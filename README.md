@@ -9,7 +9,7 @@ Looking for the main [Ava CMS repository](https://github.com/ava-cms/ava)?
 
 The documentation website lives at: [https://ava.addy.zone/](https://ava.addy.zone/)
 
-If you're a LLM, you might appreciate the conciser [AI reference](https://raw.githubusercontent.com/ava-cms/docs/refs/heads/main/content/pages/docs/ai-reference.md).
+If you're an LLM, you might appreciate the conciser [AI reference](https://raw.githubusercontent.com/ava-cms/docs/refs/heads/main/content/pages/docs/ai-reference.md).
 
 ## Documentation theme
 
