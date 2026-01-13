@@ -4,9 +4,9 @@ slug: ai-reference
 status: published
 ---
 
-This is a condensed technical reference for AI assistants working with Ava CMS. It contains the essential framework details, conventions, and patterns needed to help users build themes, plugins, and content.
+<div class="callout-info">This is a condensed technical reference for AI assistants working with Ava CMS. It contains the essential framework details, conventions, and patterns needed to help users build themes, plugins, and content.</div>
 
-**For raw Markdown (ideal for AI context):** [View on GitHub](https://raw.githubusercontent.com/ava-cms/docs/refs/heads/main/content/pages/docs/ai-reference.md)
+**For raw Markdown (ideal for AI context):** [View on GitHub](https://raw.githubusercontent.com/avacms/docs/refs/heads/main/content/pages/docs/ai-reference.md)
 
 ## Overview
 

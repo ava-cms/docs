@@ -15,7 +15,7 @@ A gallery of websites built with Ava CMS. Get inspired by what others are creati
         <div class="preview-card-content">
             <h3 class="preview-card-title"><a href="https://ava.addy.zone" target="_blank" rel="noopener">ava.addy.zone</a></h3>
             <p class="preview-card-desc">The Ava CMS documentation. Featuring dynamic headings navigation and AJAX search. You're looking at it right now!</p>
-            <p class="preview-card-meta">By <a href="https://github.com/ava-cms">Ava CMS</a></p>
+            <p class="preview-card-meta">By <a href="https://github.com/avacms">Ava CMS</a></p>
         </div>
     </div>
 </div>
@@ -32,7 +32,7 @@ Using Ava for your website? We'd love to feature it here!
 </ul>
 
 **How to submit:**
-- [Open an issue on GitHub](https://github.com/ava-cms/ava/issues) with the label "showcase"
+- [Open an issue on GitHub](https://github.com/avacms/ava/issues) with the label "showcase"
 - Or share it in [Discord](https://discord.gg/fZwW4jBVh5)
 
 Whether it's a personal blog, portfolio, documentation site, or something completely different — if you built it with Ava, we want to see it!

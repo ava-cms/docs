@@ -830,8 +830,8 @@ Your front-end fetches `/search.json?q=...` and renders the results however you 
 
 ### Working examples
 
-- **Default theme** (server-rendered search page): [theme.php](https://github.com/ava-cms/ava/blob/main/themes/default/theme.php) and [search.php template](https://github.com/ava-cms/ava/blob/main/themes/default/templates/search.php)
-- **Docs theme** (AJAX popup): [theme.php](https://github.com/ava-cms/docs/blob/main/themes/docs/theme.php) — registers `/search` and `/search.json` routes; the front-end JS renders results in a modal
+- **Default theme** (server-rendered search page): [theme.php](https://github.com/avacms/ava/blob/main/themes/default/theme.php) and [search.php template](https://github.com/avacms/ava/blob/main/themes/default/templates/search.php)
+- **Docs theme** (AJAX popup): [theme.php](https://github.com/avacms/docs/blob/main/themes/docs/theme.php) — registers `/search` and `/search.json` routes; the front-end JS renders results in a modal
 
 
 ## Theme Bootstrap

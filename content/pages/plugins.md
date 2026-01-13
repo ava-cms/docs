@@ -25,7 +25,7 @@ Built a plugin you'd like to share? We'd love to list it here!
 </ul>
 
 **How to submit:**
-- [Open an issue on GitHub](https://github.com/ava-cms/ava/issues) with the label "community-plugin"
+- [Open an issue on GitHub](https://github.com/avacms/ava/issues) with the label "community-plugin"
 - Or share it in [Discord](https://discord.gg/fZwW4jBVh5)
 
 ## Plugin Development

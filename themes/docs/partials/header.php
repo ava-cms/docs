@@ -24,6 +24,7 @@ $bodyClass = trim(($bodyClass ?? '') . ($showSidebar ? '' : ' no-sidebar-body'))
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <link rel="icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/media/icon.png">
     
     <meta name="robots" content="index, follow">
@@ -49,7 +50,7 @@ $bodyClass = trim(($bodyClass ?? '') . ($showSidebar ? '' : ' no-sidebar-body'))
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wdth,wght@75..125,200..900&family=Hubot+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1/themes/prism-one-light.min.css">
     <link rel="stylesheet" href="<?= $ava->asset('style.css') ?>">
     
@@ -67,7 +68,7 @@ $bodyClass = trim(($bodyClass ?? '') . ($showSidebar ? '' : ' no-sidebar-body'))
     <header class="topbar">
         <div class="topbar-inner">
             <div class="topbar-left">
-                <a href="/" class="topbar-logo">Ava CMS</a>
+                <a href="/" class="topbar-logo">Ava CMS<span class="topbar-version">v<?= AVA_VERSION ?></span></a>
                 <nav class="topbar-nav">
                     <a href="/docs"<?= str_starts_with($request->path(), '/docs') ? ' class="active"' : '' ?>>Docs</a>
                     <a href="/themes"<?= $request->path() === '/themes' ? ' class="active"' : '' ?>>Themes</a>

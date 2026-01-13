@@ -6,49 +6,121 @@ status: published
 
 <div class="badges">
 
-[![Release](https://img.shields.io/github/v/release/ava-cms/ava)](https://github.com/ava-cms/ava/releases)
-[![Issues](https://img.shields.io/github/issues/ava-cms/ava)](https://github.com/ava-cms/ava/issues)
-[![Code size](https://img.shields.io/github/languages/code-size/ava-cms/ava)](https://github.com/ava-cms/ava)
+[![Release](https://img.shields.io/github/v/release/avacms/ava)](https://github.com/avacms/ava/releases)
+[![Issues](https://img.shields.io/github/issues/avacms/ava)](https://github.com/avacms/ava/issues)
+[![Code size](https://img.shields.io/github/languages/code-size/avacms/ava)](https://github.com/avacms/ava)
 [![Discord](https://img.shields.io/discord/1028357262189801563)](https://discord.gg/fZwW4jBVh5)
-[![GitHub Repo stars](https://img.shields.io/github/stars/ava-cms/ava)](https://github.com/ava-cms/ava)
+[![GitHub Repo stars](https://img.shields.io/github/stars/avacms/ava)](https://github.com/avacms/ava)
 
 </div>
 
-A friendly, flexible, flat-file PHP-based CMS for bespoke personal websites, blogs and more.
+Ava is a blazing fast and very flexible flat-file CMS. Your content lives as Markdown (`.md`) files on disk, not rows in a database. Create a file, write in Markdown or HTML, and you have a page. Edit it, refresh your browser, and it’s live.
+
+The best part is how *normal* everything feels: your whole site is readable, portable, and yours. Put it in Git. Edit in VS Code, Obsidian, vim—whatever you like. Back it up by copying a folder. Move hosts by uploading files. There's no build step, no complex deployment process, and no proprietary format to learn.
+
+When you want more dynamic or advanced features, Ava is still right there with you: PHP-powered themes, custom content types, taxonomies, search, and caching—without hiding the underlying structure. There’s an optional admin dashboard for quick edits and status monitoring, a friendly intuitive CLI for power users, and a plugin system with extensive hooks for adding extras. But the core idea always stays simple: files in, website out.
+
+If you want your own place on the web—something you can understand, move, back up, and keep for the long haul—Ava is built for that. And if you’re still learning HTML/CSS (or PHP), that’s fine too: Ava stays approachable and grows with you.
+
+## Your Site, On Disk
+
+Ava projects are intentionally simple: your content is text files, your theme is a collection of HTML/PHP templates, and your configuration is plain PHP arrays. No magic, no hidden layers.
+
+Here’s what a typical Ava site looks like:
+
+<pre><code class="language-text">mysite/
+├── app/
+│   └── config/          # Configuration files
+│       ├── ava.php      # Main config (site, paths, caching)
+│       ├── content_types.php
+│       ├── taxonomies.php
+│       └── users.php    # Admin users (managed by CLI)
+├── content/
+│   ├── pages/           # Page content (hierarchical URLs)
+│   ├── posts/           # Blog posts (/blog/{slug})
+│   └── _taxonomies/     # Term registries
+├── themes/
+│   └── default/         # Theme templates
+│       ├── templates/
+│       └── assets/
+├── plugins/             # Optional plugins
+├── snippets/            # Safe PHP snippets for [snippet] shortcode
+├── public/              # Web root
+│   ├── media/           # Downloads referenced via @media: alias
+│   └── index.php        # Entry point
+├── storage/cache/       # Content index and page cache (gitignored)
+└── ava                  # CLI tool
+</code></pre>
+
+The big idea: you can look at the folder tree and immediately understand where things live. That makes Ava great for long-term ownership, collaboration, and version control.
+
+## How It Works
+
+1. **[Write](/docs/content)** — Create Markdown files in your `content/` folder.
+2. **[Index](/docs/performance)** — Ava automatically scans your files and builds a fast index.
+3. **[Render](/docs/theming)** — Your theme turns that content into beautiful HTML.
+
+The system handles the plumbing: routing, sorting, pagination, and search. You focus on content and design.
+
+## Editing Content: Pick Your Style
+
+Ava is flexible about *how* you work. There’s no “correct” workflow—use whatever fits your setup:
+
+- **Edit directly on your server** — SFTP, SSH, or your host’s file manager. Changes appear instantly.
+- **Work locally** — Edit on your computer and upload when ready. Great for bigger changes.
+- **Use Git** — Version control with GitHub, GitLab, etc. Perfect for collaboration and history.
+- **Mix and match** — Quick fixes on the server, bigger projects locally. Whatever works for you.
+
+If you want some beginner-friendly background on the tools involved:
+
+- Learn the basics of running commands in [CLI](/docs/cli)
+- Learn what Markdown is (and what editors are great) in [Content](/docs/content)
+
+## Is Ava for You?
+
+Ava is a great fit if:
+
+- You want a site you can fully own, understand, and move between hosts.
+- You like writing in a real editor instead of a web form.
+- You know some HTML and CSS (or want to learn), and you’re happy to customise a theme.
+- You want a fast site without build pipelines, deploy queues, or complicated tooling.
+- You’d rather keep things simple: files first, database optional.
+
+It won’t be a good fit if you need a drag-and-drop page builder or a huge marketplace of third‑party themes and plugins.
 
 ## Philosophy
 
-Ava is designed for people who love the web. It sits in the sweet spot between a static site generator and a full-blown CMS:
+Ava is built for people who like understanding how their site works. It keeps the “just files” simplicity of a static workflow, while giving you dynamic tools when you need them.
 
 <div class="philosophy-grid">
 <div class="philosophy-grid-item">
 
-**📂 Your Files, Your Rules.** Content is just Markdown files with YAML frontmatter, optional HTML, and extensible PHP shortcodes. Configuration is readable PHP. Your files are the source of truth.
+**📂 Your Files, Your Rules** Content is Markdown with YAML frontmatter (plus optional HTML) and extensible PHP shortcodes. Configuration is plain, readable PHP. Your files are the source of truth.
 
 </div>
 <div class="philosophy-grid-item">
 
-**✍️ Bring Your Own Editor.** No clunky WYSIWYG editors here. Write in your favourite text editor, IDE or even the terminal. If you can write a little HTML and CSS, you can build a theme.
+**✍️ Bring Your Own Editor** Write in your favourite text editor, IDE, or even the terminal. Use standard HTML and CSS for themes, and sprinkle in PHP when you want dynamic bits.
 
 </div>
 <div class="philosophy-grid-item">
 
-**🚀 No Database Required.** No database is required, but SQLite is seamlessly available as a lightweight local file to support large content collections while keeping memory usage low.
+**🚀 No Database Required** Run happily with no database at all. If your site grows huge, SQLite is available as a single lightweight file to handle big collections while keeping memory usage low.
 
 </div>
 <div class="philosophy-grid-item">
 
-**⚡ Edit Live.** Edit a file, refresh your browser, see it live. There's no build step, no deploy queue, and no waiting for static regeneration. Changes are immediate.
+**⚡ Edit Live** Edit a file, refresh your browser, and see the change immediately. No build step, no deploy queue, and no waiting for regeneration.
 
 </div>
 <div class="philosophy-grid-item">
 
-**🎨 Bespoke by Design.** Don't fight a platform. Create any content type you want: blogs, portfolios, recipe collections, changelogs and more without plugins or hacks.
+**🎨 Bespoke by Design** Model your site the way you think: blogs, portfolios, recipe collections, changelogs—whatever fits. Custom content types are a first-class feature, not a workaround.
 
 </div>
 <div class="philosophy-grid-item">
 
-**🤖 AI Friendly.** The clean file-based structure, thorough integrated documentation and straightforward CLI makes it easy for AI assistants to help you build themes and extensions.
+**🤖 LLM Friendly** The clean file structure, integrated docs, and straightforward CLI make it easy to pair with AI assistants when building themes and extensions.
 
 </div>
 </div>
@@ -60,17 +132,19 @@ Ava is designed for people who love the web. It sits in the sweet spot between a
 | **Content&nbsp;Types** | [Define](/docs/configuration#content-types) exactly what you're publishing (Pages, Posts, Projects, etc.). |
 | **Taxonomies** | [Organise](/docs/configuration#taxonomies) content your way with custom categories, tags, or collections. |
 | **Smart&nbsp;Routing** | URLs are generated [automatically](/docs/routing) based on your content structure. |
-| **Themes** | Write standard HTML and CSS however you prefer, use PHP and Ava's [helpers](/docs/themes) only where you need dynamic data. |
+| **Themes** | Write standard HTML and CSS however you prefer, use PHP and Ava's [helpers](/docs/theming) only where you need dynamic data. |
+| **Shortcodes** | Embed [dynamic content](/docs/shortcodes) and reusable snippets in your Markdown. |
 | **Plugins** | Add [functionality](/docs/creating-plugins) like sitemaps and feeds without bloat. |
 | **Speed** | Built-in page [caching](/docs/performance) makes your site load instantly, even on cheap hosting. |
 | **Search** | Full-text search across your content with [configurable](/docs/configuration#search-configuration) weights. |
 | **CLI Tool** | Manage your site from the [command line](/docs/cli): clear caches, create users, run tests, and more. |
+| **Admin Dashboard** | Optional [web UI](/docs/admin) for editing content, managing taxonomies, viewing logs, and system diagnostics. |
 
 ## Performance
 
 Ava is designed to be fast by default, whether you have 100 posts or 100,000.
 
-- **Instant Publishing:** No build step. Edit a file, refresh your browser, see it live. There’s no build step, no deploy queue, and no waiting for static regeneration. Changes are immediate.
+- **Instant Publishing:** No build step. Edit a file, refresh your browser, see it live.
 - **Smart Caching:** A [tiered caching system](/docs/performance) keeps page generation extremely fast. Even without page caching, posts compile quickly, and large content updates can be indexed almost immediately for responsive search and sorting.
 - **Scalable Backends:** Start with the default Array backend for raw speed, or switch to [SQLite](/docs/performance#sqlite-backend) for constant memory usage at scale.
 - **Static Speed:** Enable [full page caching](/docs/performance#page-caching) to serve static HTML files, bypassing the application entirely for most visitors.
@@ -108,13 +182,20 @@ Ava includes a friendly CLI for managing your site. Run commands from your proje
 
 ## Admin Dashboard
 
-Ava includes a web-based admin panel for monitoring your site. It's completely optional and everything can be done via the CLI or direct file editing, but it's handy for quick overviews and common tasks.
+Ava includes a web-based admin panel for monitoring and managing your site. It's completely optional—everything can be done via the CLI or direct file editing—but it's handy for quick edits and common tasks.
 
 <a href="@media:admin-dashboard.webp" target="_blank" rel="noopener">
   <img src="@media:admin-dashboard.webp" alt="Ava Admin Dashboard" />
 </a>
 
-The dashboard gives you a bird's-eye view of your content, taxonomy terms, and system health. Browse and preview content, view themes, manage redirects, and check logs without touching the command line.
+The dashboard lets you:
+
+- **Edit content** — Create and edit Markdown files with frontmatter generation
+- **Browse content** — See what exists, its status, and where it lives on disk
+- **Manage taxonomies** — Create and delete terms via a file-backed registry
+- **Upload media** — Add images to your media folder
+- **Run diagnostics** — Lint content, view logs, check system health
+- **Maintenance** — Rebuild indexes and clear cached pages
 
 [See admin documentation →](/docs/admin)
 
@@ -122,7 +203,7 @@ The dashboard gives you a bird's-eye view of your content, taxonomy terms, and s
 
 <img src="https://addy.zip/ava/i-love-php.webp" alt="I love PHP" style="float: right; width: 180px; margin: 0 0 1rem 1.5rem;" />
 
-Ava requires **PHP 8.3** or later and **SSH access** for some simple commands. Most good hosts include this, but check before you start.
+Ava requires **PHP 8.3** or later and **SSH access** for CLI commands. Most good hosts include this.
 
 **Required Extensions:**
 
@@ -130,7 +211,7 @@ Ava requires **PHP 8.3** or later and **SSH access** for some simple commands. M
 - `json` — Config and API responses
 - `ctype` — String validation
 
-These are bundled with most PHP installations. If you're missing one, your host's control panel or `apt install php-mbstring` will sort it out.
+These are bundled with most PHP installations.
 
 **Optional Extensions:**
 
@@ -142,15 +223,15 @@ If `igbinary` isn't available, Ava falls back to PHP's built-in `serialize`. Bot
 
 ## Quick Start
 
-Getting started with Ava is incredibly simple and the default set-up can be put live in just a minute. Here are a few options:
+Getting started with Ava is simple and the default set-up can be put live in just a minute. Here are a few options:
 
 ### Download and Upload
 
 The simplest approach—no special tools required:
 
-[![Release](https://img.shields.io/github/v/release/ava-cms/ava)](https://github.com/ava-cms/ava/releases)
+[![Release](https://img.shields.io/github/v/release/avacms/ava)](https://github.com/avacms/ava/releases)
 
-1. Download the latest release from [GitHub Releases](https://github.com/ava-cms/ava/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/avacms/ava/releases)
 2. Extract the ZIP file
 3. Upload to your web host (via SFTP, your host's file manager, or however you prefer)
 4. Run `composer install` to install dependencies
@@ -161,9 +242,9 @@ The simplest approach—no special tools required:
 
 If you're comfortable with Git and want version control from the start:
 
-1. Clone the repo in your websites root directory (above the `public` folder):
+1. Clone the repo in your website's root directory (above the `public` folder):
 ```bash
-git clone https://github.com/ava-cms/ava.git
+git clone https://github.com/avacms/ava.git
 ```
 2. Install dependencies:
 ```bash
@@ -199,79 +280,21 @@ By default, Ava comes with a simple example site. You can replace the content in
 
 <img src="@media:default.webp" alt="Default theme preview" />
 
-The default theme provides a clean, minimal starting point for your site. Customise it with your own styles, scripts and templates to match your vibe or [build something entirely new](/docs/themes).
-
-## Project Structure
-
-<pre><code class="language-text">mysite/
-├── app/
-│   └── config/          # Configuration files
-│       ├── ava.php      # Main config (site, paths, caching)
-│       ├── content_types.php
-│       └── taxonomies.php
-├── content/
-│   ├── pages/           # Page content (hierarchical URLs)
-│   ├── posts/           # Blog posts (/blog/{slug})
-│   └── _taxonomies/     # Term registries
-├── themes/
-│   └── default/         # Theme templates
-│       ├── templates/
-│       └── assets/
-├── plugins/             # Optional plugins
-├── snippets/            # Safe PHP snippets for &#91;snippet&#93; shortcode
-├── public/              # Web root
-│   ├── media/           # @media<span></span>: downloads referenced via @media<span></span>: alias
-│   └── index.php        # Entry point
-├── storage/cache/       # Content index and page cache (gitignored)
-└── ava                  # CLI tool
-</code></pre>
-
-## How It Works
-
-1. **[Write](/docs/content)** — Create Markdown files in your `content/` folder.
-2. **[Index](/docs/performance)** — Ava automatically scans your files and builds a fast index.
-3. **[Render](/docs/themes)** — Your theme turns that content into beautiful HTML.
-
-The system handles all the boring stuff: routing, sorting, pagination, and search. You just focus on the content and the design.
-
-## Editing Content: Pick Your Style
-
-Ava is flexible about *how* you work. There's no "correct" way to edit—pick whatever fits your workflow:
-
-- **Edit directly on your server** — SFTP, SSH, or your host's file manager. Changes appear instantly.
-- **Work locally** — Edit on your computer and upload when ready. Great for bigger changes.
-- **Use Git** — Version control with GitHub, GitLab, etc. Perfect for collaboration and history.
-- **Mix and match** — Quick fixes on the server, bigger projects locally. Whatever works for you.
-
-If you want some beginner-friendly background on the tools involved:
-
-- Learn the basics of running commands in [CLI](/docs/cli)
-- Learn what Markdown is (and what editors are great) in [Content](/docs/content)
-
-## Is Ava for You?
-
-Ava is perfect if:
-- You know some HTML and CSS (or want to learn!).
-- You prefer writing in a real text editor over a web form.
-- You want a fast, personal site that you fully own and control.
-- You don't want to deal with deployment processes or build steps.
-- You don't want to manage a database or complex server setup, just files.
-
-It won't be a good fit if you need a drag-and-drop page builder or a massive ecosystem of third-party themes.
+The default theme provides a clean, minimal starting point for your site. Customise it with your own styles, scripts and templates to match your vibe or [build something entirely new](/docs/theming).
 
 ## Next Steps
 
-- [Configuration](/docs/configuration) — Site settings and content types
+- [Configuration](/docs/configuration) — Site settings, content types, and taxonomies
 - [Content](/docs/content) — Writing pages and posts
 - [Hosting](/docs/hosting) — Getting your site live
-- [Themes](/docs/themes) — Creating templates
+- [Theming](/docs/theming) — Creating templates
 - [Admin](/docs/admin) — Optional dashboard
 - [CLI](/docs/cli) — Command-line tools
 - [Showcase](/showcase) — Community sites, themes, and plugins
 
 ## License
 
-Ava CMS is free and open-source software licensed under the [MIT License](https://github.com/ava-cms/ava/blob/main/LICENSE).
+Ava CMS is free and open-source software licensed under the [MIT License](https://github.com/avacms/ava/blob/main/LICENSE).
 
 In plain English, that means you can:
 
@@ -281,20 +304,18 @@ In plain English, that means you can:
 
 The main thing the license asks is that you keep the MIT license text and copyright notice with the software.
 
-Also worth knowing: the MIT license comes with a standard “no warranty” clause. Ava is provided as-is, so you’re responsible for how you deploy and run it. There's no guarantees that it's fit-for-purpose or impenetrably secure. Standard open-source stuff.
+Also worth knowing: the MIT license comes with a standard "no warranty" clause. Ava is provided as-is, so you're responsible for how you deploy and run it.
 
 ## Contributing
 
-Ava is still fairly early and moving quickly, so I’m not looking for undiscussed pull requests or additional contributors just yet.
+Ava is still fairly early and moving quickly, so I'm not looking for undiscussed pull requests or additional contributors just yet.
 
-That said, I’d genuinely love your feedback:
+That said, I'd genuinely love your feedback:
 
-- If you run into a bug, get stuck, or have a “this could be nicer” moment, please [open an issue](https://github.com/ava-cms/ava/issues).
-- Feature requests, ideas, and “what if Ava could…” suggestions are very welcome.
+- If you run into a bug, get stuck, or have a "this could be nicer" moment, please [open an issue](https://github.com/avacms/ava/issues).
+- Feature requests, ideas, and suggestions are very welcome.
 
 If you prefer a more conversational place to ask questions and share ideas, join the [Discord community](https://discord.gg/fZwW4jBVh5).
-
-Even small notes help a lot at this stage.
 
 ## Community
 
