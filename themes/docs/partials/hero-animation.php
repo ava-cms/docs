@@ -31,18 +31,21 @@
     let mouseX = -1000;
     let mouseY = -1000;
     
-    // Colors
-    let baseColor = 'rgba(150, 150, 150, 0.3)'; // Increased opacity
+    // Colors - light theme uses neutral gray
+    let baseColor = 'rgba(115, 115, 115, 0.2)';
     let accentColor = 'rgba(99, 102, 241, 1)'; 
     
     function updateColors() {
-        const style = getComputedStyle(document.body);
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         
-        // Use text-secondary which is darker/higher contrast than tertiary
-        const textSecondary = style.getPropertyValue('--text-secondary').trim();
-        baseColor = textSecondary || 'rgba(150, 150, 150, 0.4)';
+        if (isDark) {
+            baseColor = 'rgba(150, 150, 150, 0.3)';
+        } else {
+            baseColor = 'rgba(115, 115, 115, 0.2)';
+        }
         
         // Parse accent for active dots
+        const style = getComputedStyle(document.body);
         const accent = style.getPropertyValue('--accent').trim();
         accentColor = accent || '#6366f1';
     }

@@ -317,3 +317,49 @@
         }
     })();
 })();
+
+// GitHub Star Toast
+(function() {
+    const STORAGE_KEY = 'github-toast-until';
+    const SHOW_DELAY = 30000; // 30 seconds
+    const CLOSE_DURATION = 2 * 60 * 60 * 1000; // 2 hours
+    const MAYBE_LATER_DURATION = 10 * 60 * 1000; // 10 minutes
+    
+    function isDismissed() {
+        const until = localStorage.getItem(STORAGE_KEY);
+        if (!until) return false;
+        return Date.now() < parseInt(until, 10);
+    }
+    
+    function hideToast() {
+        const toast = document.getElementById('github-toast');
+        if (toast) toast.classList.remove('visible');
+    }
+    
+    function showToast() {
+        const toast = document.getElementById('github-toast');
+        if (toast) toast.classList.add('visible');
+    }
+    
+    // Close button (X) - dismiss for 2 hours
+    window.closeGithubToast = function() {
+        hideToast();
+        localStorage.setItem(STORAGE_KEY, (Date.now() + CLOSE_DURATION).toString());
+    };
+    
+    // Maybe later button - dismiss for 10 minutes
+    window.dismissGithubToast = function() {
+        hideToast();
+        localStorage.setItem(STORAGE_KEY, (Date.now() + MAYBE_LATER_DURATION).toString());
+    };
+    
+    // Starred - dismiss permanently
+    window.starredGithub = function() {
+        localStorage.setItem(STORAGE_KEY, (Date.now() + 1000 * 60 * 60 * 24 * 365 * 10).toString());
+    };
+    
+    // Only show if not dismissed
+    if (!isDismissed()) {
+        setTimeout(showToast, SHOW_DELAY);
+    }
+})();

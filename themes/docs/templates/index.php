@@ -39,7 +39,7 @@ $bodyClass = $isHomepage ? 'home-landing' : '';
                                 <p class="hero-tagline">A friendly, flexible, flat-file PHP CMS for bespoke personal sites, blogs, and docs with zero database and zero build step.</p>
                                 <div class="hero-buttons">
                                     <a href="/docs" class="btn-primary">Get Started →</a>
-                                    <a href="https://github.com/adamgreenough/ava" class="btn-secondary" target="_blank" rel="noopener">View on GitHub</a>
+                                    <a href="https://github.com/avacms/ava" class="btn-secondary" target="_blank" rel="noopener">View on GitHub</a>
                                 </div>
                             </div>
                         <?php endif; ?>

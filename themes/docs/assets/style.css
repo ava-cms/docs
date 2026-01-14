@@ -20,17 +20,17 @@
    ========================================================================== */
 
 :root {
-    --bg: #f9fafb;
-    --bg-body: #ffffff;
-    --bg-card: #ffffff;
-    --bg-surface: #fafafa;
-    --bg-hover: #f3f4f6;
-    --bg-subtle: #f8fafc;
-    --bg-code: #f4f4f5;
-    --bg-code-block: #fafafa;
+    --bg: #f0f0f0;
+    --bg-body: #f6f6f6;
+    --bg-card: #fafafa;
+    --bg-surface: #f0f0f0;
+    --bg-hover: #e8e8e8;
+    --bg-subtle: #f3f3f3;
+    --bg-code: #ebebeb;
+    --bg-code-block: #f0f0f0;
     
-    --border: #e5e7eb;
-    --border-light: #f3f4f6;
+    --border: #e0e0e0;
+    --border-light: #ebebeb;
     
     --text: #0e1c31;
     --text-primary: #0e1c31;
@@ -38,11 +38,11 @@
     --text-muted: #64748b;
     --text-tertiary: #94a3b8;
     
-    --accent: #6366f1;
-    --accent-hover: #4f46e5;
-    --accent-light: #818cf8;
-    --accent-subtle: rgba(99, 102, 241, 0.08);
-    --accent-rgb: 99, 102, 241;
+    --accent: #7c3aed;
+    --accent-hover: #6d28d9;
+    --accent-light: #a78bfa;
+    --accent-subtle: rgba(124, 58, 237, 0.08);
+    --accent-rgb: 124, 58, 237;
     
     --theme-color: #7c3aed;
     --theme-color-dark: #6d28d9;
@@ -100,10 +100,10 @@
     --text-muted: #71717a;
     --text-tertiary: #52525b;
     
-    --accent: #818cf8;
-    --accent-hover: #a5b4fc;
-    --accent-light: #c7d2fe;
-    --accent-subtle: rgba(129, 140, 248, 0.12);
+    --accent: #a78bfa;
+    --accent-hover: #c4b5fd;
+    --accent-light: #ddd6fe;
+    --accent-subtle: rgba(167, 139, 250, 0.12);
     
     --theme-color: #a78bfa;
     --theme-color-dark: #8b5cf6;
@@ -1590,6 +1590,148 @@ body.home-hero-page .docs-footer .footer-content { color: var(--text-secondary);
 .preview-card-meta { font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 0 !important; }
 .preview-card-meta a { color: var(--text-muted); }
 .preview-card-meta a:hover { color: var(--accent); }
+
+/* ==========================================================================
+   13. GITHUB STAR TOAST
+   ========================================================================== */
+
+.github-toast {
+    position: fixed;
+    bottom: var(--sp-6);
+    right: var(--sp-6);
+    max-width: 340px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    padding: var(--sp-5);
+    z-index: 300;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .github-toast {
+        left: var(--sp-4);
+        right: var(--sp-4);
+        max-width: none;
+        bottom: var(--sp-4);
+    }
+}
+
+[data-theme="dark"] .github-toast {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.github-toast.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.github-toast-close {
+    position: absolute;
+    top: var(--sp-3);
+    right: var(--sp-3);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.github-toast-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.github-toast-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent-subtle);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--sp-3);
+    color: var(--accent);
+}
+
+.github-toast-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.github-toast-title {
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-2);
+    padding-right: var(--sp-6);
+}
+
+.github-toast-text {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: var(--sp-4);
+}
+
+.github-toast-actions {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: center;
+}
+
+.github-star-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4);
+    background: var(--text-primary);
+    color: var(--bg-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.github-star-btn:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.github-star-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.github-toast-dismiss {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--sp-2);
+    transition: color var(--transition-fast);
+}
+
+.github-toast-dismiss:hover {
+    color: var(--text-primary);
+}
 
 /* Showcase Grid */
 .showcase-grid {
