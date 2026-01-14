@@ -74,7 +74,7 @@ The most important folders to back up are:
 
 - **`content/`** — All your pages, posts, and media
 - **`app/config/`** — Your site settings
-- **`themes/`** — Your customised themes
+- **`app/themes/`** — Your customised themes
 
 Everything else (like `core/`, `vendor/`, `storage/cache/`) can be regenerated or re-downloaded.
 
@@ -161,18 +161,16 @@ The updater is intentionally conservative: it updates Ava's core/runtime files w
 - `public/assets/admin.css` — Admin styles
 - `docs/` — Documentation directory, if present in the release
 
-**Bundled plugins** are also updated (files copied into `plugins/<name>/`), currently:
-- `plugins/sitemap/`
-- `plugins/feed/`
-- `plugins/redirects/`
+**Bundled plugins** are also updated (files copied into `app/plugins/<name>/`), currently:
+- `app/plugins/sitemap/`
+- `app/plugins/feed/`
+- `app/plugins/redirects/`
 
-If a release adds a *new bundled plugin* and you do not already have a folder for it, the updater will copy it into `plugins/<new-plugin>/`. New plugins are not automatically enabled — you activate plugins via your config.
+If a release adds a *new bundled plugin* and you do not already have a folder for it, the updater will copy it into `app/plugins/<new-plugin>/`. New plugins are not automatically enabled — you activate plugins via your config.
 
 **Preserved (never targeted by the updater):**
 - `content/` — Your pages, posts, and media
-- `app/` — Your configuration (including `app/config/*`)
-- `themes/` — Your themes
-- `plugins/` — Any custom/non-bundled plugins you created
+- `app/` — Your configuration (including `app/config/*`), themes, plugins, snippets
 - `vendor/` — Installed PHP dependencies
 - `storage/` — Cache, logs, temp files
 - `.git/`, `.env`

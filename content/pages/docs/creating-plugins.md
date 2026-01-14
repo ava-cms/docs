@@ -28,8 +28,8 @@ The bundled plugins (sitemap, feed, redirects) are good examples — they work r
 
 ## Your First Plugin
 
-1. Create a folder: `plugins/my-plugin/`
-2. Create a file: `plugins/my-plugin/plugin.php`
+1. Create a folder: `app/plugins/my-plugin/`
+2. Create a file: `app/plugins/my-plugin/plugin.php`
 
 ```php
 <?php
@@ -66,7 +66,7 @@ Each plugin is a folder with a `plugin.php` that returns an array. Ava does not 
 
 ```php
 <?php
-// plugins/my-plugin/plugin.php
+// app/plugins/my-plugin/plugin.php
 
 return [
     // Common
@@ -296,6 +296,10 @@ Hooks::addAction('cli.rebuild', function($app) {
         echo "  \033[32m✔\033[0m Notifying search engine...\n";
     }
 });
+
+// Note: The `./ava rebuild` command loads plugins before rebuilding so hooks can run.
+// Also note: on a fast-path webpage-cache HIT, Ava can serve HTML before app boot,
+// so plugin boot code and hooks do not run on that request.
 ```
 
 ## Adding Routes
@@ -385,7 +389,7 @@ use Ava\Application;
 
 For more complex pages, create a content-only view file:
 
-**plugins/my-plugin/views/content.php:**
+**app/plugins/my-plugin/views/content.php:**
 ```php
 <?php
 // Only the main content - no <html>, <head>, sidebar, etc.
@@ -413,7 +417,7 @@ For more complex pages, create a content-only view file:
 </div>
 ```
 
-**plugins/my-plugin/plugin.php:**
+**app/plugins/my-plugin/plugin.php:**
 ```php
 'handler' => function(Request $request, Application $app, $controller) {
     // Prepare your data
@@ -544,7 +548,7 @@ A full plugin that adds reading time estimates to posts:
 
 ```php
 <?php
-// plugins/reading-time/plugin.php
+// app/plugins/reading-time/plugin.php
 
 use Ava\Plugins\Hooks;
 
@@ -582,7 +586,7 @@ Include CSS or JS from your plugin:
 ```php
 'boot' => function($app) {
     Hooks::addFilter('render.context', function($context) {
-        $context['plugin_assets'][] = '/plugins/my-plugin/assets/style.css';
+        $context['plugin_assets'][] = '/app/plugins/my-plugin/assets/style.css';
         return $context;
     });
 }

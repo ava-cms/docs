@@ -89,7 +89,7 @@ Since Ava is just PHP, you can easily create endpoints that return JSON. This is
 You can create a plugin to expose your content as JSON.
 
 ```php
-// plugins/json-api/plugin.php
+// app/plugins/json-api/plugin.php
 
 return [
     'name' => 'JSON API',

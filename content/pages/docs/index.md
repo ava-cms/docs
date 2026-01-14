@@ -69,22 +69,22 @@ Ava projects are intentionally simple: your content is text files, your theme is
 Here’s what a typical Ava site looks like:
 
 <pre><code class="language-text">mysite/
-├── app/
-│   └── config/          # Configuration files
-│       ├── ava.php      # Main config (site, paths, caching)
-│       ├── content_types.php
-│       ├── taxonomies.php
-│       └── users.php    # Admin users (managed by CLI)
+├── app/                 # Your code
+│   ├── config/          # Configuration files
+│   │   ├── ava.php      # Main config (site, paths, caching)
+│   │   ├── content_types.php
+│   │   ├── taxonomies.php
+│   │   └── users.php    # Admin users (managed by CLI)
+│   ├── plugins/         # Enabled plugins
+│   ├── snippets/        # Reusable PHP content blocks
+│   └── themes/          # Your HTML/PHP templates
+│       └── default/
+│           ├── templates/
+│           └── assets/
 ├── content/
 │   ├── pages/           # Page content (hierarchical URLs)
 │   ├── posts/           # Blog posts (/blog/{slug})
 │   └── _taxonomies/     # Term registries
-├── themes/
-│   └── default/         # Theme templates
-│       ├── templates/
-│       └── assets/
-├── plugins/             # Optional plugins
-├── snippets/            # Safe PHP snippets for [snippet] shortcode
 ├── public/              # Web root
 │   ├── media/           # Downloads referenced via @media: alias
 │   └── index.php        # Entry point
@@ -279,7 +279,7 @@ See the [Hosting Guide](/docs/hosting) for shared hosting, VPS options, and depl
 
 ### Default Site
 
-By default, Ava comes with a simple example site. You can replace the content in the `content/` folder and your theme in the `themes/default/` folder to start building your site.
+By default, Ava comes with a simple example site. You can replace the content in the `content/` folder and your theme in the `app/themes/default/` folder to start building your site.
 
 <img src="@media:default.webp" alt="Default theme preview" />
 

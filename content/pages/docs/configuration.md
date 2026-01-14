@@ -61,11 +61,11 @@ return [
 Directory locations for your content, themes, plugins, and other assets.
 
 <pre><code class="language-php">'paths' =&gt; [
-    'content'  =&gt; 'content',     // Where your Markdown files live
-    'themes'   =&gt; 'themes',      // Where theme folders live
-    'plugins'  =&gt; 'plugins',     // Where plugin folders live
-    'snippets' =&gt; 'snippets',    // Where PHP snippets for &#91;snippet&#93; shortcode live
-    'storage'  =&gt; 'storage',     // Cache, logs, and temporary files
+    'content'  =&gt; 'content',       // Where your Markdown files live
+    'themes'   =&gt; 'app/themes',    // Where theme folders live
+    'plugins'  =&gt; 'app/plugins',   // Where plugin folders live
+    'snippets' =&gt; 'app/snippets',  // Where PHP snippets for &#91;snippet&#93; shortcode live
+    'storage'  =&gt; 'storage',       // Cache, logs, and temporary files
 
     'aliases' =&gt; [
         '@media<span></span>:' =&gt; '/media/',
@@ -74,12 +74,16 @@ Directory locations for your content, themes, plugins, and other assets.
 ],
 </code></pre>
 
+<div class="callout-warning">
+<strong>Important:</strong> Most people should not change these paths from the defaults. Only change them if you have a specific reason (e.g., custom project structure). Ccustom directories disable automated core updates. Aliases are safe to customise.
+</div>
+
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `paths.content` | string | `'content'` | Directory containing your Markdown content files. |
-| `paths.themes` | string | `'themes'` | Directory containing theme folders. |
-| `paths.plugins` | string | `'plugins'` | Directory containing plugin folders. |
-| `paths.snippets` | string | `'snippets'` | Directory containing PHP snippets for the <code>&#91;snippet&#93;</code> shortcode. |
+| `paths.themes` | string | `'app/themes'` | Directory containing theme folders. |
+| `paths.plugins` | string | `'app/plugins'` | Directory containing plugin folders. |
+| `paths.snippets` | string | `'app/snippets'` | Directory containing PHP snippets for the <code>&#91;snippet&#93;</code> shortcode. |
 | `paths.storage` | string | `'storage'` | Directory for cache files, logs, and temporary data. |
 | `paths.aliases` | array | <code>['@media<span></span>:' =&gt; '/media/']</code> | Path aliases for use in content. See below. |
 
@@ -122,7 +126,7 @@ At render time, <code>@media<span></span>:</code> expands to <code>/media/</code
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `theme` | string | `'default'` | The active theme folder name inside `themes/`. |
+| `theme` | string | `'default'` | The active theme folder name inside `app/themes/`. |
 
 The theme folder must contain a `templates/` directory with at least one template file. Optionally, it can include:
 
@@ -141,6 +145,7 @@ The content index is a binary snapshot of all your content metadata—used to av
     'mode'         => 'auto',      // When to rebuild
     'backend'      => 'array',     // Storage format
     'use_igbinary' => true,        // Use faster serialization if available
+    'prerender_html' => false,     // Optional: pre-render Markdown → HTML during rebuild
 ],
 ```
 
@@ -149,6 +154,7 @@ The content index is a binary snapshot of all your content metadata—used to av
 | `mode` | string | `'auto'` | When to rebuild the index. See modes below. |
 | `backend` | string | `'array'` | Storage backend for the index. See backends below. |
 | `use_igbinary` | bool | `true` | Use igbinary extension for faster serialization if installed. |
+| `prerender_html` | bool | `false` | Pre-render Markdown → HTML during rebuild (writes `html_cache.bin`). |
 
 #### Rebuild Modes
 
@@ -181,6 +187,25 @@ You can control this with `use_igbinary`:
 ```
 
 Ava detects which format each cache file uses via prefix markers (`IG:` or `SZ:`), so you can switch between them safely without rebuilding.
+
+#### Pre-rendered HTML (Optional)
+
+If `content_index.prerender_html` is enabled, Ava generates an additional cache file during `./ava rebuild`:
+
+- **File:** `storage/cache/html_cache.bin`
+- **Purpose:** Stores Markdown → HTML output for published items so uncached requests can skip Markdown conversion work.
+- **When disabled:** Any existing `html_cache.bin` is deleted during rebuild.
+
+What’s included at rebuild time:
+
+- Markdown conversion (League\CommonMark), using the same `markdown.configure` hook used during rendering
+- Path alias expansion using `paths.aliases` (simple string replacement)
+
+What’s deferred to runtime:
+
+- Shortcodes (still processed on each request)
+
+Cache keys are stored as `"<type>:<contentKey>"` (for example: `page:`, `page:about`, `post:hello-world`).
 
 <details class="beginner-box">
 <summary>Which backend should I use?</summary>
@@ -225,6 +250,23 @@ The webpage cache stores fully-rendered HTML for near-instant serving. This appl
 4. **On content change** (with `content_index.mode = 'auto'`): Cache is cleared
 5. **Logged-in admin users:** Always bypass the cache (see fresh content)
 6. **Requests with query parameters:** Not cached (except UTM tracking params)
+
+#### Fast Path (TTFB Optimisation)
+
+On some requests, Ava can serve the cached HTML **before the application boots** (skipping plugin/theme loading and index freshness checks). This “fast path” triggers only when **all** of the following are true:
+
+- `webpage_cache.enabled` is `true`
+- Request method is `GET`
+- Request path is **not** under the admin path (`admin.path`, default `/admin`)
+- The URL has **no query params**, except UTM params: `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`
+- No `ava_admin` cookie is present
+- The URL does not match any `webpage_cache.exclude` patterns
+- The cache file exists, and (if `webpage_cache.ttl` is set) the file is not expired
+
+On a fast-path **HIT**, app boot is skipped and the cached response includes:
+
+- `X-Page-Cache: HIT`
+- `X-Cache-Age: <seconds>`
 
 #### Exclusion Patterns
 
@@ -300,7 +342,10 @@ Controls how Ava processes your Markdown content files.
     'markdown' => [
         'allow_html'       => true,     // Allow raw HTML in Markdown
         'heading_ids'      => true,     // Add id attributes to headings
-        'disallowed_tags'  => [],       // HTML tags to strip
+        'disallowed_tags'  => [         // HTML tags to strip
+            'script',                   // Prevents XSS attacks
+            'noscript',                 // Can contain fallback attack vectors
+        ],
     ],
     'id' => [
         'type' => 'ulid',               // ulid or uuid7
@@ -313,7 +358,7 @@ Controls how Ava processes your Markdown content files.
 | `frontmatter.format` | string | `'yaml'` | Frontmatter parser format. Currently only YAML is supported. |
 | `markdown.allow_html` | bool | `true` | Allow raw HTML tags in Markdown content. Set to `false` to strip all HTML. |
 | `markdown.heading_ids` | bool | `true` | Automatically add `id` attributes to headings for deep linking. |
-| `markdown.disallowed_tags` | array | `[]` | HTML tags to strip even when `allow_html` is true. |
+| `markdown.disallowed_tags` | array | `['script', 'noscript']` | HTML tags to strip even when `allow_html` is true. |
 | `id.type` | string | `'ulid'` | ID format for new content items: `'ulid'` or `'uuid7'`. |
 
 #### Heading IDs
@@ -374,12 +419,12 @@ IDs are assigned when you create content with `./ava content:add` or add an `id:
 
 #### PHP Snippets
 
-When `allow_php_snippets` is `true`, content can include PHP files from the `snippets/` directory:
+When `allow_php_snippets` is `true`, content can include PHP files from the `app/snippets/` directory:
 
 <pre><code class="language-markdown">&#91;snippet name=&quot;cta&quot; heading=&quot;Join Today&quot;&#93;
 </code></pre>
 
-This loads `snippets/cta.php` and passes the attributes as `$params`. Snippet names are strictly validated:
+This loads `app/snippets/cta.php` and passes the attributes as `$params`. Snippet names are strictly validated:
 - Only letters, numbers, hyphens, and underscores allowed
 - Maximum 128 characters
 - Cannot contain path traversal characters
@@ -863,7 +908,7 @@ Map content types to template files in your theme.
 | `single` | Template for viewing a single content item. |
 | `archive` | Template for the archive listing page (pattern URLs only). |
 
-Templates are looked up in `themes/{theme}/templates/`. If not found, Ava falls back to `single.php` then `index.php`.
+Templates are looked up in `app/themes/{theme}/templates/`. If not found, Ava falls back to `single.php` then `index.php`.
 
 **Per-item template override:** Set `template:` in frontmatter to use a different template for specific items.
 
@@ -1295,6 +1340,7 @@ return [
         'mode'         => 'never',      // Production: rebuild via CLI only
         'backend'      => 'array',
         'use_igbinary' => true,
+        'prerender_html' => true,       // Optional: pre-render Markdown → HTML during rebuild
     ],
 
     'webpage_cache' => [
@@ -1321,7 +1367,7 @@ return [
         'markdown' => [
             'allow_html'      => true,
             'heading_ids'     => true,
-            'disallowed_tags' => ['script', 'iframe'],
+            'disallowed_tags' => ['script', 'noscript'],
         ],
         'id' => [
             'type' => 'ulid',
@@ -1437,14 +1483,15 @@ return [
 | `site.date_format` | string | `'F j, Y'` | Default date format |
 | `theme` | string | `'default'` | Active theme folder |
 | `paths.content` | string | `'content'` | Content directory |
-| `paths.themes` | string | `'themes'` | Themes directory |
-| `paths.plugins` | string | `'plugins'` | Plugins directory |
-| `paths.snippets` | string | `'snippets'` | Snippets directory |
+| `paths.themes` | string | `'app/themes'` | Themes directory |
+| `paths.plugins` | string | `'app/plugins'` | Plugins directory |
+| `paths.snippets` | string | `'app/snippets'` | Snippets directory |
 | `paths.storage` | string | `'storage'` | Storage directory |
 | `paths.aliases` | array | `[]` | Path aliases for content |
 | `content_index.mode` | string | `'auto'` | `auto`, `never`, `always` |
 | `content_index.backend` | string | `'array'` | `array` or `sqlite` |
 | `content_index.use_igbinary` | bool | `true` | Use igbinary if available |
+| `content_index.prerender_html` | bool | `false` | Pre-render Markdown → HTML during rebuild |
 | `webpage_cache.enabled` | bool | `true` | Enable HTML caching |
 | `webpage_cache.ttl` | int\|null | `null` | Cache lifetime (seconds) |
 | `webpage_cache.exclude` | array | `[]` | URL patterns to skip |
@@ -1452,7 +1499,7 @@ return [
 | `content.frontmatter.format` | string | `'yaml'` | Frontmatter format |
 | `content.markdown.allow_html` | bool | `true` | Allow HTML in Markdown |
 | `content.markdown.heading_ids` | bool | `true` | Auto-generate heading IDs |
-| `content.markdown.disallowed_tags` | array | `[]` | HTML tags to strip |
+| `content.markdown.disallowed_tags` | array | `['script', 'noscript']` | HTML tags to strip |
 | `content.id.type` | string | `'ulid'` | `ulid` or `uuid7` |
 | `security.shortcodes.allow_php_snippets` | bool | `true` | Enable <code>&#91;snippet&#93;</code> shortcode |
 | `security.preview_token` | string\|null | `null` | Draft preview token |

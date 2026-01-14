@@ -149,7 +149,6 @@ Shared hosts typically give you a structure like this:
 │   ├── app/
 │   ├── content/
 │   ├── core/
-│   ├── themes/
 │   ├── storage/
 │   └── ...
 │

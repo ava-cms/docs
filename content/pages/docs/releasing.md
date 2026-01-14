@@ -90,8 +90,8 @@ The “higher than GitHub” check requires the `curl` extension and network acc
 
 ### Project Structure
 
-- Default theme directory exists: `themes/default/`
-- Default theme has bootstrap file: `themes/default/theme.php`
+- Default theme directory exists: `app/themes/default/`
+- Default theme has bootstrap file: `app/themes/default/theme.php`
 - Example content exists: `content/pages/index.md`
 - `app/config/users.php` should ideally be absent; if it exists, it must be gitignored
 - `public/media/` should be empty (except `.gitkeep`)
@@ -153,7 +153,7 @@ When a user runs `./ava update:apply`, Ava does **not** blindly overwrite their 
 - `public/index.php`
 - `bootstrap.php`
 - `composer.json`
-- Bundled plugins under `plugins/` (currently: `sitemap`, `feed`, `redirects`)
+- Bundled plugins under `app/plugins/` (currently: `sitemap`, `feed`, `redirects`)
 
 Notes:
 
@@ -162,7 +162,7 @@ Notes:
 
 **Never updated:**
 - `content/` — User content
-- `themes/` — All themes, including `themes/default/` (Ava avoids overwriting theme customisations)
+- `app/themes/` — All themes, including `app/themes/default/` (Ava avoids overwriting theme customisations)
 - `app/config/` — User configuration
 - `app/config/users.php` — Admin users (gitignored)
 - `storage/` — Cache and logs (gitignored except structure)

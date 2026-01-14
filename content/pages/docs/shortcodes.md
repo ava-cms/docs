@@ -31,7 +31,7 @@ When rendered, <code>&#91;&#8203;year&#93;</code> becomes the current year, <cod
 | <code>&#91;&#8203;site_name&#93;</code> | Site name from config |
 | <code>&#91;&#8203;site_url&#93;</code> | Site URL from config |
 | <code>&#91;&#8203;email&#93;you@example.com&#91;/&#8203;email&#93;</code> | Obfuscated mailto link |
-| <code>&#91;&#8203;snippet name=&quot;file&quot;&#93;</code> | Renders <code>snippets/file.php</code> |
+| <code>&#91;&#8203;snippet name="file"&#93;</code> | Renders <code>app/snippets/file.php</code> |
 
 ## Creating Custom Shortcodes
 
@@ -39,7 +39,7 @@ Register shortcodes in your `theme.php`:
 
 ```php
 <?php
-// themes/yourtheme/theme.php
+// app/themes/yourtheme/theme.php
 
 use Ava\Application;
 
@@ -100,7 +100,7 @@ Attribute parsing supports:
 
 ## Snippets: Reusable PHP Components
 
-For more complex components, use snippets. A snippet is a PHP file in your `snippets/` folder that you invoke with the <code>&#91;&#8203;snippet&#93;</code> shortcode.
+For more complex components, use snippets. A snippet is a PHP file in your `app/snippets/` folder that you invoke with the <code>&#91;&#8203;snippet&#93;</code> shortcode.
 
 **When to use snippets vs shortcodes:**
 
@@ -114,7 +114,7 @@ For more complex components, use snippets. A snippet is a PHP file in your `snip
 ### Creating a Snippet
 
 ```php
-<?php // snippets/cta.php ?>
+<?php // app/snippets/cta.php ?>
 <?php
 $heading = $params['heading'] ?? 'Ready to get started?';
 $button = $params['button'] ?? 'Learn More';
@@ -149,7 +149,7 @@ Get weekly tips delivered to your inbox.
 
 **YouTube Embed:**
 ```php
-<?php // snippets/youtube.php ?>
+<?php // app/snippets/youtube.php ?>
 <?php $id = $params['id'] ?? ''; ?>
 <div class="video-embed" style="aspect-ratio: 16/9;">
     <iframe src="https://www.youtube.com/embed/<?= htmlspecialchars($id) ?>" 
@@ -161,7 +161,7 @@ Usage: <code>&#91;&#8203;snippet name=&quot;youtube&quot; id=&quot;dQw4w9WgXcQ&q
 
 **Notice Box:**
 ```php
-<?php // snippets/notice.php ?>
+<?php // app/snippets/notice.php ?>
 <?php
 $type = $params['type'] ?? 'info';
 $icons = ['info' => '💡', 'warning' => '⚠️', 'success' => '✅', 'error' => '❌'];
@@ -181,7 +181,7 @@ This feature is experimental.
 
 **Pricing Card:**
 ```php
-<?php // snippets/pricing.php ?>
+<?php // app/snippets/pricing.php ?>
 <?php
 $plan = $params['plan'] ?? 'Plan';
 $price = $params['price'] ?? '$0';

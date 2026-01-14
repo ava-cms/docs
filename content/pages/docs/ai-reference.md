@@ -27,14 +27,15 @@ Ava is a flat-file PHP CMS (PHP 8.3+) that requires no database. Content is Mark
 **Project Structure:**
 ```
 mysite/
-├── app/config/           # Configuration (ava.php, content_types.php, taxonomies.php)
+├── app/                  # Your code
+│   ├── config/           # Configuration (ava.php, content_types.php, taxonomies.php)
+│   ├── plugins/          # Plugin folders
+│   ├── snippets/         # PHP snippets for [snippet] shortcode
+│   └── themes/{name}/    # Theme templates, assets, partials
 ├── content/              # Markdown content files
 │   ├── pages/            # Hierarchical pages
 │   ├── posts/            # Blog posts
 │   └── _taxonomies/      # Term registries
-├── themes/{name}/        # Theme templates, assets, partials
-├── plugins/              # Plugin folders
-├── snippets/             # PHP snippets for [snippet] shortcode
 ├── public/               # Web root (index.php, media/, assets/)
 ├── storage/cache/        # Index and page cache
 └── ava                   # CLI tool
@@ -70,9 +71,9 @@ All settings in `app/config/` as PHP arrays. Three main files:
 ```php
 'paths' => [
     'content'  => 'content',
-    'themes'   => 'themes',
-    'plugins'  => 'plugins',
-    'snippets' => 'snippets',
+    'themes'   => 'app/themes',
+    'plugins'  => 'app/plugins',
+    'snippets' => 'app/snippets',
     'storage'  => 'storage',
     'aliases'  => [
         '@media:' => '/media/',
@@ -86,6 +87,7 @@ All settings in `app/config/` as PHP arrays. Three main files:
     'mode'         => 'auto',   // 'auto' (dev), 'never' (prod), 'always' (debug)
     'backend'      => 'array',  // 'array' or 'sqlite' (for 10k+ items)
     'use_igbinary' => true,
+    'prerender_html' => false,  // Optional: pre-render Markdown → HTML during rebuild
 ],
 ```
 
@@ -104,7 +106,7 @@ All settings in `app/config/` as PHP arrays. Three main files:
     'markdown' => [
         'allow_html'      => true,
         'heading_ids'     => true,
-        'disallowed_tags' => ['script', 'iframe'],
+        'disallowed_tags' => ['script', 'noscript'],
     ],
     'id' => ['type' => 'ulid'],  // 'ulid' or 'uuid7'
 ],
@@ -465,7 +467,7 @@ Themes are HTML + PHP templates. No build step, no custom templating language.
 ### Structure
 
 ```
-themes/mytheme/
+app/themes/mytheme/
 ├── templates/        # Page layouts
 │   ├── index.php     # Default fallback
 │   ├── page.php      # Pages
@@ -511,7 +513,7 @@ $content->metaDescription() // SEO description
 
 **Rendering:**
 ```php
-$ava->body($content)              // Render Markdown to HTML
+$ava->body($content)              // Render content body (uses pre-render cache when enabled)
 $ava->markdown($string)           // Render Markdown string
 $ava->partial('header', $data)    // Include partial with data
 ```
@@ -692,7 +694,7 @@ Dynamic content in Markdown via `[tag]` syntax. Processed after Markdown convers
 | `[site_name]` | Site name from config |
 | `[site_url]` | Site URL from config |
 | `[email]you@example.com[/email]` | Obfuscated mailto link |
-| `[snippet name="file"]` | Renders `snippets/file.php` |
+| `[snippet name="file"]` | Renders `app/snippets/file.php` |
 
 ### Creating Shortcodes
 
@@ -711,7 +713,7 @@ $app->shortcodes()->register('greeting', function ($attrs, $content, $tag) {
 
 ### Snippets
 
-PHP files in `snippets/` folder, invoked via `[snippet name="file"]`.
+PHP files in `app/snippets/` folder, invoked via `[snippet name="file"]`.
 
 **Variables available:**
 - `$params` — Attributes array
@@ -720,7 +722,7 @@ PHP files in `snippets/` folder, invoked via `[snippet name="file"]`.
 - `$app` — Application instance
 
 ```php
-<?php // snippets/cta.php ?>
+<?php // app/snippets/cta.php ?>
 <?php $heading = $params['heading'] ?? 'Ready?'; ?>
 <div class="cta">
     <h3><?= htmlspecialchars($heading) ?></h3>
@@ -739,7 +741,7 @@ PHP files in `snippets/` folder, invoked via `[snippet name="file"]`.
 
 **Full docs:** https://ava.addy.zone/docs/creating-plugins
 
-Reusable extensions in `plugins/{name}/plugin.php`. Survive theme changes.
+Reusable extensions in `app/plugins/{name}/plugin.php`. Survive theme changes.
 
 ### Structure
 
@@ -1082,7 +1084,7 @@ Requires `ZipArchive` PHP extension.
 
 **Updated:** `core/`, `ava`, `bootstrap.php`, `composer.json`, `public/index.php`, `public/assets/admin.css`, bundled plugins (`sitemap`, `feed`, `redirects`)
 
-**Preserved:** `content/`, `app/`, `themes/`, custom `plugins/`, `vendor/`, `storage/`
+**Preserved:** `content/`, `app/` (config, themes, plugins, snippets), `vendor/`, `storage/`
 
 ### After Updating
 
@@ -1096,7 +1098,7 @@ composer install
 Essential folders:
 - `content/` — All content
 - `app/config/` — Settings
-- `themes/` — Custom themes
+- `app/themes/` — Custom themes
 
 ## API
 
@@ -1162,7 +1164,7 @@ Return `Response` for API endpoints (sent directly). Return `RouteMatch` to trig
 ### JSON API Plugin Example
 
 ```php
-// plugins/json-api/plugin.php
+// app/plugins/json-api/plugin.php
 return [
     'name' => 'JSON API',
     'boot' => function($app) {

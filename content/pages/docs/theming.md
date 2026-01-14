@@ -67,10 +67,10 @@ That older shorthand (without the `=`) is discouraged and disabled by default.  
 
 ## Theme Structure
 
-A theme is just a folder in `themes/`. Here's a typical layout:
+A theme is just a folder in `app/themes/`. Here's a typical layout:
 
 ```
-themes/
+app/themes/
 └── default/
     ├── templates/        # Your page layouts
     │   ├── index.php     # The default layout
@@ -271,6 +271,8 @@ When you write content in Markdown, Ava needs to *process* it before displaying:
 This processing requires the rendering engine, which lives in the `$ava` helper. The `$content` object is a simple data container—it holds your content but doesn't know how to render it.
 
 Think of it like this: `$content` is the *ingredients*, and `$ava` is the *kitchen* that turns them into a finished dish.
+
+<strong>Performance note:</strong> If <code>content_index.prerender_html</code> is enabled, <code>$ava-&gt;body($content)</code> automatically uses the pre-rendered HTML cache when available (while still processing shortcodes at runtime). If you bypass <code>$ava-&gt;body()</code> and call the rendering engine directly, you may miss the pre-render cache unless you supply the required content key.
 
 </div>
 </details>
@@ -484,7 +486,7 @@ $about = $ava->get('page', 'about');
 
 ### Using Partials
 
-Partials are reusable template fragments in `themes/{theme}/partials/`:
+Partials are reusable template fragments in `app/themes/{theme}/partials/`:
 
 ```php
 <!-- Render a partial -->
@@ -833,8 +835,8 @@ Your front-end fetches `/search.json?q=...` and renders the results however you 
 
 ### Working examples
 
-- **Default theme** (server-rendered search page): [theme.php](https://github.com/avacms/ava/blob/main/themes/default/theme.php) and [search.php template](https://github.com/avacms/ava/blob/main/themes/default/templates/search.php)
-- **Docs theme** (AJAX popup): [theme.php](https://github.com/avacms/docs/blob/main/themes/docs/theme.php) — registers `/search` and `/search.json` routes; the front-end JS renders results in a modal
+- **Default theme** (server-rendered search page): [theme.php](https://github.com/avacms/ava/blob/main/app/themes/default/theme.php) and [search.php template](https://github.com/avacms/ava/blob/main/app/themes/default/templates/search.php)
+- **Docs theme** (AJAX popup): [theme.php](https://github.com/avacms/docs/blob/main/app/themes/docs/theme.php) — registers `/search` and `/search.json` routes; the front-end JS renders results in a modal
 
 
 ## Theme Bootstrap
@@ -843,7 +845,7 @@ Your front-end fetches `/search.json?q=...` and renders the results however you 
 
 ```php
 <?php
-// themes/yourtheme/theme.php
+// app/themes/yourtheme/theme.php
 
 use Ava\Application;
 use Ava\Plugins\Hooks;
@@ -874,7 +876,7 @@ If your `theme.php` grows unwieldy, split it into multiple files. Pass `$app` to
 
 ```php
 <?php
-// themes/yourtheme/theme.php
+// app/themes/yourtheme/theme.php
 
 return function (\Ava\Application $app): void {
     (require __DIR__ . '/inc/shortcodes.php')($app);
@@ -887,7 +889,7 @@ Each included file follows the same pattern:
 
 ```php
 <?php
-// themes/yourtheme/inc/shortcodes.php
+// app/themes/yourtheme/inc/shortcodes.php
 
 return function (\Ava\Application $app): void {
     $app->shortcodes()->register('button', function (array $attrs, ?string $content) {

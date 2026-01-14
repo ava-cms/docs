@@ -26,7 +26,7 @@ The CLI has been thoughtfully designed for a simple and delightful experience. M
 “CLI” just means *typing commands* instead of clicking buttons. It’s a superpower for servers and automation, but you only need a tiny slice of it to be productive with Ava.
 
 ### What is “the project root”?
-It’s the folder that contains your Ava project — where you can see `composer.json`, `content/`, `themes/`, and the `ava` script.
+It’s the folder that contains your Ava project — where you can see `composer.json`, `content/`, `app/`, and the `ava` script.
 
 <div class="callout-info">
 <strong>Tip:</strong> If you type <code>./ava status</code> and it works, you're in the right folder.
@@ -161,7 +161,7 @@ Run `./ava` or `./ava --help` to see all available commands:
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v25.12</span>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Usage</span> <span class="t-dim">─────────────────────────────────────────────</span>
 
@@ -236,7 +236,7 @@ Show the current Ava version:
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v25.12</span></samp></pre>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span></samp></pre>
 
 <details class="beginner-box">
 <summary>Why do commands start with <code>./</code>?</summary>
@@ -261,7 +261,7 @@ Shows a quick overview of your site's health:
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v25.12</span>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Site</span> <span class="t-dim">──────────────────────────────────────────────</span>
 
@@ -311,6 +311,15 @@ Rebuild the content index:
   <span class="t-green">✓ Content index rebuilt!</span></samp></pre>
 
 Use this after deploying new content in production, or if something looks stuck.
+
+What it does:
+
+- Loads plugins first so rebuild hooks can run
+- Rebuilds the content index (`$app->indexer()->rebuild()`)
+- If `content_index.prerender_html` is enabled: writes `storage/cache/html_cache.bin` (otherwise deletes it)
+- Clears the webpage cache at the end (so pages regenerate on the next request)
+
+Alternative invocation (if the `./ava` script isn’t executable): `php ava rebuild`.
 
 ### lint
 
@@ -500,14 +509,14 @@ Results are cached for 1 hour. Force a fresh check:
 
 <pre><samp>  🔍 Checking for updates...
 
-  <span class="t-dim">Current:</span>    <span class="t-white">25.12.0</span>
-  <span class="t-dim">Latest:</span>     <span class="t-green">25.12.1</span>
+  <span class="t-dim">Current:</span>    <span class="t-white">1.0.0.0</span>
+  <span class="t-dim">Latest:</span>     <span class="t-green">1.0.0.1</span>
 
   <span class="t-green">╭───────────────────────╮
   │  Update available!    │
   ╰───────────────────────╯</span>
 
-  <span class="t-dim">Release:</span>    <span class="t-white">v25.12.1</span>
+  <span class="t-dim">Release:</span>    <span class="t-white">v1.0.0.1</span>
   <span class="t-dim">Published:</span>  <span class="t-white">2024-12-28</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Changelog</span> <span class="t-dim">──────────────────────────────────────────</span>
@@ -534,12 +543,12 @@ Download and apply the latest update:
 
 <pre><samp>  <span class="t-dim">───</span> <span class="t-cyan t-bold">Update Available</span> <span class="t-dim">───────────────────────────────────</span>
 
-  <span class="t-dim">From:</span>       <span class="t-white">25.12.0</span>
-  <span class="t-dim">To:</span>         <span class="t-green">25.12.1</span>
+  <span class="t-dim">From:</span>       <span class="t-white">1.0.0.0</span>
+  <span class="t-dim">To:</span>         <span class="t-green">1.0.0.1</span>
 
   <span class="t-bold">Will be updated:</span>
     <span class="t-cyan">▸</span> Core files <span class="t-dim">(core/, bin/, bootstrap.php)</span>
-    <span class="t-cyan">▸</span> Default theme <span class="t-dim">(themes/default/)</span>
+    <span class="t-cyan">▸</span> Default theme <span class="t-dim">(app/themes/default/)</span>
     <span class="t-cyan">▸</span> Bundled plugins <span class="t-dim">(sitemap, feed, redirects)</span>
     <span class="t-cyan">▸</span> Documentation <span class="t-dim">(docs/)</span>
 
@@ -581,7 +590,7 @@ Skip confirmation with `-y` or `--yes`:
       <span class="t-dim">This may include unstable or untested changes.</span>
       <span class="t-dim">Version checks are bypassed in dev mode.</span>
 
-  <span class="t-dim">From:</span>       <span class="t-white">25.12.0</span>
+  <span class="t-dim">From:</span>       <span class="t-white">1.0.0.0</span>
   <span class="t-dim">To:</span>         <span class="t-yellow t-bold">main (latest commit)</span></samp></pre>
 
 <div class="callout-warning">
@@ -870,7 +879,7 @@ Test the performance of your content index:
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v25.12</span>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Performance Benchmark</span> <span class="t-dim">───────────────────────────────</span>
 

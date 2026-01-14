@@ -6,14 +6,14 @@ meta_description: Discover themes made by the Ava CMS community. Add a theme to 
 excerpt: Community-made themes for Ava CMS. Drop a theme into your themes folder and select it in app/config/ava.php.
 ---
 
-Themes created by the Ava community. Drop these into your `themes/` folder and set them in your config. Some themes may be designed for certain content types—check the theme details for more info.
+Themes created by the Ava community. Drop these into your `app/themes/` folder and set them in your config. Some themes may be designed for certain content types—check the theme details for more info.
 
 ## Available Themes
 
 | Theme | Description | Author |
 |-------|-------------|--------|
 | **Default** (bundled) | Clean, modern theme focused on readability. Great starting point for customisation. | [Adam Greenough](https://github.com/adamgreenough) |
-| [**Docs**](https://github.com/avacms/docs/tree/main/themes/docs) | Beautiful documentation theme with sidebar navigation, search, and dark mode. Powers the official Ava docs. | [Ava CMS](https://github.com/avacms) |
+| [**Docs**](https://github.com/avacms/docs/tree/main/app/themes/docs) | Beautiful documentation theme with sidebar navigation, search, and dark mode. Powers the official Ava docs. | [Ava CMS](https://github.com/avacms) |
 
 ## Submit Your Theme
 

@@ -14,6 +14,11 @@ Ava is designed to be fast by default. To achieve this, it uses a two-layer perf
 
 Together, these systems mean most visitors get pre-rendered HTML served directly from disk with minimal overhead.
 
+In practice there are two different “disk-served HTML” optimisations:
+
+- **Webpage cache (full page HTML):** Can serve a cached response directly from disk, and on a fast-path HIT it can do so *before the app boots*.
+- **Pre-rendered HTML cache (Markdown body HTML):** Optional rebuild-time cache that stores Markdown → HTML output for published items, reducing work on uncached requests.
+
 ## Content Indexing
 
 The Content Index is the foundation of Ava's performance. Instead of reading and parsing Markdown files every time a user visits your site, Ava builds a binary index of all your content's metadata (titles, dates, slugs, custom fields, taxonomies).
@@ -39,6 +44,7 @@ Ava generates several files in `storage/cache/` to optimise different types of q
 | `content_index.bin` | Full content metadata | **Deep Queries:** Search, filtering, deep pagination (page 21+). |
 | `tax_index.bin` | Taxonomy terms with item counts | **Taxonomies:** Category/tag lists, term pages. |
 | `routes.bin` | URL → Content map | **Routing:** Maps incoming URLs to content and redirects. |
+| `html_cache.bin` | Pre-rendered Markdown → HTML (published only) | **Faster Uncached Renders:** Skips Markdown conversion work when enabled. |
 | `fingerprint.json` | Hash of content and config files | **Change Detection:** Determines when to rebuild in `auto` mode. |
 
 #### Tiered Caching Strategy
@@ -243,7 +249,26 @@ All content index settings live in `app/config/ava.php`:
     
     // Compression (array backend only)
     'use_igbinary' => true,     // true or false
+
+    // Optional: pre-render Markdown → HTML during rebuild
+    'prerender_html' => false,  // true or false
 ],
+
+### Pre-rendered HTML Cache (Optional)
+
+If `content_index.prerender_html` is enabled, Ava generates `storage/cache/html_cache.bin` during `./ava rebuild`.
+
+- Only **published** items are included.
+- Cache entries are stored as `"<type>:<contentKey>"` → `"<html>"` (examples: `page:`, `page:about`, `post:hello-world`).
+
+Included at rebuild time:
+
+- Markdown conversion (League\CommonMark), using the same `markdown.configure` hook as rendering
+- Path alias expansion using `paths.aliases` (string replacement)
+
+Deferred to runtime:
+
+- Shortcodes (still processed on each request)
 ```
 
 #### Mode Options
@@ -287,8 +312,22 @@ This bypasses the content index entirely for most traffic.
 
 1. A visitor requests `/blog/my-post`
 2. Ava checks if a cached HTML file exists for this path
-3. **Cache HIT:** Return the cached file with `X-Page-Cache: HIT` header
-4. **Cache MISS:** Render the page, save to cache, return with `X-Page-Cache: MISS` header
+3. **Cache HIT:** Return the cached file with `X-Page-Cache: HIT` and `X-Cache-Age: <seconds>`
+4. **Cache MISS:** Render the page, save to cache, return with `X-Page-Cache: MISS`
+
+### Fast Path (TTFB Optimisation)
+
+On some requests, Ava can serve a cached HTML page **before the application boots**. This triggers only when all are true:
+
+- `webpage_cache.enabled` is `true`
+- Request method is `GET`
+- Request path is not under the admin path (`admin.path`, default `/admin`)
+- No query params other than UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`)
+- No `ava_admin` cookie present
+- URL does not match any `webpage_cache.exclude` patterns
+- Cache file exists and (if `webpage_cache.ttl` is set) is not expired
+
+On a fast-path HIT, app boot is skipped (no plugin/theme loading, no index freshness checks).
 
 ### Cache File Location
 
@@ -335,7 +374,7 @@ Enable and configure webpage caching in `app/config/ava.php`:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `enabled` | bool | `false` | Enable webpage caching |
+| `enabled` | bool | `true` | Enable webpage caching |
 | `ttl` | int\|null | `null` | Cache lifetime in seconds. `null` = cache until rebuild |
 | `exclude` | array | `[]` | Glob patterns for URLs to never cache |
 
