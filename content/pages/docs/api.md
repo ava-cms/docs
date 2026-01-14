@@ -2,6 +2,9 @@
 title: API
 slug: api
 status: published
+meta_title: Building APIs | Flat-file PHP CMS | Ava CMS
+meta_description: Build custom JSON APIs with Ava CMS. Learn about routing, Request and Response helpers, and how to create headless CMS endpoints for your applications.
+excerpt: Ava gives you the tools to build exactly the API you need—a router, Request/Response helpers, and content access via the Repository. Perfect for headless CMS setups.
 ---
 
 Ava doesn't force a specific API on you. Instead, it gives you the tools to build exactly the API you need.

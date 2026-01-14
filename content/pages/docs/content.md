@@ -2,6 +2,9 @@
 title: Writing Content
 slug: content
 status: published
+meta_title: Writing Content | Flat-file PHP CMS | Ava CMS
+meta_description: Write content in Markdown with YAML frontmatter. Learn about content types, taxonomies, drafts, and how to structure your flat-file CMS content.
+excerpt: Content in Ava is just text—write in Markdown, save as a file, and you have a page. No database to manage, your files are your content.
 ---
 
 Content in Ava is just text. You write in [Markdown](https://www.markdownguide.org/basic-syntax/), which is a simple way to format text, and save it as a file. There's no database to manage—your files are your content. 

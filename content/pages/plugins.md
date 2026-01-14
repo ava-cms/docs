@@ -1,6 +1,9 @@
 ---
 title: Community Plugins
 status: published
+meta_title: Community Plugins | Ava CMS
+meta_description: Explore plugins created by the Ava CMS community. Extend Ava with extra features by dropping plugins into your plugins folder and enabling them in your config.
+excerpt: Community-made plugins for Ava CMS. Install by adding the plugin folder to your plugins directory and enabling it in app/config/ava.php.
 ---
 
 Plugins created by the Ava community. These extend Ava with additional functionality. You can use these by dropping them into your `plugins/` folder and enabling them in your config.

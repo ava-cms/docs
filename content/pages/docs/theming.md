@@ -1,6 +1,9 @@
 ---
 title: Theming
 status: published
+meta_title: Theming | Flat-file PHP CMS | Ava CMS
+meta_description: Create Ava CMS themes with HTML and PHP. No custom templating language—just familiar HTML with PHP helpers for dynamic content, assets, and layouts.
+excerpt: Ava themes are HTML-first templates with PHP available when you need it. No custom templating language, no build step—just save and refresh.
 ---
 
 Ava themes are HTML-first templates with PHP available when you need it. Start with normal HTML, then sprinkle in `<?= ?>` to output data or call helpers. There's no custom templating language, no build step, and no new syntax to learn.

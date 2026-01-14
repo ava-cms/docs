@@ -2,6 +2,9 @@
 title: Performance
 slug: performance
 status: published
+meta_title: Performance | Flat-file PHP CMS | Ava CMS
+meta_description: Ava CMS performance guide. Learn about content indexing, webpage caching, backend options (Array vs SQLite), and optimization for sites with thousands of pages.
+excerpt: "Ava is designed to be fast by default with a two-layer strategy: content indexing for metadata lookups and webpage caching for instant HTML responses."
 ---
 
 Ava is designed to be fast by default. To achieve this, it uses a two-layer performance strategy:

@@ -2,6 +2,9 @@
 title: Creating Plugins
 slug: creating-plugins
 status: published
+meta_title: Creating Plugins | Flat-file PHP CMS | Ava CMS
+meta_description: Extend Ava CMS with custom plugins. Learn how to create reusable functionality, register hooks, add CLI commands, and build admin dashboard pages.
+excerpt: Plugins let you extend Ava with reusable, shareable functionality that lives outside your theme. Add routes, hooks, CLI commands, and more.
 ---
 
 Plugins let you extend Ava with reusable, shareable functionality that lives outside your theme.

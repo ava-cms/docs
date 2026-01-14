@@ -1,70 +1,17 @@
-# Minimal, content-first .gitignore
-
 # Ignore everything by default
 /*
 
-# Keep this file
+# Keep these
 !/.gitignore
+!/README.md
 
-# Keep the content and documentation (tracked)
+# Keep app and content folders
+!/app/
+!/app/**
 !/content/
 !/content/**
 
-# Keep app config (but still allow ignoring secrets inside)
-!/app/config/
-!/app/config/**
-app/config/*.local
-
-# Explicitly keep content types config files
-!/app/config/content_types.php
-!/app/config/content_types.php.bak
-
-# Keep themes
-!/themes/
-!/themes/**
-
-# Plugins, index.php and composer files should not be tracked in the repo
-/plugins/
-
-# Keep public media, but ignore the public entry and local assets we don't want
-!/public/media/
-!/public/media/**
-!/public/assets/
-!/public/assets/**
-
-# Re-ignore the admin stylesheet (keep it local)
-/public/assets/admin.css
-
-# Project files to ignore (not tracked)
-/public/index.php
-/composer.json
-/composer.lock
-
-# Keep other project files, but don't keep the local CLI or bootstrap in the repo
-/ava
-/bootstrap.php
-
-# Ignore common runtime/build folders
-vendor/
-storage/
-tmp/
-logs/
-node_modules/
-
-# Local env and OS files
-.env
-.env.local
-.DS_Store
-Thumbs.db
-
-# IDE/editor
-.idea/
-.vscode/
-*.swp
-
-# Logs and caches
-*.log
-*.cache
-
-# End
+# Ignore sensitive config files
+app/config/ava.php
+app/config/users.php
 

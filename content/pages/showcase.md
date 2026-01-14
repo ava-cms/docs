@@ -1,6 +1,9 @@
 ---
 title: Showcase
 status: published
+meta_title: Showcase | Sites Built With Ava CMS
+meta_description: Browse a gallery of websites built with Ava CMS. Get inspired by portfolios, blogs, and documentation sites created with a fast flat-file workflow.
+excerpt: A gallery of websites built with Ava CMS. Get inspired by what others are creating, and submit your own site to be featured.
 ---
 
 A gallery of websites built with Ava CMS. Get inspired by what others are creating!

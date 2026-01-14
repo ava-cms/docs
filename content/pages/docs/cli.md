@@ -2,6 +2,9 @@
 title: CLI Reference
 slug: cli
 status: published
+meta_title: CLI Reference | Flat-file PHP CMS | Ava CMS
+meta_description: Complete CLI reference for Ava CMS. Manage content, users, rebuild indexes, run tests, and automate your flat-file CMS workflow from the command line.
+excerpt: Ava includes a friendly command-line interface for managing your site. Create content, manage users, rebuild indexes, and run tests—all from your terminal.
 ---
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄

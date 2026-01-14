@@ -2,6 +2,9 @@
 title: Shortcodes
 slug: shortcodes
 status: published
+meta_title: Shortcodes | Flat-file PHP CMS | Ava CMS
+meta_description: Add dynamic content to Markdown with shortcodes. Built-in tags for dates, site info, and email obfuscation, plus custom shortcodes and PHP snippets.
+excerpt: Shortcodes let you add dynamic content to your Markdown without writing raw HTML. Simple tags in square brackets get replaced when the page renders.
 ---
 
 Shortcodes let you add dynamic content to your Markdown without writing raw HTML. They're simple tags in square brackets that get replaced when the page renders.

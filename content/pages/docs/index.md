@@ -2,6 +2,9 @@
 title: Introduction
 slug: index
 status: published
+meta_title: Introduction | Flat-file PHP CMS | Ava CMS
+meta_description: Ava is a blazing fast flat-file CMS. Your content lives as Markdown files, not database rows. No build step, no complex deployment—just files in, website out.
+excerpt: Ava is a blazing fast and flexible flat-file CMS where your content lives as Markdown files on disk. Edit in any editor, back up by copying a folder, and see changes instantly.
 ---
 
 <div class="badges">

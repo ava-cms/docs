@@ -2,6 +2,9 @@
 title: Bundled Plugins
 slug: bundled-plugins
 status: published
+meta_title: Bundled Plugins | Flat-file PHP CMS | Ava CMS
+meta_description: Ava comes with sitemap, RSS feed, and redirects plugins included. Learn how to configure and use these bundled plugins for SEO and content management.
+excerpt: Ava comes with helpful plugins for common tasks—sitemap generation for SEO, RSS feeds for subscribers, and redirects for URL management. Enable or disable them in your config.
 ---
 
 Ava comes with a few helpful plugins to handle common tasks. They're installed by default but you can enable or disable them in your config.

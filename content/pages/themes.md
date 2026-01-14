@@ -1,6 +1,9 @@
 ---
 title: Community Themes
 status: published
+meta_title: Community Themes | Ava CMS
+meta_description: Discover themes made by the Ava CMS community. Add a theme to your themes folder and switch it in configuration to change your site’s look and layout.
+excerpt: Community-made themes for Ava CMS. Drop a theme into your themes folder and select it in app/config/ava.php.
 ---
 
 Themes created by the Ava community. Drop these into your `themes/` folder and set them in your config. Some themes may be designed for certain content types—check the theme details for more info.

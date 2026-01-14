@@ -2,6 +2,9 @@
 title: Testing
 slug: testing
 status: published
+meta_title: Testing | Flat-file PHP CMS | Ava CMS
+meta_description: Ava CMS includes a lightweight, zero-dependency test framework. Learn how to run tests, write test cases, and use release checks for maintainers.
+excerpt: Ava includes a lightweight, zero-dependency test framework for verifying core functionality. Run tests with the CLI and write your own test cases.
 ---
 
 Ava includes a lightweight, zero-dependency test framework for verifying core functionality. Tests are designed for maintainers and contributors working on the CMS itself.

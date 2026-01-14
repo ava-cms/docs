@@ -3,6 +3,8 @@ title: Ava CMS
 slug: index
 status: published
 template: home
+meta_title: Ava CMS | Fast Flat-file PHP CMS
+meta_description: Ava is a fast, flexible flat-file CMS for bespoke websites. Write Markdown, avoid databases, extend with themes and plugins, and ship with a dev-friendly workflow.
 excerpt: A friendly, flexible, flat-file, PHP-based CMS for bespoke personal websites, blogs and more.
 ---
 
@@ -65,7 +67,7 @@ excerpt: A friendly, flexible, flat-file, PHP-based CMS for bespoke personal web
 </div>
 
 <div class="home-cta">
-    <a href="/docs" class="cta-primary">Get Started →</a>
+    <a href="/docs" class="cta-primary">Learn More →</a>
     <a href="https://github.com/avacms/ava" class="cta-secondary" target="_blank" rel="noopener">View on GitHub</a>
 </div>
 

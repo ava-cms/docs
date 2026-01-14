@@ -2,6 +2,9 @@
 title: Hosting
 slug: hosting
 status: published
+meta_title: Hosting Guide | Flat-file PHP CMS | Ava CMS
+meta_description: Deploy Ava CMS anywhere PHP runs. Guide to local development, shared hosting, VPS, cloud platforms, and server configuration for your flat-file site.
+excerpt: Get Ava live on the internet. Whether you're hosting your first website or you're a seasoned developer, this guide covers local dev, shared hosting, VPS, and cloud options.
 ---
 
 This guide walks you through getting Ava live on the internet. Whether you're hosting your first website ever or you're a seasoned developer, there's an option that fits your needs and budget.

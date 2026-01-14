@@ -2,6 +2,9 @@
 title: AI Reference
 slug: ai-reference
 status: published
+meta_title: AI Reference | Flat-file PHP CMS | Ava CMS
+meta_description: Condensed technical reference for AI assistants working with Ava CMS. Essential framework details, conventions, and patterns for building themes, plugins, and content.
+excerpt: A condensed technical reference for AI assistants working with Ava CMS, containing essential framework details, conventions, and patterns for building themes, plugins, and content.
 ---
 
 <div class="callout-info">This is a condensed technical reference for AI assistants working with Ava CMS. It contains the essential framework details, conventions, and patterns needed to help users build themes, plugins, and content.</div>

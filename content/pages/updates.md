@@ -2,6 +2,9 @@
 title: Updates
 slug: updates
 status: published
+meta_title: Updates | Ava CMS
+meta_description: Keep Ava CMS up to date with the built-in CLI updater. Learn update commands, requirements, and backup strategies for safe upgrades.
+excerpt: Keeping Ava up to date is easy. Use the CLI to check for updates and apply them, with backup reminders and safe file handling.
 ---
 
 Keeping Ava up to date is easy. We release updates regularly with new features and bug fixes.

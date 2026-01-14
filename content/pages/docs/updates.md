@@ -2,6 +2,9 @@
 title: Updates
 slug: updates
 status: published
+meta_title: Updates | Flat-file PHP CMS | Ava CMS
+meta_description: Keep Ava CMS up to date easily. Learn about the CLI updater, manual updates, backup strategies, and what files get updated during the process.
+excerpt: Keeping Ava up to date is easy. Use the CLI to check for updates and apply them, with automatic backup reminders and safe file handling.
 ---
 
 Keeping Ava up to date is easy. We release updates regularly with new features and bug fixes.

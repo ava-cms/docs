@@ -2,6 +2,9 @@
 title: Routing
 slug: routing
 status: published
+meta_title: Routing | Flat-file PHP CMS | Ava CMS
+meta_description: Ava CMS routing explained. Learn about hierarchical URLs, pattern-based URLs, redirects, trailing slashes, and how content structure maps to URLs.
+excerpt: URLs are generated automatically based on your content structure. Choose hierarchical URLs that mirror file paths, or pattern URLs for date-based blog archives.
 ---
 
 In Ava, you don't need to write complex route files. URLs are generated automatically based on your content structure and configuration.

@@ -2,6 +2,9 @@
 title: Configuration
 slug: configuration
 status: published
+meta_title: Configuration | Flat-file PHP CMS | Ava CMS
+meta_description: Configure Ava CMS using simple PHP arrays. Set up site identity, paths, caching, content types, taxonomies, and more with readable, commentable config files.
+excerpt: All Ava settings live in plain PHP files—readable, commentable, and powerful. Configure your site identity, paths, caching, content types, and taxonomies.
 ---
 
 Ava's configuration is simple and transparent. All settings live in `app/config/` as plain PHP files.
