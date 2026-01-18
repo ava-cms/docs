@@ -15,7 +15,7 @@ excerpt: A condensed technical reference for AI assistants working with Ava CMS,
 
 **Full docs:** https://ava.addy.zone/docs
 
-Ava is a flat-file PHP CMS (PHP 8.3+) that requires no database. Content is Markdown files with YAML frontmatter. Configuration is PHP arrays. There's no build step—edit a file, refresh, see changes.
+Ava CMS is a flat-file PHP CMS (PHP 8.3+) that requires no database. Content is Markdown files with YAML frontmatter. Configuration is PHP arrays. There's no build step—edit a file, refresh, see changes.
 
 **Core Philosophy:**
 - Files are the source of truth (content, config, themes)
@@ -977,13 +977,14 @@ Stores fully-rendered HTML. Most visitors get static files.
 
 **Not cached:** Admin pages, POST requests, query strings, logged-in admins
 
-**Invalidation:** `./ava rebuild` clears both index and page cache
+**Invalidation:** `./ava rebuild` clears both index and page cache unless the `--keep-webpage-cache` flag (alias `--keep-webcache`) is used to preserve cached pages during the rebuild.
 
 ### CLI
 
 ```bash
 ./ava status              # View index and cache status
 ./ava rebuild             # Rebuild index, clear cache
+./ava rebuild --keep-webpage-cache  # Rebuild index but keep the webpage cache (alias: --keep-webcache)
 ./ava cache:stats         # Page cache statistics
 ./ava cache:clear         # Clear page cache
 ./ava benchmark --compare # Compare backends
@@ -1007,7 +1008,7 @@ Stores fully-rendered HTML. Most visitors get static files.
 /home/user/
 ├── public_html/       # Web root (public/ contents)
 │   └── index.php
-└── ava/               # Ava installation (above web root)
+└── ava/               # Ava CMS installation (above web root)
     ├── app/
     ├── content/
     ├── core/
@@ -1024,7 +1025,7 @@ php -S localhost:8000 -t public
 
 ### Shared Hosting Setup
 
-1. Upload Ava above web root
+1. Upload Ava CMS above web root
 2. Move/symlink `public/` contents to `public_html/`
 3. Update paths in `public/index.php`
 4. Run `composer install`
@@ -1104,7 +1105,7 @@ Essential folders:
 
 **Full docs:** https://ava.addy.zone/docs/api
 
-Ava provides building blocks for creating custom APIs rather than shipping a predefined API structure.
+Ava CMS provides building blocks for creating custom APIs rather than shipping a predefined API structure.
 
 ### Core Components
 

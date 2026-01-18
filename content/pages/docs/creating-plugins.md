@@ -4,16 +4,16 @@ slug: creating-plugins
 status: published
 meta_title: Creating Plugins | Flat-file PHP CMS | Ava CMS
 meta_description: Extend Ava CMS with custom plugins. Learn how to create reusable functionality, register hooks, add CLI commands, and build admin dashboard pages.
-excerpt: Plugins let you extend Ava with reusable, shareable functionality that lives outside your theme. Add routes, hooks, CLI commands, and more.
+excerpt: Plugins let you extend Ava CMS with reusable, shareable functionality that lives outside your theme. Add routes, hooks, CLI commands, and more.
 ---
 
-Plugins let you extend Ava with reusable, shareable functionality that lives outside your theme.
+Plugins let you extend Ava CMS with reusable, shareable functionality that lives outside your theme.
 
 ## Plugins vs theme.php
 
-You might wonder: *"Can't I just put everything in theme.php?"*
+You might wonder: *"Can't I just put everything in [theme.php](/docs/theming#themephp)?"*
 
-Yes! For many sites, `theme.php` is all you need. But plugins are better when:
+Yes! For simple sites, `theme.php` is often all you need. But plugins are better when:
 
 | Use theme.php | Use a Plugin |
 |---------------|--------------|
@@ -24,7 +24,7 @@ Yes! For many sites, `theme.php` is all you need. But plugins are better when:
 
 **Think of it this way:** If you switch themes, anything in `theme.php` disappears. Plugins survive theme changes because they live in a separate folder.
 
-The bundled plugins (sitemap, feed, redirects) are good examples — they work regardless of which theme you use.
+The [bundled plugins](/docs/bundled-plugins) (sitemap, feed, redirects) are good examples — they work regardless of which theme you use.
 
 ## Your First Plugin
 
@@ -38,7 +38,7 @@ return [
     'version' => '1.0',
     
     'boot' => function($app) {
-        // Your code goes here!
+        // Your code runs here when the plugin loads
         
         // Example: Add a custom route
         $app->router()->addRoute('/hello', function() {
@@ -60,440 +60,319 @@ return [
 
 That's it! Visit `/hello` and see your plugin in action.
 
-## Plugin Metadata Format
+<details class="beginner-box">
+<summary>What is <code>$app</code>?</summary>
+<div class="beginner-box-content">
 
-Each plugin is a folder with a `plugin.php` that returns an array. Ava does not currently enforce a schema for this array; keys like `version` and `author` are conventions you can use for your own documentation. The keys Ava actively reads are `boot` (during normal web requests) and `commands` (when running the CLI).
+The `$app` object is your gateway to everything in Ava CMS. It's passed to your plugin's `boot` function:
+
+| Method | Returns |
+|--------|---------|
+| `$app->router()` | Router — add custom routes |
+| `$app->repository()` | Content repository — fetch pages and posts |
+| `$app->query()` | Content query builder with filtering/pagination |
+| `$app->config('key')` | Configuration values |
+| `$app->path('relative')` | Absolute file paths |
+| `$app->configPath('key')` | Paths from config (e.g., `'storage'`, `'plugins'`) |
+| `$app->renderer()` | Template rendering engine |
+| `$app->shortcodes()` | Shortcode registration |
+
+See the [API documentation](/docs/api) for detailed usage.
+
+</div>
+</details>
+
+## Plugin Structure
 
 ```php
 <?php
 // app/plugins/my-plugin/plugin.php
 
 return [
-    // Common
-    'name' => 'My Plugin',                    // Display name (convention)
-    'boot' => function($app) { ... },         // Initialization (run if callable)
+    // Required
+    'name' => 'My Plugin',
+    'boot' => function($app) { ... },
 
-    // Recommended
-    'version' => '1.0.0',                     // Semantic version
-    'description' => 'What this plugin does', // Brief description
-    'author' => 'Your Name',                  // Author name or organization
+    // Recommended metadata
+    'version' => '1.0.0',
+    'description' => 'What this plugin does',
+    'author' => 'Your Name',
 
     // Optional
-    'url' => 'https://example.com/plugin',    // Plugin homepage
-    'license' => 'MIT',                       // License identifier
-    'requires' => [                           // Dependencies
-        'php' => '>=8.1',
-        'ava' => '>=25.1',
-    ],
+    'url' => 'https://example.com/plugin',
+    'license' => 'GPLv3',
 
     // Optional: CLI commands
-    'commands' => [
-        [
-            'name' => 'myplugin:status',
-            'description' => 'Show plugin status',
-            'handler' => function($args, $cli, $app) { ... },
-        ],
-    ],
+    'commands' => [ ... ],
 ];
 ```
 
-### Metadata Reference
+Plugins load in the order listed in `app/config/ava.php`. If plugin B depends on hooks from plugin A, list A first.
 
-| Key | Type | Required | Description |
-|-----|------|----------|-------------|
-| `name` | string |  | Human-readable plugin name (convention) |
-| `boot` | callable |  | Function called when plugin loads (if provided), receives `$app` |
-| `version` | string | | Semantic version (e.g., `'1.0.0'`, `'2.1.0-beta'`) |
-| `description` | string | | One-line description (convention) |
-| `author` | string | | Author name, email, or organization |
-| `url` | string | | Plugin homepage or documentation URL |
-| `license` | string | | SPDX license identifier (MIT, GPL-3.0, etc.) |
-| `requires` | array | | Minimum versions: `php`, `ava`, or extension names |
-| `commands` | array | | CLI commands to register (see [CLI Commands](#cli-commands)) |
+## Hooks
 
-<div class="callout-info">
-<strong>Note:</strong> As of v1, the admin System page lists enabled plugin folder names from config; it does not read or display plugin metadata from <code>plugin.php</code>.
-</div>
+Hooks let your code run at specific moments — when content loads, templates render, or the admin builds.
 
-## Understanding Hooks
+### Filters vs Actions
 
-Hooks are the backbone of Ava's plugin system. They let your code run at specific moments during Ava's lifecycle—like when content is being parsed, when a template is about to render, or when the admin sidebar is being built.
-
-There are two types of hooks:
-
-### Filters
-
-Filters let you **modify data** as it passes through Ava. You receive a value, change it, and return it:
+**Filters** modify data and must return it:
 
 ```php
 use Ava\Plugins\Hooks;
 
-// Add a variable to every template
 Hooks::addFilter('render.context', function($context) {
-    $context['my_plugin_version'] = '1.0';
-    return $context;  // Must return the modified value
+    $context['year'] = date('Y');
+    return $context;  // Must return!
 });
 ```
 
-### Actions
-
-Actions let you **react to events** without modifying data. Useful for logging, sending notifications, or side effects:
+**Actions** react to events without returning data:
 
 ```php
-use Ava\Plugins\Hooks;
+Hooks::addAction('indexer.rebuild', function($app) {
+    file_put_contents('rebuild.log', date('c') . "\n", FILE_APPEND);
+});
+```
+
+### Priority
+
+Multiple callbacks run in priority order (lower first, default 10):
+
+```php
+Hooks::addFilter('render.context', $earlyCallback, 5);   // Runs first
+Hooks::addFilter('render.context', $normalCallback);      // Priority 10
+Hooks::addFilter('render.context', $lateCallback, 100);   // Runs last
+```
+
+### Available Hooks
+
+| Hook | Type | When it fires |
+|------|------|---------------|
+| `router.before_match` | Filter | Before routing — return Response to intercept |
+| `content.loaded` | Filter | After content item loads from repository |
+| `render.context` | Filter | Before template rendering — add template variables |
+| `render.output` | Filter | After rendering — modify final HTML |
+| `markdown.configure` | Action | When Markdown parser initializes |
+| `admin.register_pages` | Filter | When admin pages are registered |
+| `indexer.rebuild` | Action | After any content index rebuild |
+| `cli.rebuild` | Action | After CLI rebuild command only |
+
+### Hook Examples
+
+**Intercept routing:**
+```php
+use Ava\Http\Response;
+
+Hooks::addFilter('router.before_match', function($match, $request, $router) {
+    if ($request->path() === '/old-page') {
+        return Response::redirect('/new-page', 301);
+    }
+    return $match;
+});
+```
+
+**Add template variables:**
+```php
+Hooks::addFilter('render.context', function($context) {
+    if (isset($context['content'])) {
+        $words = str_word_count(strip_tags($context['content']->rawContent()));
+        $context['reading_time'] = max(1, (int) ceil($words / 200));
+    }
+    return $context;
+});
+```
+
+**Modify final HTML:**
+```php
+Hooks::addFilter('render.output', function($output, $templatePath, $context) {
+    return str_replace('</body>', '<script src="/tracking.js"></script></body>', $output);
+});
+```
+
+**Add Markdown extensions:**
+```php
 use League\CommonMark\Extension\Table\TableExtension;
 
-// Add a CommonMark extension
 Hooks::addAction('markdown.configure', function($environment) {
     $environment->addExtension(new TableExtension());
 });
 ```
 
-### Hook Priority
+## Frontend Routes
 
-Hooks run in priority order (lower numbers first). Default is 10:
+Create custom public URLs for APIs, landing pages, or dynamic content.
 
-```php
-// Run early (before most other hooks)
-Hooks::addFilter('render.context', $callback, 5);
-
-// Run late (after most other hooks)
-Hooks::addFilter('render.context', $callback, 100);
-```
-
-## Available Hooks Reference
-
-Ava provides these hooks for plugins and themes to extend functionality:
-
-### Quick Reference
-
-| Hook | Type | Description |
-|------|------|-------------|
-| `router.before_match` | Filter | Intercept routing before content lookup |
-| `content.loaded` | Filter | Modify content item after loading |
-| `render.context` | Filter | Add/modify template variables |
-| `render.output` | Filter | Modify final HTML output |
-| `markdown.configure` | Action | Configure CommonMark environment |
-| `admin.register_pages` | Filter | Add custom admin pages |
-| `admin.sidebar_items` | Filter | Add items to admin sidebar |
-| `cli.rebuild` | Action | Run code after content rebuild |
-
-### Routing Hooks
-
-| Hook | Type | Description | Parameters |
-|------|------|-------------|------------|
-| `router.before_match` | Filter | Intercept routing before content lookup | `$match` (null), `$request`, `$router` |
-
-```php
-use Ava\Plugins\Hooks;
-use Ava\Routing\RouteMatch;
-
-// Return a RouteMatch to override routing, or a Response for immediate response
-Hooks::addFilter('router.before_match', function($match, $request, $router) {
-    if ($request->path() === '/custom') {
-        return new RouteMatch(type: 'custom', template: 'custom');
-    }
-    return $match; // Let normal routing continue
-}, priority: 10);
-```
-
-### Content Hooks
-
-| Hook | Type | Description | Parameters |
-|------|------|-------------|------------|
-| `content.loaded` | Filter | Modify content item after loading from repository | `$content` |
-
-```php
-// Add computed fields to content items
-Hooks::addFilter('content.loaded', function($content) {
-    // Add reading time estimate
-    $words = str_word_count(strip_tags($content->rawContent()));
-    $content->set('reading_time', max(1, (int) ceil($words / 200)));
-    return $content;
-});
-```
-
-### Rendering Hooks
-
-| Hook | Type | Description | Parameters |
-|------|------|-------------|------------|
-| `render.context` | Filter | Modify template variables before rendering | `$context[]` |
-| `render.output` | Filter | Modify final HTML output after template rendering | `$output`, `$templatePath`, `$context` |
-| `markdown.configure` | Action | Configure CommonMark environment | `$environment` |
-
-```php
-// Add a custom variable to all templates
-Hooks::addFilter('render.context', function($context) {
-    $context['analytics_id'] = 'UA-12345';
-    return $context;
-});
-
-// Modify final HTML output
-Hooks::addFilter('render.output', function($output, $templatePath, $context) {
-    // Add analytics script before </body>
-    $script = '<script>/* analytics */</script>';
-    return str_replace('</body>', $script . '</body>', $output);
-});
-
-// Add a CommonMark extension
-Hooks::addAction('markdown.configure', function($environment) {
-    $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension());
-});
-```
-
-### Admin Hooks
-
-These let you extend the admin dashboard.
-
-| Hook | Type | Description | Parameters |
-|------|------|-------------|------------|
-| `admin.register_pages` | Filter | Register custom admin pages | `$pages[]`, `$app` |
-| `admin.sidebar_items` | Filter | Add items to admin sidebar | `$items[]`, `$app` |
-
-```php
-// Add a custom admin page
-Hooks::addFilter('admin.register_pages', function(array $pages, $app) {
-    $pages['analytics'] = [
-        'label' => 'Analytics',
-        'icon' => 'analytics',           // Material Symbols icon name
-        'section' => 'Plugins',          // Sidebar section
-        'handler' => function($request, $app, $controller) {
-            // Return a Response
-        },
-    ];
-    return $pages;
-});
-
-// Add a sidebar link
-Hooks::addFilter('admin.sidebar_items', function(array $items, $app) {
-    $items[] = [
-        'label' => 'Documentation',
-        'url' => 'https://ava.addy.zone',
-        'icon' => 'menu_book',
-        'external' => true,
-    ];
-    return $items;
-});
-```
-
-### Rebuild Hooks
-
-| Hook | Type | Description | Parameters |
-|------|------|-------------|------------|
-| `indexer.rebuild` | Action | Fires at the end of the Indexer::rebuild() method for every content index rebuild (CLI, automatic on boot, or via the admin). Preferred for content-syncing plugins. | `$app` |
-| `cli.rebuild` | Action | Runs after a rebuild invoked from the CLI only, before the command exits. Useful for CLI-specific post-processing and console output. | `$app` |
-
-```php
-// Run on every content index rebuild (recommended for syncing/publishing external systems)
-Hooks::addAction('indexer.rebuild', function($app) {
-    // Example: Update a remote search index or notify a webhook
-    // This runs regardless of how the index was rebuilt (CLI, auto, admin)
-});
-
-// CLI-only messages: guard console output to avoid polluting web responses
-Hooks::addAction('cli.rebuild', function($app) {
-    if (php_sapi_name() === 'cli') {
-        echo "  \033[32m✔\033[0m Notifying search engine...\n";
-    }
-});
-
-// Note: The `./ava rebuild` command loads plugins before rebuilding so hooks can run.
-// Also note: on a fast-path webpage-cache HIT, Ava can serve HTML before app boot,
-// so plugin boot code and hooks do not run on that request.
-```
-
-## Adding Routes
-
-Plugins can register custom routes:
+### Basic Route
 
 ```php
 use Ava\Http\Request;
 use Ava\Http\Response;
 
 'boot' => function($app) {
-    $router = $app->router();
-    
-    // Simple route
-    $router->addRoute('/api/posts', function(Request $request) use ($app) {
-        $posts = $app->query()
-            ->type('post')
-            ->published()
-            ->get();
+    $app->router()->addRoute('/api/posts', function(Request $request) use ($app) {
+        $posts = $app->query()->type('post')->published()->get();
         
-        return Response::json(
-            array_map(fn($p) => [
+        return Response::json([
+            'count' => count($posts),
+            'posts' => array_map(fn($p) => [
                 'title' => $p->title(),
                 'slug' => $p->slug(),
-            ], $posts)
-        );
-    });
-    
-    // Route with parameters
-    $router->addRoute('/api/posts/{slug}', function(Request $request, array $params) use ($app) {
-        $post = $app->repository()->get('post', $params['slug']);
-        if (!$post) {
-            return Response::json(['error' => 'Not found'], 404);
-        }
-        return Response::json(['title' => $post->title()]);
-    });
-    
-    // Prefix route (catch-all for /api/*)
-    $router->addPrefixRoute('/api/', function(Request $request) {
-        return Response::json(['error' => 'Unknown endpoint'], 404);
+                'excerpt' => $p->excerpt(),
+            ], $posts),
+        ]);
     });
 }
 ```
 
-## Adding Admin Pages
+### URL Parameters
 
-Plugins can add custom pages to the admin dashboard. The recommended approach uses `renderPluginPage()` which automatically wraps your content in the admin layout (sidebar, header, footer). This ensures your plugin stays compatible with future admin updates.
+Use `{param}` placeholders:
 
-### Basic Example
+```php
+$router->addRoute('/api/posts/{slug}', function(Request $request, array $params) use ($app) {
+    $post = $app->repository()->get('post', $params['slug']);
+    
+    if (!$post) {
+        return Response::json(['error' => 'Not found'], 404);
+    }
+    
+    return Response::json([
+        'title' => $post->title(),
+        'content' => $post->html(),
+    ]);
+});
+```
+
+### Form Handling
+
+```php
+$router->addRoute('/contact', function(Request $request) use ($app) {
+    if ($request->isMethod('POST')) {
+        $name = $request->post('name', '');
+        $email = $request->post('email', '');
+        
+        if (empty($name) || empty($email)) {
+            return Response::json(['error' => 'Name and email required'], 400);
+        }
+        
+        // Save, send email, etc.
+        return Response::json(['success' => true]);
+    }
+    
+    return $app->renderer()->render('contact');
+});
+```
+
+### Prefix Routes
+
+Match any URL starting with a path (checked after exact routes):
+
+```php
+$router->addPrefixRoute('/api/', function(Request $request) {
+    return Response::json(['error' => 'Endpoint not found'], 404);
+});
+```
+
+### Response Methods
+
+| Method | Description |
+|--------|-------------|
+| `Response::json($data, $status)` | JSON response |
+| `Response::html($html, $status)` | HTML response |
+| `Response::redirect($url, $status)` | Redirect (301, 302, etc.) |
+| `Response::text($text, $status)` | Plain text |
+| `Response::notFound($message)` | 404 response |
+
+## Admin Pages
+
+Add pages to the admin dashboard. They're automatically protected by authentication.
+
+### Register a Page
 
 ```php
 use Ava\Plugins\Hooks;
 use Ava\Http\Request;
 use Ava\Application;
 
-'boot' => function($app) {
-    Hooks::addFilter('admin.register_pages', function(array $pages) {
-        $pages['my-plugin'] = [
-            'label' => 'My Plugin',           // Sidebar label
-            'icon' => 'extension',            // Material icon name
-            'section' => 'Plugins',           // Sidebar section
-            'handler' => function(Request $request, Application $app, $controller) {
-                // Your page content (just the main content, no layout)
-                $content = '<div class="card">
-                    <div class="card-header">
-                        <span class="card-title">My Plugin Settings</span>
-                    </div>
-                    <div class="card-body">
-                        <p>Your plugin content goes here.</p>
-                    </div>
-                </div>';
-
-                // Use renderPluginPage() to wrap in admin layout
-                return $controller->renderPluginPage([
-                    'title' => 'My Plugin',      // Browser tab title
-                    'icon' => 'extension',       // Header icon
-                    'activePage' => 'my-plugin', // Highlights in sidebar
-                ], $content);
-            },
-        ];
-        return $pages;
-    });
-}
+Hooks::addFilter('admin.register_pages', function(array $pages) {
+    $pages['my-plugin'] = [
+        'label' => 'My Plugin',     // Sidebar text
+        'icon' => 'extension',      // Material Symbols icon
+        'handler' => function(Request $request, Application $app, $controller) {
+            $content = '<div class="card">
+                <div class="card-body">Your content here</div>
+            </div>';
+            
+            return $controller->renderPluginPage([
+                'title' => 'My Plugin',
+                'activePage' => 'my-plugin',
+            ], $content);
+        },
+    ];
+    return $pages;
+});
 ```
 
-### Using a View File
+Plugin pages appear in the "Plugins" section of the sidebar.
 
-For more complex pages, create a content-only view file:
-
-**app/plugins/my-plugin/views/content.php:**
-```php
-<?php
-// Only the main content - no <html>, <head>, sidebar, etc.
-?>
-<div class="stat-grid">
-    <div class="stat-card">
-        <div class="stat-label">
-            <span class="material-symbols-rounded">check</span>
-            Status
-        </div>
-        <div class="stat-value"><?= $isActive ? 'Active' : 'Inactive' ?></div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <span class="card-title">
-            <span class="material-symbols-rounded">settings</span>
-            Configuration
-        </span>
-    </div>
-    <div class="card-body">
-        <p><?= htmlspecialchars($message) ?></p>
-    </div>
-</div>
-```
-
-**app/plugins/my-plugin/plugin.php:**
-```php
-'handler' => function(Request $request, Application $app, $controller) {
-    // Prepare your data
-    $isActive = true;
-    $message = 'Plugin is working!';
-
-    // Render your content-only view
-    ob_start();
-    include __DIR__ . '/views/content.php';
-    $content = ob_get_clean();
-
-    // Wrap in admin layout
-    return $controller->renderPluginPage([
-        'title' => 'My Plugin',
-        'icon' => 'extension',
-        'activePage' => 'my-plugin',
-    ], $content);
-},
-```
+**Finding icons:** Browse [Material Symbols](https://fonts.google.com/icons) for icon names.
 
 ### renderPluginPage() Options
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `title` | string | Page title (shown in browser tab) |
-| `heading` | string | Main heading (defaults to title) |
-| `icon` | string | Material icon name for header |
-| `activePage` | string | Page slug for sidebar highlighting |
-| `headerActions` | string | HTML for header action buttons |
-| `alertSuccess` | string | Success message to display |
-| `alertError` | string | Error message to display |
-| `alertWarning` | string | Warning message to display |
+| Option | Description |
+|--------|-------------|
+| `title` | Browser tab title |
+| `heading` | Page heading (defaults to title) |
+| `icon` | Header icon |
+| `activePage` | Sidebar item to highlight |
+| `headerActions` | HTML for header buttons |
+| `alertSuccess` | Green success message |
+| `alertError` | Red error message |
+| `alertWarning` | Yellow warning message |
+| `scripts` | Additional JavaScript |
 
-### Header Actions Example
-
-```php
-return $controller->renderPluginPage([
-    'title' => 'My Plugin',
-    'icon' => 'extension',
-    'activePage' => 'my-plugin',
-    'headerActions' => '<a href="/my-plugin/export" class="btn btn-primary btn-sm">
-        <span class="material-symbols-rounded">download</span>
-        Export
-    </a>',
-], $content);
-```
-
-### Handling Forms with Alerts
+### Handling Forms
 
 ```php
 'handler' => function(Request $request, Application $app, $controller) {
-    $message = null;
+    $configFile = $app->path('storage/my-plugin.json');
+    $config = file_exists($configFile) 
+        ? json_decode(file_get_contents($configFile), true) 
+        : [];
+    
+    $success = null;
     $error = null;
-
+    
     if ($request->isMethod('POST')) {
-        $csrf = $request->post('_csrf', '');
-        if (!$controller->auth()->verifyCsrf($csrf)) {
-            $error = 'Invalid request. Please try again.';
+        if (!$controller->auth()->verifyCsrf($request->post('_csrf', ''))) {
+            $error = 'Invalid request.';
         } else {
-            // Process form...
-            $message = 'Settings saved!';
+            $config['api_key'] = $request->post('api_key', '');
+            file_put_contents($configFile, json_encode($config, JSON_PRETTY_PRINT));
+            $success = 'Settings saved!';
             $controller->auth()->regenerateCsrf();
         }
     }
-
+    
     $csrf = $controller->auth()->csrfToken();
-
-    ob_start();
-    include __DIR__ . '/views/content.php';
-    $content = ob_get_clean();
-
+    
+    $content = '<div class="card">
+        <div class="card-body">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="' . $csrf . '">
+                <div class="form-group">
+                    <label>API Key</label>
+                    <input type="text" name="api_key" value="' . htmlspecialchars($config['api_key'] ?? '') . '" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>';
+    
     return $controller->renderPluginPage([
-        'title' => 'My Plugin',
-        'icon' => 'extension',
+        'title' => 'Settings',
         'activePage' => 'my-plugin',
-        'alertSuccess' => $message,
+        'alertSuccess' => $success,
         'alertError' => $error,
     ], $content);
 },
@@ -501,99 +380,109 @@ return $controller->renderPluginPage([
 
 ### Available CSS Classes
 
-Your content can use these admin CSS classes:
+| Class | Use for |
+|-------|---------|
+| `.card`, `.card-header`, `.card-body` | Content cards |
+| `.stat-grid`, `.stat-card`, `.stat-label`, `.stat-value` | Statistics display |
+| `.btn`, `.btn-primary`, `.btn-secondary`, `.btn-sm` | Buttons |
+| `.badge`, `.badge-success`, `.badge-warning`, `.badge-muted` | Status indicators |
+| `.alert`, `.alert-success`, `.alert-danger`, `.alert-warning` | Messages |
+| `.table`, `.table-wrap` | Data tables |
+| `.form-group`, `.form-control` | Form elements |
 
-| Class | Description |
-|-------|-------------|
-| `.card`, `.card-header`, `.card-body` | Card containers |
-| `.stat-grid`, `.stat-card` | Statistics display |
-| `.grid`, `.grid-2`, `.grid-3` | Grid layouts |
-| `.list-item`, `.list-label`, `.list-value` | List displays |
-| `.btn`, `.btn-primary`, `.btn-secondary` | Buttons |
-| `.badge`, `.badge-success`, `.badge-muted` | Badges |
-| `.alert`, `.alert-success`, `.alert-danger` | Alerts |
-| `.table`, `.table-wrap` | Tables |
-| `.text-sm`, `.text-tertiary` | Text styles |
-| `.mt-4`, `.mt-5` | Margin utilities |
+## CLI Commands
 
-### Why Content-Only Views?
-
-**Don't include the full admin layout in plugin views.** This includes:
-- No `<!DOCTYPE html>`, `<html>`, `<head>`, `<body>` tags
-- No sidebar markup
-- No CSS/JS includes
-- No mobile header
-- No footer scripts
-
-The admin layout is maintained by Ava core. When the layout is updated (new features, design changes, bug fixes), your plugin will automatically benefit without changes.
-
-## Enabling Plugins
-
-Add plugins to `app/config/ava.php`:
+Add commands that appear in `./ava help`.
 
 ```php
-'plugins' => [
-    'sitemap',
-    'feed',
-    'redirects',
-    'my-plugin',
-],
-```
-
-Plugins load in the order listed.
-
-## Complete Example: Reading Time
-
-A full plugin that adds reading time estimates to posts:
-
-```php
-<?php
-// app/plugins/reading-time/plugin.php
-
-use Ava\Plugins\Hooks;
-
 return [
-    'name' => 'Reading Time',
-    'version' => '1.0.0',
-    'description' => 'Adds estimated reading time to content items',
-    'author' => 'Ava CMS',
+    'name' => 'My Plugin',
     
-    'boot' => function($app) {
-        Hooks::addFilter('render.context', function($context) {
-            if (isset($context['page']) && $context['page'] instanceof \Ava\Content\Item) {
-                $content = $context['page']->rawContent();
-                $wordCount = str_word_count(strip_tags($content));
-                $minutes = max(1, ceil($wordCount / 200));
-                $context['reading_time'] = $minutes;
-            }
-            return $context;
-        });
-    }
+    'commands' => [
+        [
+            'name' => 'myplugin:status',
+            'description' => 'Show plugin status',
+            'handler' => function(array $args, $cli, \Ava\Application $app) {
+                $cli->header('My Plugin Status');
+                $cli->success('Everything is working!');
+                return 0;
+            },
+        ],
+    ],
 ];
 ```
 
-In your template:
+### Handler Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `$args` | Arguments after command name |
+| `$cli` | CLI output helper |
+| `$app` | Application instance |
+
+### Output Methods
+
 ```php
-<?php if (isset($reading_time)): ?>
-    <span class="reading-time"><?= $reading_time ?> min read</span>
-<?php endif; ?>
+$cli->header('Section Title');      // Bold header
+$cli->info('Note');                 // ℹ Cyan
+$cli->success('Done!');             // ✓ Green
+$cli->warning('Careful');           // ⚠ Yellow
+$cli->error('Failed');              // ✗ Red
+$cli->writeln('Plain text');
+$cli->table(['Col1', 'Col2'], [['a', 'b'], ['c', 'd']]);
+
+// Text formatting (returns string)
+$cli->bold('text');
+$cli->dim('text');
+$cli->green('text');
+$cli->yellow('text');
+$cli->red('text');
 ```
+
+### Return Values
+
+Return `0` for success, `1` or higher for errors.
 
 ## Plugin Assets
 
-Include CSS or JS from your plugin:
+### Admin Assets
+
+Serve CSS/JS for admin pages via `/admin-assets/{plugin-name}/{file}`:
 
 ```php
-'boot' => function($app) {
-    Hooks::addFilter('render.context', function($context) {
-        $context['plugin_assets'][] = '/app/plugins/my-plugin/assets/style.css';
-        return $context;
-    });
-}
+'handler' => function($request, $app, $controller) {
+    $pluginPath = $app->configPath('plugins') . '/my-plugin/assets';
+    $cssFile = $pluginPath . '/styles.css';
+    $cssUrl = '/admin-assets/my-plugin/styles.css';
+    if (file_exists($cssFile)) {
+        $cssUrl .= '?v=' . filemtime($cssFile);
+    }
+    
+    $content = '<link rel="stylesheet" href="' . $cssUrl . '">
+        <div class="card">...</div>';
+    
+    return $controller->renderPluginPage([...], $content);
+},
 ```
 
-Then in your theme's `<head>`:
+Assets are cached with `max-age=31536000`, so always use `?v={timestamp}` for cache busting.
+
+**Supported types:** CSS, JS, JSON, images (SVG, PNG, JPG, GIF, WebP, ICO), fonts (WOFF, WOFF2, TTF, EOT).
+
+### Frontend Assets
+
+Add to template context, then include in your theme's `<head>`:
+
 ```php
+// In plugin
+Hooks::addFilter('render.context', function($context) {
+    $context['plugin_assets'][] = '/app/plugins/my-plugin/assets/style.css';
+    return $context;
+});
+```
+
+```php
+<!-- In theme layout -->
 <?php foreach ($plugin_assets ?? [] as $asset): ?>
     <?php if (str_ends_with($asset, '.css')): ?>
         <link rel="stylesheet" href="<?= $asset ?>">
@@ -603,135 +492,127 @@ Then in your theme's `<head>`:
 <?php endforeach; ?>
 ```
 
-## CLI Commands
+## Shortcodes
 
-Plugins can register custom CLI commands that appear in `./ava help` and can be invoked from the command line.
-
-### Registering Commands
-
-Add a `commands` key to your plugin's return array:
+Plugins can register custom [shortcodes](/docs/shortcodes):
 
 ```php
+$app->shortcodes()->register('greeting', function(array $attrs, ?string $content) {
+    $name = $attrs['name'] ?? 'friend';
+    return "Hello, " . htmlspecialchars($name) . "!";
+});
+```
+
+See the [Shortcodes documentation](/docs/shortcodes) for full details.
+
+## Complete Example
+
+A plugin with admin page, CLI command, and frontend route:
+
+```php
+<?php
+// app/plugins/link-checker/plugin.php
+
+use Ava\Plugins\Hooks;
+use Ava\Http\Request;
+use Ava\Http\Response;
+use Ava\Application;
+
 return [
-    'name' => 'My Plugin',
+    'name' => 'Link Checker',
     'version' => '1.0.0',
-    'description' => 'Does something useful',
-    'author' => 'Your Name',
-
+    'description' => 'Scans content for broken internal links',
+    
     'boot' => function($app) {
-        // Your boot logic...
+        // Admin page
+        Hooks::addFilter('admin.register_pages', function(array $pages) {
+            $pages['link-checker'] = [
+                'label' => 'Link Checker',
+                'icon' => 'link_off',
+                'handler' => function(Request $request, Application $app, $controller) {
+                    $broken = findBrokenLinks($app);
+                    
+                    if (empty($broken)) {
+                        $content = '<div class="card"><div class="card-body" style="text-align:center;padding:3rem">
+                            <span class="material-symbols-rounded" style="font-size:3rem;color:var(--success)">check_circle</span>
+                            <h3>No Broken Links</h3>
+                        </div></div>';
+                    } else {
+                        $rows = implode('', array_map(fn($l) => 
+                            '<tr><td>' . htmlspecialchars($l['page']) . '</td><td><code>' . htmlspecialchars($l['url']) . '</code></td></tr>', 
+                            $broken
+                        ));
+                        $content = '<div class="card"><div class="table-wrap">
+                            <table class="table"><thead><tr><th>Page</th><th>Broken Link</th></tr></thead>
+                            <tbody>' . $rows . '</tbody></table>
+                        </div></div>';
+                    }
+                    
+                    return $controller->renderPluginPage([
+                        'title' => 'Link Checker',
+                        'icon' => 'link_off',
+                        'activePage' => 'link-checker',
+                    ], $content);
+                },
+            ];
+            return $pages;
+        });
+        
+        // JSON API endpoint
+        $app->router()->addRoute('/api/broken-links', function() use ($app) {
+            return Response::json(findBrokenLinks($app));
+        });
     },
-
+    
     'commands' => [
         [
-            'name' => 'myplugin:status',
-            'description' => 'Show plugin status',
-            'handler' => function (array $args, $cli, \Ava\Application $app) {
-                $cli->header('My Plugin Status');
-                $cli->info('Everything is working!');
-                $cli->writeln('');
-                return 0;
+            'name' => 'links:check',
+            'description' => 'Check for broken internal links',
+            'handler' => function($args, $cli, $app) {
+                $cli->header('Checking Links');
+                $broken = findBrokenLinks($app);
+                
+                foreach ($broken as $link) {
+                    $cli->writeln('  ' . $cli->red('✗') . ' ' . $link['page'] . ': ' . $link['url']);
+                }
+                
+                if (empty($broken)) {
+                    $cli->success('All links valid!');
+                    return 0;
+                }
+                
+                $cli->error('Found ' . count($broken) . ' broken link(s)');
+                return 1;
             },
         ],
     ],
 ];
-```
 
-### Command Handler
-
-The handler is invoked with three parameters (extra parameters can be omitted if you don't need them):
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `$args` | array | Command line arguments after the command name |
-| `$cli` | Application | The CLI application instance with output helpers |
-| `$app` | Application | The Ava application instance |
-
-### Available CLI Methods
-
-Your handler can use these methods on the `$cli` object:
-
-```php
-// Headers and sections
-$cli->header('Section Title');      // Bold section header with underline
-
-// Messages
-$cli->info('Informational note');   // ℹ prefixed cyan message
-$cli->success('It worked!');        // ✓ prefixed green message
-$cli->warning('Be careful');        // ⚠ prefixed yellow message
-$cli->error('Something failed');    // ✗ prefixed red message
-
-// Output
-$cli->writeln('Plain text');        // Write a line
-$cli->writeln('');                  // Blank line
-
-// Tables
-$cli->table(
-    ['Name', 'Value', 'Status'],    // Headers
-    [
-        ['item-1', '100', 'active'],
-        ['item-2', '200', 'pending'],
-    ]
-);
-```
-
-### Command Naming Convention
-
-Use a prefix based on your plugin name to avoid conflicts:
-
-```php
-'commands' => [
-    ['name' => 'analytics:report', ...],
-    ['name' => 'analytics:reset', ...],
-],
-```
-
-### Multiple Commands Example
-
-```php
-'commands' => [
-    [
-        'name' => 'backup:create',
-        'description' => 'Create a backup',
-        'handler' => function (array $args, $cli) {
-            $name = $args[0] ?? 'backup-' . date('Y-m-d');
-            $cli->header('Creating Backup');
-            // ... backup logic ...
-            $cli->success("Backup created: {$name}");
-            return 0;
-        },
-    ],
-    [
-        'name' => 'backup:list',
-        'description' => 'List available backups',
-        'handler' => function (array $args, $cli) {
-            $cli->header('Available Backups');
-            // ... list logic ...
-            return 0;
-        },
-    ],
-],
-```
-
-### Accessing the Application
-
-Your command handler receives the application as its third argument:
-
-```php
-'handler' => function (array $args, $cli, \Ava\Application $app) {
-    $repository = $app->repository();
+function findBrokenLinks($app): array {
+    $repo = $app->repository();
+    $validPaths = array_keys($repo->routes()['exact'] ?? []);
+    $broken = [];
     
-    $posts = $repository->published('post');
-    $cli->info('Found ' . count($posts) . ' posts');
-    
-    return 0;
-},
+    foreach ($repo->types() as $type) {
+        foreach ($repo->published($type) as $item) {
+            preg_match_all('/\[([^\]]+)\]\(([^)]+)\)/', $item->rawContent(), $matches);
+            foreach ($matches[2] as $url) {
+                if (str_starts_with($url, '/') && !str_starts_with($url, '//')) {
+                    $path = strtok($url, '#?');
+                    if (!in_array($path, $validPaths) && $path !== '/') {
+                        $broken[] = ['page' => $item->title(), 'url' => $url];
+                    }
+                }
+            }
+        }
+    }
+    return $broken;
+}
 ```
 
-### Return Values
+## Next Steps
 
-Commands should return an integer exit code:
-
-- `0` — Success
-- `1` — Error
-- Other non-zero values indicate specific error conditions
+- Browse [bundled plugins](/docs/bundled-plugins) for real examples
+- See the [API reference](/docs/api) for all available methods
+- Read the [CLI reference](/docs/cli) for command details
+- Learn about [shortcodes](/docs/shortcodes) for content extensions

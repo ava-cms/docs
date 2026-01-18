@@ -7,26 +7,26 @@ meta_description: Ava CMS routing explained. Learn about hierarchical URLs, patt
 excerpt: URLs are generated automatically based on your content structure. Choose hierarchical URLs that mirror file paths, or pattern URLs for date-based blog archives.
 ---
 
-In Ava, you don't need to write complex route files. URLs are generated automatically based on your content structure and configuration.
+**Routing** is how your CMS decides which content to show when someone visits a URL on your site — like matching `/about` to your about page.
+
+In Ava CMS, you don't write route files. URLs are generated automatically based on your content structure and configuration.
 
 ## How It Works
 
-Ava looks at your `content/` folder and your configuration to decide what URL each file gets.
+1. **💾 Save a file** in your content directory
+2. **👀 Ava indexes it** (automatically in `auto` [index mode](/docs/configuration#content-content-index) or via `./ava rebuild`)
+3. **✨ The URL works** — routing is handled for you
 
-1. **💾 You save a file** in the appropriate content directory.
-2. **👀 Ava indexes it** (automatically in `auto` mode, or via `./ava rebuild`).
-3. **✨ The URL works** — routing is handled for you.
-
-All routes are compiled into a binary cache (`storage/cache/routes.bin`) for near-instant lookups.
+Routes are compiled into a binary cache for instant lookups.
 
 
 ## URL Styles
 
-Ava supports two URL generation strategies. You configure these per content type in `app/config/content_types.php`.
+Choose how URLs are generated per content type in `app/config/content_types.php`.
 
-### Hierarchical URLs (Folder Style)
+### Hierarchical URLs
 
-Best for pages, documentation, and content that naturally forms a hierarchy. The URL mirrors the file path structure.
+Best for most simple content types that aren't organised by date. URLs mirror your file structure.
 
 ```php
 'page' => [
@@ -49,29 +49,21 @@ Best for pages, documentation, and content that naturally forms a hierarchy. The
 
 **Key points:**
 
-- `index.md` or `_index.md` files represent the parent folder URL
-- The `base` option adds a prefix (e.g., `'base' => '/docs'` would make `content/pages/about.md` → `/docs/about`)
-- Setting `slug:` in frontmatter does **not** change the URL for hierarchical content — the filesystem path determines the URL
-- The internal content key used for lookups is the path (e.g., `'about/team'`), not the slug
-
-**Fetching hierarchical content in templates:**
-
-```php
-// Use the path-based key, not the slug
-$item = $ava->get('page', 'about/team');
-$item = $ava->get('page', 'docs/getting-started');
-```
+- `index.md` files represent the parent folder URL
+- `base` adds a URL prefix (e.g., `'base' => '/docs'` makes `about.md` → `/docs/about`)
+- The file path determines the URL — `slug:` in frontmatter is ignored
+- Use path-based keys for lookups: `$ava->get('page', 'about/team')`
 
 ### Pattern URLs
 
-Best for blogs, news, and date-based content where you want consistent URL structures regardless of file organization.
+Best for blogs and news. URLs follow a specified pattern regardless of file organization.
 
 ```php
 'post' => [
     'url' => [
         'type'    => 'pattern',
         'pattern' => '/blog/{slug}',
-        'archive' => '/blog',          // Optional: URL for the listing page
+        'archive' => '/blog',  // Optional: listing page URL
     ],
 ]
 ```
@@ -86,161 +78,45 @@ Best for blogs, news, and date-based content where you want consistent URL struc
 | `{mm}` | 2-digit month from `date` field | `03` |
 | `{dd}` | 2-digit day from `date` field | `15` |
 
-**Pattern examples:**
+**Examples:**
 
 ```php
-// Simple blog URLs
-'pattern' => '/blog/{slug}'                    // → /blog/my-post
-
-// Year-based archives
-'pattern' => '/blog/{yyyy}/{slug}'             // → /blog/2024/my-post
-
-// Full date in URL
-'pattern' => '/news/{yyyy}/{mm}/{dd}/{slug}'   // → /news/2024/03/15/my-post
-
-// ID-based permalinks (rename-proof)
-'pattern' => '/p/{id}'                         // → /p/01HXYZ4567ABCD
+'/blog/{slug}'                        // → /blog/my-post
+'/blog/{yyyy}/{slug}'                 // → /blog/2024/my-post
+'/news/{yyyy}/{mm}/{dd}/{slug}'       // → /news/2024/03/15/my-post
+'/p/{id}'                             // → /p/01HXYZ4567ABCD (rename-proof)
 ```
 
 **Key points:**
 
-- The `slug` frontmatter field (or filename if omitted) becomes the lookup key
-- With pattern URLs, file organization inside the content directory doesn't affect URLs
-- The optional `archive` setting creates a listing page at that URL
-
-**Fetching pattern content in templates:**
-
-```php
-// For pattern URL types, the lookup key is the item's slug
-$post = $ava->get('post', 'hello-world');
-```
-
-
-## Route Matching Order
-
-When a request comes in, Ava checks routes in this specific order:
-
-1. **Hook interception** — `router.before_match` filter can intercept and return a response early
-2. **Trailing slash redirect** — Enforces your canonical URL style (301 redirect)
-3. **Redirects** — 301 redirects from `redirect_from` frontmatter
-4. **System routes** — Custom routes registered via `$router->addRoute()`
-5. **Exact routes** — Content URLs from the routes cache
-6. **Preview mode** — Allows draft access with valid preview token
-7. **Prefix routes** — Custom routes registered via `$router->addPrefixRoute()`
-8. **Taxonomy routes** — Archives like `/category/tutorials`
-9. **404** — No match found
-
-Understanding this order helps when debugging why a route isn't matching as expected.
-
+- Use the `slug` field for lookups: `$ava->get('post', 'hello-world')`
+- File organization doesn't affect URLs
+- `archive` creates a listing page
 
 ## Content Status and Routing
 
-Content status affects whether items are routed:
-
-| Status | Routing Behavior |
-|--------|------------------|
-| `draft` | **Not routed publicly.** Only accessible via preview mode with a valid token. Not included in the routes cache. |
-| `published` | **Fully routed.** Accessible at its URL. Included in archives, listings, taxonomy indexes, and sitemaps. |
-| `unlisted` | **Routed but hidden.** Accessible via direct URL (no preview token needed). Excluded from archives, listings, and taxonomy indexes. |
-
-
-## Redirects
-
-When you move or rename content, set up redirects from the old URLs:
+Content files **must** have a status in their frontmatter to determine routing behavior:
 
 ```yaml
 ---
-title: New Page Title
-slug: new-page
-redirect_from:
-  - /old-page
-  - /legacy/old-url
-  - /renamed/from/here
+title: Sample Post
+status: published  # draft, published, unlisted
 ---
 ```
 
-Ava issues a **301 (permanent) redirect** from each old URL to the current canonical URL.
-
-For frontmatter details, see [Redirects](/docs/content#content-redirects).
-
-**Key points:**
-
-- Redirects are processed before content routes in the matching order
-- You can have multiple old URLs redirect to the same new page
-- The redirect happens server-side, so search engines update their indexes
-
-For managing redirects outside of content files (e.g., arbitrary URL mappings), see the [Redirects plugin](/docs/bundled-plugins#redirects).
+Depending on the status, routing behaves as follows:
 
 
-## Trailing Slash
-
-Configure your preferred URL style in `ava.php`:
-
-```php
-'routing' => [
-    'trailing_slash' => false,  // /about (recommended)
-    // 'trailing_slash' => true,   // /about/
-]
-```
-
-When a request arrives with the "wrong" format, Ava issues a **301 redirect** to the canonical URL:
-
-- With `trailing_slash: false`: `/about/` → 301 → `/about`
-- With `trailing_slash: true`: `/about` → 301 → `/about/`
-
-This ensures consistent URLs for SEO and prevents duplicate content issues.
-
-<div class="callout-info">
-The root path <code>/</code> is always valid regardless of this setting.
-</div>
-
-
-## Taxonomy Routes
-
-Taxonomies (categories, tags, etc.) automatically get archive routes when `public: true` in their configuration.
-
-**Route types created:**
-
-| Route Type | Example | Template |
-|------------|---------|----------|
-| Taxonomy index | `/category` | `taxonomy-index.php` |
-| Term archive | `/category/tutorials` | `taxonomy.php` |
-
-**Configuration in `taxonomies.php`:**
-
-```php
-'category' => [
-    'label'   => 'Categories',
-    'public'  => true,              // Creates public routes
-    'rewrite' => [
-        'base' => '/category',      // URL prefix for term archives
-    ],
-],
-```
-
-Set `'public' => false` for internal-only taxonomies that shouldn't have public archive pages.
-
-**Template variables for taxonomy routes:**
-
-In `taxonomy.php` or `taxonomy-index.php`, you have access to:
-
-```php
-$tax['name']   // Taxonomy name (e.g., 'category')
-$tax['term']   // Term data array (for term archives)
-$tax['terms']  // All terms (for taxonomy index)
-$query         // Pre-built Query filtered to this term
-```
+| Status | Routing Behavior |
+|--------|------------------|
+| `draft` | Not routed publicly. Only accessible via [preview mode](#preview-mode). |
+| `published` | Fully accessible. Appears in listings and sitemaps. |
+| `unlisted` | Accessible via direct URL but excluded from listings. |
 
 
 ## Preview Mode
 
-Preview mode allows viewing draft content without publishing it. This is useful for:
-
-- Reviewing drafts before publishing
-- Sharing previews with clients or editors
-- Testing on devices where you're not logged in
-
-**Access a draft via preview:**
+View draft content before publishing by adding `?preview=1&token=...` to the URL:
 
 ```
 https://example.com/blog/my-draft?preview=1&token=YOUR_SECRET_TOKEN
@@ -254,39 +130,90 @@ https://example.com/blog/my-draft?preview=1&token=YOUR_SECRET_TOKEN
 ]
 ```
 
-**Security considerations:**
+**Generate a secure token:**
+```bash
+php -r "echo bin2hex(random_bytes(32));"
+```
 
-- Generate a strong, random token: `php -r "echo bin2hex(random_bytes(32));"`
-- The token is validated using timing-safe comparison (`hash_equals`)
-- Both `preview=1` and `token=...` query parameters are required
-- If no token is configured, preview mode is disabled
-- Preview mode works for content that matches URL patterns but isn't in the routes cache (drafts)
+Both `preview=1` and `token` parameters are required. Without a configured token, preview mode is disabled.
+
+
+## Redirects
+
+Redirect old URLs when you move or rename content:
+
+```yaml
+---
+title: New Page Title
+redirect_from:
+  - /old-page
+  - /legacy/old-url
+---
+```
+
+Ava issues **301 (permanent) redirects** from old URLs to the current URL. For external redirects or arbitrary mappings, use the [Redirects plugin](/docs/bundled-plugins#redirects).
+
+
+## Trailing Slash
+
+Enforce consistent URL format in `ava.php`:
+
+```php
+'routing' => [
+    'trailing_slash' => false,  // /about (recommended)
+]
+```
+
+Ava issues **301 redirects** to enforce your choice:
+- `false`: `/about/` → `/about`
+- `true`: `/about` → `/about/`
+
+The root `/` is always valid.
+
+
+## Taxonomy Routes
+
+Taxonomies with `public: true` automatically get routes:
+
+```php
+'category' => [
+    'label'   => 'Categories',
+    'public'  => true,         // Enable public routes
+    'rewrite' => [
+        'base' => '/category', // URL prefix
+    ],
+],
+```
+
+**Routes created:**
+- `/category` — Taxonomy index (all terms)
+- `/category/tutorials` — Term archive (items with this term)
+
+**Template variables:**
+- `$tax['name']` — Taxonomy name
+- `$tax['term']` — Term data (term archives)
+- `$tax['terms']` — All terms (index)
+- `$query` — Pre-filtered Query object
 
 
 ## Adding Custom Routes
 
-You can register custom routes for API endpoints, special pages, or dynamic functionality.
+Register custom routes in your `theme.php` for APIs or special pages.
 
 ### Exact Routes
 
-Match a specific URL path:
-
 ```php
-// In theme.php
 return function (\Ava\Application $app): void {
     $router = $app->router();
     
     $router->addRoute('/api/search', function ($request) use ($app) {
-        $query = $request->query('q', '');
-        
         $results = $app->query()
             ->published()
-            ->search($query)
+            ->search($request->query('q', ''))
             ->perPage(10)
             ->get();
         
         return \Ava\Http\Response::json([
-            'query' => $query,
             'results' => array_map(fn($item) => [
                 'title' => $item->title(),
                 'url' => $app->router()->urlFor($item->type(), $item->slug()),
@@ -298,43 +225,31 @@ return function (\Ava\Application $app): void {
 
 ### Routes with Parameters
 
-Use `{param}` placeholders for dynamic segments:
-
 ```php
 $router->addRoute('/api/posts/{id}', function ($request, $params) use ($app) {
-    $id = $params['id'];
-    $item = $app->repository()->getById($id);
+    $item = $app->repository()->getById($params['id']);
     
     if (!$item) {
         return \Ava\Http\Response::json(['error' => 'Not found'], 404);
     }
     
-    return \Ava\Http\Response::json([
-        'title' => $item->title(),
-        'content' => $app->render('partials/post-body', ['content' => $item]),
-    ]);
+    return \Ava\Http\Response::json(['title' => $item->title()]);
 });
-```
 
 ### Prefix Routes
-
-Match all URLs starting with a prefix:
 
 ```php
 $router->addPrefixRoute('/api/', function ($request) use ($app) {
     // Handles all /api/* requests
-    $path = $request->path();
-    
-    // Your API routing logic here
-    return \Ava\Http\Response::json(['path' => $path]);
+    return \Ava\Http\Response::json(['path' => $request->path()]);
 });
 ```
 
-**Order matters:** Prefix routes are checked after exact routes and content routes, so they won't override content URLs.
+Prefix routes are checked after exact and content routes.
 
-### Using Hooks for Routes
+### Using Hooks
 
-You can also intercept routing using the `router.before_match` filter:
+Intercept routing with the `router.before_match` filter (checked first):
 
 ```php
 use Ava\Plugins\Hooks;
@@ -342,99 +257,69 @@ use Ava\Http\Response;
 
 Hooks::addFilter('router.before_match', function ($match, $request) use ($app) {
     if ($request->path() === '/custom-page') {
-        return Response::html(
-            $app->render('custom-template', ['request' => $request])
-        );
+        return Response::html($app->render('custom-template'));
     }
-    return $match; // Let normal routing continue
+    return $match;
 });
 ```
 
-This is checked first in the route matching order, so it can override any other route.
-
-For hook basics (filters vs actions, priorities, etc.), see [Understanding Hooks](/docs/creating-plugins#content-understanding-hooks).
+See [Understanding Hooks](/docs/creating-plugins#content-understanding-hooks) for details.
 
 
 ## Route Caching
 
-Routes are compiled into binary cache files for instant lookups:
-
-| File | Contents |
-|------|----------|
-| `storage/cache/routes.bin` | All route mappings |
-| `storage/cache/slug_lookup.bin` | Quick content key → file lookups |
-
-**Cache structure:**
-
-```php
-[
-    'redirects' => [
-        '/old-url' => ['to' => '/new-url', 'code' => 301],
-    ],
-    'exact' => [
-        '/about' => [
-            'type' => 'single',
-            'content_type' => 'page',
-            'slug' => 'about',
-            'file' => 'pages/about.md',
-            'template' => 'page.php',
-        ],
-    ],
-    'taxonomy' => [
-        'category' => [
-            'base' => '/category',
-            'hierarchical' => false,
-        ],
-    ],
-]
-```
+Routes are compiled to binary cache files for instant lookups:
+- `storage/cache/routes.bin` — All route mappings
+- `storage/cache/slug_lookup.bin` — Content key lookups
 
 **Rebuilding:**
+- `content_index.mode = 'auto'` — Automatic when content changes
+- `content_index.mode = 'never'` — Run `./ava rebuild` manually
 
-- With `content_index.mode = 'auto'`: Routes rebuild automatically when content changes
-- With `content_index.mode = 'never'`: Use `./ava rebuild` to update routes
-
-For more on caching and performance, see [Performance](/docs/performance).
+See [Performance](/docs/performance) for details.
 
 
 ## Generating URLs in Templates
 
-Use the `$ava` helper to generate URLs:
+Use `$ava` helper methods:
 
 ```php
-// Content URL (pattern-based types use slug, hierarchical use path)
-<?= $ava->url('post', 'hello-world') ?>       // /blog/hello-world
-<?= $ava->url('page', 'about/team') ?>        // /about/team
-
-// Taxonomy term URL
-<?= $ava->termUrl('category', 'tutorials') ?> // /category/tutorials
-
-// Full absolute URL
-<?= $ava->fullUrl('/about') ?>                // https://example.com/about
-
-// Site base URL
-<?= $ava->baseUrl() ?>                        // https://example.com
+<?= $ava->url('post', 'hello-world') ?>       // Content: /blog/hello-world
+<?= $ava->url('page', 'about/team') ?>        // Hierarchical: /about/team
+<?= $ava->termUrl('category', 'tutorials') ?> // Term: /category/tutorials
+<?= $ava->fullUrl('/about') ?>                // Full: https://example.com/about
+<?= $ava->baseUrl() ?>                        // Base: https://example.com
 ```
+## Route Matching Order
 
+When a request comes in, Ava CMS checks routes in this specific order:
+
+1. **Hook interception** — `router.before_match` filter can intercept and return a response early
+2. **Trailing slash redirect** — Enforces your [canonical URL style](/docs/configuration#:~:text=trailing%20slash) (301 redirect)
+3. **Redirects** — 301 redirects from `redirect_from` frontmatter
+4. **System routes** — Custom routes registered via `$router->addRoute()`
+5. **Exact routes** — Content URLs from the routes cache
+6. **Preview mode** — Allows draft access with valid preview token
+7. **Prefix routes** — Custom routes registered via `$router->addPrefixRoute()`
+8. **Taxonomy routes** — Archives like `/category/tutorials`
+9. **404** — No match found
+
+Understanding this order helps when debugging why a route isn't matching as expected.
 
 ## Debugging Routes
 
-**Check if a route exists:**
+**Inspect route cache:**
 
 ```php
-$router = $app->router();
 $routes = $app->repository()->routes();
-
-// Inspect the routes cache
 var_dump($routes['exact']['/my-path'] ?? 'not found');
 ```
 
 **Common issues:**
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| 404 for new content | Cache not rebuilt | Run `./ava rebuild` or set `content_index.mode = 'auto'` |
-| Wrong URL for hierarchical content | Using slug instead of path | Use path-based key: `$ava->get('page', 'about/team')` |
-| Redirect loop | Conflicting `redirect_from` | Check for circular redirects in frontmatter |
-| Custom route not matching | Route order conflict | Check if content route matches first |
-| Preview not working | Missing or invalid token | Verify `security.preview_token` in config |
+| Issue | Solution |
+|-------|----------|
+| 404 for new content | Run `./ava rebuild` or set `content_index.mode = 'auto'` |
+| Wrong hierarchical URL | Use path-based key: `$ava->get('page', 'about/team')` |
+| Redirect loop | Check for circular `redirect_from` |
+| Preview not working | Verify `security.preview_token` in config |

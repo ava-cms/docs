@@ -3,11 +3,11 @@ title: Bundled Plugins
 slug: bundled-plugins
 status: published
 meta_title: Bundled Plugins | Flat-file PHP CMS | Ava CMS
-meta_description: Ava comes with sitemap, RSS feed, and redirects plugins included. Learn how to configure and use these bundled plugins for SEO and content management.
-excerpt: Ava comes with helpful plugins for common tasks—sitemap generation for SEO, RSS feeds for subscribers, and redirects for URL management. Enable or disable them in your config.
+meta_description: Ava CMS comes with sitemap, RSS feed, and redirects plugins included. Learn how to configure and use these bundled plugins for SEO and content management.
+excerpt: Ava CMS comes with helpful plugins for common tasks—sitemap generation for SEO, RSS feeds for subscribers, and redirects for URL management. Enable or disable them in your config.
 ---
 
-Ava comes with a few helpful plugins to handle common tasks. They're installed by default but you can enable or disable them in your config.
+Ava CMS comes with a few helpful plugins to handle common tasks. They're installed by default but you can enable or disable them in your config.
 
 These plugins also serve as good examples and code references if you want to build your own — see [Creating Plugins](/docs/creating-plugins).
 
@@ -15,9 +15,11 @@ These plugins also serve as good examples and code references if you want to bui
 
 Automatically generates an XML sitemap for search engines like Google.
 
+<div class="screenshot-window">
 <a href="@media:plugin-sitemap.webp" target="_blank" rel="noopener">
   <img src="@media:plugin-sitemap.webp" alt="Sitemap plugin screen" />
 </a>
+</div>
 
 - **What it does:** Creates a `sitemap.xml` index that links to individual sitemaps for each content type (e.g., `/sitemap-page.xml`).
 - **How to use:** Just enable it in `app/config/ava.php`.
@@ -28,22 +30,21 @@ Automatically generates an XML sitemap for search engines like Google.
 ### Behavior
 
 - **Robots handling:** On every index rebuild the plugin will check `public/robots.txt`:
-- Create `robots.txt` if it doesn't exist (with sensible defaults).
-- Add or update the `Sitemap: <url>` line to match your `site.base_url` config.
-- Preserve existing `User-agent` and `Allow` rules when updating.
+  - Create `robots.txt` if it doesn't exist (with sensible defaults).
+  - Add or update the `Sitemap: <url>` line to match your `site.base_url` config.
+  - Preserve existing `User-agent` and `Allow` rules when updating.
 
 ### Configuration
 
+First, ensure `'sitemap'` is in your `plugins` array:
+
 ```php
 // app/config/ava.php
-'sitemap' => [
-    'enabled' => true,
+'plugins' => [
+    'sitemap',
+    // ... other plugins
 ],
 ```
-
-| Option | Description |
-|--------|-------------|
-| `enabled` | Enable or disable sitemap generation (default: `true`) |
 
 ### CLI Commands
 
@@ -70,13 +71,29 @@ Show sitemap statistics including URL counts per content type.
 
 Lets people subscribe to your blog using an RSS reader.
 
+<div class="screenshot-window">
 <a href="@media:plugin-feeds.webp" target="_blank" rel="noopener">
   <img src="@media:plugin-feeds.webp" alt="Feeds plugin screen" />
 </a>
+</div>
 
-- **What it does:** Creates `feed.xml` with your latest posts.
+- **What it does:** Creates `feed.xml` with your latest posts, plus per-content-type feeds (e.g., `/feed/page.xml`).
 - **How to use:** Enable it in `app/config/ava.php`.
-- **Customisation:** You can choose which content types to include (like just posts, or everything).
+- **Customisation:** Choose which content types to include and whether to show full content or excerpts.
+
+### Configuration
+
+First, ensure `'feed'` is in your `plugins` array:
+
+```php
+// app/config/ava.php
+'plugins' => [
+    'feed',
+    // ... other plugins
+],
+```
+
+Then optionally configure:
 
 ```php
 'feed' => [
@@ -86,6 +103,13 @@ Lets people subscribe to your blog using an RSS reader.
     'types' => null,          // null = all types, or ['post'] for specific types
 ],
 ```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `enabled` | `true` | Enable or disable feed generation |
+| `items_per_feed` | `20` | Maximum items per feed |
+| `full_content` | `false` | `true` = full rendered HTML, `false` = excerpt only |
+| `types` | `null` | Which content types to include (`null` = all, or array like `['post']`) |
 
 ### Adding to Your Theme
 
@@ -125,9 +149,9 @@ Show RSS feed statistics and configuration.
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-  <title>My Ava Site</title>
+  <title>My Ava CMS Site</title>
   <link>https://example.com</link>
-  <description>Latest content from My Ava Site</description>
+  <description>Latest content from My Ava CMS Site</description>
   <atom:link href="https://example.com/feed.xml" rel="self" type="application/rss+xml"/>
   <item>
     <title>My Latest Post</title>
@@ -144,9 +168,11 @@ Show RSS feed statistics and configuration.
 
 Manage custom URL redirects and status responses through the admin UI or CLI.
 
+<div class="screenshot-window">
 <a href="@media:plugin-redirects.webp" target="_blank" rel="noopener">
   <img src="@media:plugin-redirects.webp" alt="Redirects plugin screen" />
 </a>
+</div>
 
 - **What it does:** Redirects old URLs to new ones, or returns status-only responses (like 410 Gone).
 - **How to use:** Enable the plugin, then use the admin dashboard or CLI commands.
@@ -162,12 +188,17 @@ Manage custom URL redirects and status responses through the admin UI or CLI.
 
 ### Enabling
 
+Add `'redirects'` to your `plugins` array:
+
 ```php
 // app/config/ava.php
 'plugins' => [
     'redirects',
+    // ... other plugins
 ],
 ```
+
+This plugin has no additional configuration options—just enable it and use the admin UI or CLI to manage redirects.
 
 ### When to Use
 
@@ -178,7 +209,7 @@ Manage custom URL redirects and status responses through the admin UI or CLI.
 
 ### Comparison with Content Redirects
 
-Ava supports two ways to redirect:
+Ava CMS supports two ways to redirect:
 
 | Method | Best For |
 |--------|----------|
@@ -252,7 +283,6 @@ Add a new redirect from the command line.
 | `418` | Status | I'm a Teapot ☕ |
 | `451` | Status | Unavailable For Legal Reasons |
 | `503` | Status | Service Unavailable (maintenance) |
-| `503` | Status | Service Unavailable |
 
 **Examples:**
 
@@ -329,6 +359,6 @@ Then access the plugin admin pages at:
 
 ## Community Plugins
 
-Looking for more plugins? Check out the [Community Plugins](/plugins) page for plugins shared by other Ava users.
+Looking for more plugins? Check out the [Community Plugins](/plugins) page for plugins shared by other Ava CMS users.
 
 Built a plugin you'd like to share? [Submit it to the community gallery!](/plugins#content-submit-your-plugin)

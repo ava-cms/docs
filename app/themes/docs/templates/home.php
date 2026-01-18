@@ -18,17 +18,6 @@ $bodyClass = 'home-hero-page';
     'bodyClass' => $bodyClass,
 ]) ?>
 
-            <div class="home-hero-content">
-                <?= $ava->partial('hero-animation') ?>
-                <!-- Decorative Blueprint Corners -->
-                <div class="hero-corner top-left">+</div> 
-                <div class="hero-corner top-right">+</div>
-                <div class="hero-corner bottom-left">+</div>
-                <div class="hero-corner bottom-right">+</div>
-
-                <div class="home-container">
-                    <?= $ava->body($content) ?>
-                </div>
-            </div>
+            <?= $ava->body($content) ?>
 
 <?= $ava->partial('footer', ['showToc' => $showToc, 'isHomepage' => true]) ?>

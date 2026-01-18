@@ -49,10 +49,7 @@ $bodyClass = trim(($bodyClass ?? '') . ($isDocsPage ? '' : ' hide-sidebar-deskto
         <meta property="og:type" content="website">
     <?php endif; ?>
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-themes@1/themes/prism-one-light.min.css">    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wdth,wght@75..125,200..900&family=Hubot+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= $ava->asset('fonts.css') ?>">
     <link rel="stylesheet" href="<?= $ava->asset('style.css') ?>">
     
 
@@ -65,22 +62,6 @@ $bodyClass = trim(($bodyClass ?? '') . ($isDocsPage ? '' : ' hide-sidebar-deskto
         document.documentElement.setAttribute('data-theme', theme);
     })();
     </script>
-
-    <!-- Matomo Analytics -->
-    <script>
-        var _paq = _paq || [];
-        _paq.push(["trackPageView"]), _paq.push(["enableLinkTracking"]),
-        function() {
-            _paq.push(["disableCookies"]);
-            _paq.push(["setTrackerUrl", "//reporting.adgr.dev/zefstyg.php"]);
-            _paq.push(["setSiteId", "22"]);
-            _paq.push(['disableAlwaysUseSendBeacon', 'true']);
-            var a = document, r = a.createElement("script"), s = a.getElementsByTagName("script")[0];
-            r.async = !0, r.defer = !0, r.src = "//reporting.adgr.dev/pywhvsr.php", s.parentNode.insertBefore(r, s)
-        }();
-    </script>
-    <noscript><img src="//reporting.adgr.dev/zefstyg.php?vbf=22&nmi=1" /></noscript>
-    <!-- End Matomo Code -->
 </head>
 <body class="<?= $ava->e($bodyClass) ?>">
     <header class="topbar">

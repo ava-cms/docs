@@ -12,10 +12,9 @@ $isHomepage = $isHomepage ?? false;
 ?>
             <footer class="docs-footer<?= $isHomepage ? ' home-footer' : '' ?>">
                 <div class="footer-content">
-                    <span>Made with 💖 & ☕ by <a href="https://addy.zone/" target="_blank" rel="noopener">Addy</a>. Powered by <a href="https://ava.addy.zone/" target="_blank" rel="noopener">Ava</a> (so meta).</span>
+                    <span>Made with 💖 & ☕ by <a href="https://addy.zone/" target="_blank" rel="noopener">Addy</a>. Powered by <a href="https://ava.addy.zone/" target="_blank" rel="noopener">Ava CMS</a> (so meta).<br>&copy; 2025–2026 Ava CMS. Documentation all rights reserved.</span>
                     <div class="footer-links">
                         <a href="https://github.com/avacms/ava" target="_blank" rel="noopener">GitHub</a>
-                        <a href="https://github.com/avacms/ava/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
                         <a href="https://ko-fi.com/addycodes" target="_blank" rel="noopener">Ko-fi</a>
                         <a href="https://discord.gg/fZwW4jBVh5" target="_blank" rel="noopener">Discord</a>
                     </div>
@@ -76,9 +75,32 @@ $isHomepage = $isHomepage ?? false;
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js" defer></script>
+    <script>
+        // Configure Prism autoloader to use locally hosted language components.
+        window.Prism = window.Prism || {};
+        Prism.plugins = Prism.plugins || {};
+        Prism.plugins.autoloader = Prism.plugins.autoloader || {};
+        Prism.plugins.autoloader.languages_path = '/theme/vendor/prism/components/';
+    </script>
+    <script src="<?= $ava->asset('vendor/prism/prism-core.min.js') ?>" defer></script>
+    <script src="<?= $ava->asset('vendor/prism/prism-autoloader.min.js') ?>" defer></script>
     <script src="<?= $ava->asset('instantpage.js') ?>" defer></script>
     <script src="<?= $ava->asset('docs.js') ?>" defer></script>
+
+    <!-- Matomo Analytics -->
+    <script>
+        var _paq = _paq || [];
+        _paq.push(["trackPageView"]), _paq.push(["enableLinkTracking"]),
+        function() {
+            _paq.push(["disableCookies"]);
+            _paq.push(["setTrackerUrl", "//reporting.adgr.dev/zefstyg.php"]);
+            _paq.push(["setSiteId", "22"]);
+            _paq.push(['disableAlwaysUseSendBeacon', 'true']);
+            var a = document, r = a.createElement("script"), s = a.getElementsByTagName("script")[0];
+            r.async = !0, r.defer = !0, r.src = "//reporting.adgr.dev/pywhvsr.php", s.parentNode.insertBefore(r, s)
+        }();
+    </script>
+    <noscript><img src="//reporting.adgr.dev/zefstyg.php?vbf=22&nmi=1" /></noscript>
+    <!-- End Matomo Code -->
 </body>
 </html>

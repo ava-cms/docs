@@ -4,38 +4,55 @@ slug: performance
 status: published
 meta_title: Performance | Flat-file PHP CMS | Ava CMS
 meta_description: Ava CMS performance guide. Learn about content indexing, webpage caching, backend options (Array vs SQLite), and optimization for sites with thousands of pages.
-excerpt: "Ava is designed to be fast by default with a two-layer strategy: content indexing for metadata lookups and webpage caching for instant HTML responses."
+excerpt: "Ava CMS is designed to be fast by default with a two-layer strategy: content indexing for metadata lookups and webpage caching for instant HTML responses."
 ---
 
-Ava is designed to be fast by default. To achieve this, it uses a two-layer performance strategy:
+Ava CMS is designed to be fast by default. To achieve this, it uses a two-layer performance strategy:
 
 1. **Content Indexing:** A pre-built index of your content metadata to avoid parsing Markdown files on every request.
 2. **Webpage Caching:** A static HTML cache that serves fully rendered webpages instantly.
 
-Together, these systems mean most visitors get pre-rendered HTML served directly from disk with minimal overhead.
+Together, these systems mean most visitors get pre-rendered HTML served directly from disk with minimal overhead. 
 
-In practice there are two different “disk-served HTML” optimisations:
+With webpage caching enabled (the default), cached pages serve in ~0.02ms. Uncached pages render in ~5ms. The content index ensures even uncached pages are fast.
 
-- **Webpage cache (full page HTML):** Can serve a cached response directly from disk, and on a fast-path HIT it can do so *before the app boots*.
-- **Pre-rendered HTML cache (Markdown body HTML):** Optional rebuild-time cache that stores Markdown → HTML output for published items, reducing work on uncached requests.
+## Quick Guide
+
+**For most users:**
+- The defaults work great (Array backend with `igbinary` installed and webpage caching enabled)
+- Run `./ava rebuild` after content changes in production
+- Check `./ava status` to see your cache status
+- Prefer servers with high I/O performance (SSD highly recommended)
+
+**Upgrading from another CMS or have lots of content?**
+- < 5,000 posts: Use default settings
+- 5,000-10,000 posts: Test both Array and SQLite with `./ava benchmark --compare`
+- 10,000+ posts: Switch to SQLite backend (`'backend' => 'sqlite'` in `app/config/ava.php`)
+
+**Having performance issues?**
+- Run `./ava status` to check index freshness
+- Run `./ava cache:stats` to check webpage cache
+- Run `./ava benchmark --compare` to test different backends on your server
 
 ## Content Indexing
 
-The Content Index is the foundation of Ava's performance. Instead of reading and parsing Markdown files every time a user visits your site, Ava builds a binary index of all your content's metadata (titles, dates, slugs, custom fields, taxonomies).
+The Content Index is the foundation of Ava CMS's performance. Instead of reading and parsing Markdown files on every request, Ava CMS builds a binary index of your content metadata (titles, dates, slugs, custom fields, taxonomies).
+
+**Think of it like a library catalog:** Rather than opening every book to find what you need, you look it up in the catalog first.
 
 ### How It Works
 
-When you run [`./ava rebuild`](/docs/cli#rebuild) (or when Ava auto-detects changes in `auto` mode), it:
+When you run [`./ava rebuild`](/docs/cli#rebuild) (or when changes are auto-detected in `'auto'` mode), Ava CMS:
 
 1. **Scans** all your Markdown files recursively
 2. **Parses** frontmatter and extracts metadata
 3. **Validates** content for common issues (YAML syntax, required fields, duplicate slugs/IDs)
-4. **Builds** optimised indexes for fast lookups
+4. **Builds** optimized indexes for fast lookups
 5. **Stores** the index in your chosen backend format
 
 #### Index Files
 
-Ava generates several files in `storage/cache/` to optimise different types of queries:
+Ava CMS generates several files in `storage/cache/` to optimise different types of queries:
 
 | File | Contents | Purpose |
 |------|----------|---------|
@@ -49,7 +66,7 @@ Ava generates several files in `storage/cache/` to optimise different types of q
 
 #### Tiered Caching Strategy
 
-Ava uses a "tiered" approach to ensure common requests are ultra-fast, even on huge sites:
+Ava CMS uses a "tiered" approach to ensure common requests are ultra-fast, even on huge sites:
 
 | Tier | Cache Used | Operations | Typical Response |
 |------|-----------|-----------|------------------|
@@ -61,7 +78,7 @@ Ava uses a "tiered" approach to ensure common requests are ultra-fast, even on h
 
 ### Backend Options
 
-Ava supports two index storage backends, plus a compression option. The best choice depends on your content size and server resources.
+Ava CMS supports two index storage backends, plus a compression option. The best choice depends on your content size and server resources.
 
 #### Array Backend (Default)
 
@@ -82,7 +99,7 @@ Stores the index as serialized PHP arrays in `.bin` files. On each request, the 
 | **igbinary** (recommended) | `igbinary` | ~2× faster reads, much smaller cache files |
 | **serialize** (fallback) | None | Works everywhere, slower and larger files |
 
-Ava automatically uses igbinary if installed and enabled. Most quality hosts include it by default.
+Ava CMS automatically uses igbinary if installed and enabled. Most quality hosts include it by default.
 
 **Pros:**
 - Fastest for most operations (everything happens in RAM)
@@ -116,57 +133,61 @@ Stores the index in a single SQLite database file (`storage/cache/content_index.
 
 ### Benchmark Comparison
 
-We tested all backends with realistic content. You can run these tests on your own server using [`./ava benchmark --compare`](/docs/cli#content-benchmarking).
+We tested all backends with realistic content. You can run these tests on your own server using [`./ava benchmark --compare`](/docs/cli#content-benchmarking) and `./ava stress:generate post <count>` to create test posts.
+
+**Key metrics explained:**
+- **Homepage (Recent):** How fast your homepage and recent posts load (uses Tier 1 cache)
+- **Get by slug:** How fast a single post/page loads (Tier 2)
+- **Deep Archive (Page 50):** Complex queries beyond the recent cache (Tier 3)
+- **Memory per query:** RAM used for each uncached request
+- **Cache Size:** Disk space used by the index
+
+**Note:** We're comparing Array with igbinary (the recommended default if available) vs SQLite. Plain `serialize()` is much slower and larger—use igbinary if possible.
 
 #### 1,000 Posts
 
-| Operation | Array + igbinary | Array + serialize | SQLite |
-|-----------|------------------|-------------------|--------|
-| **Build index** | 229ms | 327ms | 264ms |
-| **Count all posts** | 11ms | 57ms | 0.5ms |
-| **Get by slug** | 0.8ms | 0.7ms | 0.7ms |
-| **Homepage** (Recent) | 0.3ms | 0.2ms | 1.0ms |
-| **Deep Archive** (Page 50, beyond recent cache) | 18ms | 59ms | 18ms |
-| **Sort by date** | 16ms | 60ms | 19ms |
-| **Sort by title** | 17ms | 61ms | 19ms |
-| **Search** | 17ms | 60ms | 14ms |
-| **Memory per query** | 7 MB | 31 MB | minimal |
-| **Cache Size** | ~4 MB | ~18 MB | ~1 MB |
+| Operation | Array + igbinary | SQLite | Winner |
+|-----------|------------------|--------|--------|
+| **Homepage** (Recent) | 0.3ms | 1.0ms | Array ✓ |
+| **Get by slug** | 0.8ms | 0.7ms | Tied |
+| **Deep Archive** (Page 50) | 18ms | 18ms | Tied |
+| **Memory per query** | 7 MB | minimal | SQLite ✓ |
+| **Cache Size** | ~4 MB | ~1 MB | SQLite ✓ |
+
+**Verdict:** Array (default) is perfect at this scale. Both are very fast.
 
 #### 10,000 Posts
 
-| Operation | Array + igbinary | Array + serialize | SQLite |
-|-----------|------------------|-------------------|--------|
-| **Build index** | 2.4s | 3.3s | 2.7s |
-| **Count all posts** | 141ms | 531ms | 1.2ms |
-| **Get by slug** | 14ms | 12ms | 0.8ms |
-| **Homepage** (Recent) | 0.1ms | 0.2ms | 6ms |
-| **Deep Archive** (Page 50, beyond recent cache) | 233ms | 621ms | 281ms |
-| **Sort by date** | 191ms | 695ms | 278ms |
-| **Sort by title** | 215ms | 757ms | 285ms |
-| **Search** | 192ms | 650ms | 237ms |
-| **Memory per query** | 69 MB | 306 MB | minimal |
-| **Cache Size** | ~42 MB | ~180 MB | ~10 MB |
+| Operation | Array + igbinary | SQLite | Winner |
+|-----------|------------------|--------|--------|
+| **Homepage** (Recent) | 0.1ms | 6ms | Array ✓ |
+| **Get by slug** | 14ms | 0.8ms | SQLite ✓ |
+| **Deep Archive** (Page 50) | 233ms | 281ms | Array ✓ |
+| **Memory per query** | 69 MB | minimal | SQLite ✓ |
+| **Cache Size** | ~42 MB | ~10 MB | SQLite ✓ |
 
-#### 25,000 Posts
+**Verdict:** Either works well. Array is faster for common queries, but SQLite uses far less memory. Test both with `./ava benchmark --compare` to see what matters for your use case.
 
-These results show what happens once the dataset is large enough that “load a big blob into RAM and scan it” starts to cost noticeable time.
+<details>
+<summary><strong>25,000 Posts (Click to expand—most sites won't reach this scale)</strong></summary>
 
-| Operation | Array + igbinary | Array + serialize | SQLite |
-|-----------|------------------|-------------------|--------|
-| **Build index** | 4.6s | 7.8s | 6.1s |
-| **Count all posts** | 327ms | 1.3s | 2.7ms |
-| **Get by slug** | 30ms | 36ms | 0.7ms |
-| **Homepage** (Recent) | 0.16ms | 0.15ms | 15.8ms |
-| **Deep Archive** (Page 50, beyond recent cache) | 577ms | 1.7s | 855ms |
-| **Memory per query** | 160 MB | 676 MB | 2.6 KB |
-| **Cache Size** | 96.5 MB | 438.4 MB | 25.2 MB |
+| Operation | Array + igbinary | SQLite | Winner |
+|-----------|------------------|--------|--------|
+| **Homepage** (Recent) | 0.16ms | 15.8ms | Array ✓ |
+| **Get by slug** | 30ms | 0.7ms | SQLite ✓ |
+| **Deep Archive** (Page 50) | 577ms | 855ms | Array ✓ |
+| **Memory per query** | **160 MB** | **2.6 KB** | SQLite ✓✓ |
+| **Cache Size** | 96.5 MB | 25.2 MB | SQLite ✓ |
+
+**Verdict:** SQLite is the clear winner at this scale due to memory constraints. Array needs 160 MB per concurrent uncached request, which will overwhelm most servers.
+
+</details>
 
 <details>
 <summary><strong>Benchmark Environment & Methodology</strong></summary>
 
 **Environment:**
-- **Ava:** v1.0.0
+- **Ava CMS:** v1.0.0
 - **OS:** Linux x86_64 (Ubuntu)
 - **PHP:** 8.5.1 (CLI)
 - **Hardware:** Budget Hetzner Cloud VPS (CX22: 2 vCPU, 4GB RAM)
@@ -181,59 +202,35 @@ These results show what happens once the dataset is large enough that “load a 
 **Note:** OPcache is disabled for CLI by default. This doesn't affect these results since OPcache only caches compiled PHP bytecode, not data operations. The benchmarks measure I/O, unserialization, and query performance.
 </details>
 
-#### Analysis
+#### Understanding the Results
 
-**Build Index:** All backends take similar time since the cost is dominated by parsing Markdown files. This is a one-time cost when content changes.
+**Why Array is faster for homepages:** It uses a pre-sorted Recent Cache that loads instantly. Perfect for blog homepages and RSS feeds.
 
-**Homepage/Recent:** Array backends are instant because they use the pre-sorted Recent Cache. SQLite must query the database, adding a few milliseconds.
+**Why SQLite wins for single posts at scale:** Database indexes let it jump directly to the exact row without loading the entire index.
 
-**Counts:** SQLite is dramatically faster (~1ms vs 100s of ms) because it uses a database index. If your templates frequently call `{{ count('post') }}`, SQLite may be beneficial.
+**Why memory matters:** Array loads the index into RAM per concurrent uncached request. At 10k posts, that's 69 MB per request. With 10 concurrent users hitting uncached pages, that's 690 MB. SQLite uses just a few kilobytes.
 
-**Single Item Lookup (Get by slug):** SQLite wins at scale because it uses a database index to jump directly to the row. Array backends must load and unserialize the lookup table first.
-
-**Deep Archives, Sort, Search:** Array + igbinary is typically fastest for in-memory scanning, but at larger scales (like 25k posts) SQLite can be competitive—especially when you care about filtering/counts and keeping memory low. Both are acceptable for human-facing response times when combined with webpage caching.
-
-**Memory:** SQLite has minimal per-query overhead since it queries the database directly rather than loading the full index into RAM. This matters most for concurrent uncached requests.
-
-#### The Memory Tradeoff
-
-The Array backend consumes memory **per concurrent uncached request**. "Concurrent" here means requests being actively processed at the same instant—typically a fraction of a second per request, not how many users are browsing your site.
-
-| Posts | Index Size | 1 Concurrent | 10 Concurrent | 50 Concurrent |
-|-------|-----------|--------|----------|----------|
-| 1,000 | ~4 MB | ~4 MB | ~40 MB | ~200 MB |
-| 10,000 | ~42 MB | ~42 MB | ~420 MB | ~2.1 GB |
-
-**SQLite** has minimal per-query overhead regardless of content size or concurrency. It won't be quite as fast for a single user, but it handles concurrent load more gracefully.
-
-<div class="callout-info">
-<strong>In practice:</strong> With webpage caching enabled, the vast majority of visitors get pre-rendered HTML directly from disk, consuming almost no memory. The memory table above applies to <em>uncached</em> requests only—things like search results, deep archive pagination, or the first visit after a cache clear. For a typical site with caching enabled, you'll rarely see more than a handful of concurrent uncached requests.
-</div>
+**Real-world impact:** With webpage caching enabled (the default), 95%+ of requests are served from cache and don't touch the index at all. The benchmarks above matter mainly for:
+- Search results (always uncached)
+- First visit to any page (until cached)
+- Admin/preview pages (bypass cache)
+- Deep archive pagination beyond page 20
 
 ### Choosing a Backend
-
-#### Quick Decision Guide
 
 | Situation | Recommended Backend |
 |-----------|---------------------|
 | **< 5,000 posts** | Array + igbinary (default) |
-| **5,000-10,000 posts** | Either works; test both |
+| **5,000-10,000 posts** | Either works; test both with `./ava benchmark --compare` |
 | **> 10,000 posts** | SQLite |
 | **Memory-limited server** | SQLite |
-| **Heavy count() usage** | SQLite |
 | **No pdo_sqlite extension** | Array |
-| **Maximum speed, ample RAM** | Array + igbinary |
 
-#### How to Decide for Your Site
-
-1. **Start with the default** (Array + igbinary) — it's optimised for typical sites
-2. **Run your own benchmarks:** `./ava benchmark --compare`
-3. **Monitor memory usage** with your host's tools or `./ava status`
-4. **Switch if needed** — it's just one config change
-
-<div class="callout-info">
-<strong>Future backends:</strong> We're exploring additional backend options to ensure Ava scales gracefully for all kinds of sites while staying true to its flat-file, portable approach. If you have specific needs or ideas, let us know in the <a href="https://discord.gg/fZwW4jBVh5">Discord community</a>.
-</div>
+**How to decide:**
+1. Start with the default (Array + igbinary)
+2. Run `./ava benchmark --compare` on your actual server
+3. Monitor memory with `./ava status` or your host's tools
+4. Switch if needed—it's one line in `app/config/ava.php`
 
 ### Configuration Reference
 
@@ -242,262 +239,115 @@ All content index settings live in `app/config/ava.php`:
 ```php
 'content_index' => [
     // When to rebuild the index
-    'mode' => 'auto',           // 'auto', 'never', or 'always'
+    'mode' => 'auto',           // 'auto' | 'never' | 'always'
     
     // Storage backend
-    'backend' => 'array',       // 'array' or 'sqlite'
+    'backend' => 'array',       // 'array' | 'sqlite'
     
     // Compression (array backend only)
-    'use_igbinary' => true,     // true or false
+    'use_igbinary' => true,     // Uses igbinary if available, otherwise serialize()
 
-    // Optional: pre-render Markdown → HTML during rebuild
-    'prerender_html' => false,  // true or false
+    // Optional: pre-render Markdown → HTML during rebuild (experimental)
+    'prerender_html' => false,  // Stores rendered HTML for published items
 ],
-
-### Pre-rendered HTML Cache (Optional)
-
-If `content_index.prerender_html` is enabled, Ava generates `storage/cache/html_cache.bin` during `./ava rebuild`.
-
-- Only **published** items are included.
-- Cache entries are stored as `"<type>:<contentKey>"` → `"<html>"` (examples: `page:`, `page:about`, `post:hello-world`).
-
-Included at rebuild time:
-
-- Markdown conversion (League\CommonMark), using the same `markdown.configure` hook as rendering
-- Path alias expansion using `paths.aliases` (string replacement)
-
-Deferred to runtime:
-
-- Shortcodes (still processed on each request)
 ```
 
-#### Mode Options
+| Option | Values | Recommendation |
+|--------|--------|----------------|
+| `mode` | `'auto'` (rebuild on changes)<br>`'never'` (manual only)<br>`'always'` (every request) | `'auto'` for development<br>`'never'` for production |
+| `backend` | `'array'` or `'sqlite'` | `'array'` < 10k posts<br>`'sqlite'` for 10k+ |
+| `use_igbinary` | `true` or `false` | Keep `true` (auto-detects) |
+| `prerender_html` | `true` or `false` | `false` unless you need it |
 
-| Mode | Behaviour | Best For |
-|------|-----------|----------|
-| `auto` | Rebuild when files change (detected via fingerprint) | Development, small-medium sites |
-| `never` | Only rebuild via `./ava rebuild` | Production, CI/CD workflows, large sites |
-| `always` | Rebuild every request | Debugging only (**very slow**) |
-
-**Recommendation:** Use `auto` during development, switch to `never` in production with scheduled/triggered rebuilds.
-
-#### Backend Options
-
-| Backend | Requires | Best For |
-|---------|----------|----------|
-| `array` | Nothing (or `igbinary` for speed) | Most sites, < 10k items |
-| `sqlite` | `pdo_sqlite` extension | Large sites, memory constraints |
-
-#### igbinary Option
-
-| Setting | Effect |
-|---------|--------|
-| `true` (default) | Use igbinary if installed (faster reads, smaller files) |
-| `false` | Always use standard `serialize()` |
-
-If igbinary is enabled but not installed, Ava automatically falls back to serialize.
+**About prerender_html:** This is an experimental feature that pre-renders Markdown → HTML during rebuild and stores it in `html_cache.bin`. It can speed up uncached page renders, but most sites won't need it since webpage caching already makes pages instant.
 
 
 
 ## Webpage Caching
 
-For ultimate performance, Ava includes a full webpage cache. After the first visit to any page, Ava saves the complete HTML to disk. Subsequent visitors receive the cached file directly.
+Webpage caching is where the real performance magic happens. After the first visit to any page, Ava CMS saves the complete HTML to disk. Subsequent visitors receive the cached file directly—**up to 250× faster** than rendering.
 
-- **First visit:** ~5-50ms (renders template, processes Markdown)
-- **Cached visit:** ~0.02-0.1ms (serves static file)
+**Performance:**
+- First visit: ~5ms (renders template, processes Markdown)
+- Cached visit: ~0.02ms (serves static HTML file)
+- Handles thousands of requests/second on modest hardware
 
-This bypasses the content index entirely for most traffic.
+**How it works:**
+1. Visitor requests `/blog/my-post`
+2. Check if `storage/cache/pages/blog_my-post_[hash].html` exists
+3. **HIT:** Return cached HTML (response headers: `X-Page-Cache: HIT`, `X-Cache-Age: <seconds>`)
+4. **MISS:** Render page, save to cache, return HTML (header: `X-Page-Cache: MISS`)
 
-### How It Works
-
-1. A visitor requests `/blog/my-post`
-2. Ava checks if a cached HTML file exists for this path
-3. **Cache HIT:** Return the cached file with `X-Page-Cache: HIT` and `X-Cache-Age: <seconds>`
-4. **Cache MISS:** Render the page, save to cache, return with `X-Page-Cache: MISS`
-
-### Fast Path (TTFB Optimisation)
-
-On some requests, Ava can serve a cached HTML page **before the application boots**. This triggers only when all are true:
-
-- `webpage_cache.enabled` is `true`
-- Request method is `GET`
-- Request path is not under the admin path (`admin.path`, default `/admin`)
-- No query params other than UTM (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`)
-- No `ava_admin` cookie present
-- URL does not match any `webpage_cache.exclude` patterns
-- Cache file exists and (if `webpage_cache.ttl` is set) is not expired
-
-On a fast-path HIT, app boot is skipped (no plugin/theme loading, no index freshness checks).
-
-### Cache File Location
-
-Cached pages are stored in `storage/cache/pages/` as `.html` files:
-
-```
-storage/cache/pages/
-├── index_a1b2c3d4.html          ← Homepage
-├── about_e5f6g7h8.html          ← /about
-├── blog_my-post_i9j0k1l2.html   ← /blog/my-post
-└── ...
-```
-
-Filenames include a hash to handle special characters and long paths safely.
-
-### Webpage Rendering Benchmarks
-
-These measure the full rendering pipeline (load content, parse Markdown, render template):
-
-| Operation | Time |
-|-----------|------|
-| **Render post (uncached)** | ~5ms |
-| **Write to cache** | ~0.1ms |
-| **Read from cache (HIT)** | ~0.02ms |
-
-**Key insight:** Uncached rendering is already fast (~5ms), but cached pages are **250× faster**. For high-traffic sites, this is the difference between handling 200 requests/second and 50,000 requests/second.
+**Fast path optimization:** On cache HITs for `GET` requests from non-admin users without query strings, Ava CMS can serve the HTML **before the application even boots**. No plugin loading, no index checks—just pure static file serving.
 
 ### Configuration
 
-Enable and configure webpage caching in `app/config/ava.php`:
+Webpage caching is configured in `app/config/ava.php`:
 
 ```php
 'webpage_cache' => [
     'enabled' => true,          // Enable/disable caching
-    'ttl' => null,              // Time-to-live in seconds, or null for forever
+    'ttl' => null,              // null = forever, or seconds (3600 = 1 hour)
     'exclude' => [              // URL patterns to never cache
         '/api/*',
-        '/preview/*',
+        '/search',
     ],
 ],
 ```
 
-### Options Explained
+**TTL (Time-To-Live):**
+- `null` (default): Cache until you run `./ava rebuild` or `./ava cache:clear`
+- `3600`: Cache for 1 hour
+- `86400`: Cache for 24 hours
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enabled` | bool | `true` | Enable webpage caching |
-| `ttl` | int\|null | `null` | Cache lifetime in seconds. `null` = cache until rebuild |
-| `exclude` | array | `[]` | Glob patterns for URLs to never cache |
+**Exclude patterns:** Use glob-style patterns to prevent caching specific URLs.
 
-### TTL Examples
-
-```php
-'ttl' => null,              // Cache forever (cleared on ./ava rebuild)
-'ttl' => 3600,              // Cache for 1 hour
-'ttl' => 86400,             // Cache for 24 hours
-'ttl' => 60 * 60 * 24 * 7,  // Cache for 1 week
-```
-
-### Exclude Patterns
-
-The `exclude` array supports glob-style patterns:
-
-```php
-'exclude' => [
-    '/api/*',           // Don't cache API routes
-    '/preview/*',       // Don't cache preview pages
-    '/search',          // Don't cache search (dynamic)
-    '/user/*',          // Don't cache user-specific pages
-],
-```
-
-### Per-Page Cache Control
-
-Override the global setting for individual pages using frontmatter:
+**Per-page control:** Add `cache: false` to any page's frontmatter to bypass caching:
 
 ```yaml
 ---
-title: My Dynamic Page
-cache: false
+title: Live Dashboard
+cache: false    # This page always renders fresh
 ---
 ```
 
-| Setting | Effect |
-|---------|--------|
-| `cache: false` | Never cache this page, even if global caching is enabled |
-| `cache: true` | Force caching for this page (if global caching is enabled) |
-| (not set) | Use global settings |
+### What Gets Cached (and What Doesn't)
 
-**Use case:** A page that displays random content, current time, or user-specific information should set `cache: false`.
+**✅ Cached:**
+- Regular pages and posts
+- Archive/list pages
+- Taxonomy pages (categories, tags)
+- Homepage and pagination
 
-### What Gets Cached
+**❌ Never cached:**
+- Admin area (`/admin/*`)
+- Requests from logged-in admins
+- URLs with query parameters (except UTM marketing params)
+- Pages with `cache: false` in frontmatter
+- POST/PUT/DELETE requests
+- URLs matching `exclude` patterns
 
-| Content Type | Cached? |
-|--------------|---------|
-| ✅ Single pages (posts, pages, custom types) | Yes |
-| ✅ Archive pages (lists, paginated archives) | Yes |
-| ✅ Taxonomy pages (categories, tags) | Yes |
-| ❌ Admin pages | Never |
-| ❌ URLs with query parameters (except UTM) | Never |
-| ❌ Requests from logged-in admin users | Never |
-| ❌ POST/PUT/DELETE requests | Never |
+**UTM parameters** (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`) are automatically ignored, so marketing campaigns don't pollute your cache.
 
-### UTM Parameters
+### Cache Management
 
-Marketing UTM parameters are automatically stripped and don't create separate cache entries:
+**Automatic clearing:** The cache clears automatically when you run `./ava rebuild` or when content changes are detected in `'auto'` mode.
 
-- `?utm_source=twitter` → Uses cached version of base URL
-- `?utm_medium=social` → Uses cached version of base URL
-
-This prevents cache pollution from marketing campaigns.
-
-### Query Parameters
-
-Any other query parameter bypasses the cache:
-
-- `/search?q=hello` → Not cached (dynamic)
-- `/page?preview=1` → Not cached (preview)
-- `/api/data?format=json` → Not cached (API)
-
-This prevents cache poisoning attacks.
-
-### Cache Invalidation
-
-The webpage cache is automatically cleared when:
-
-1. You run `./ava rebuild`
-2. Content changes are detected (if `content_index.mode` is `'auto'`)
-3. You click "Rebuild" or "Flush Webpages" in the Admin Dashboard
-
-### Manual Cache Management
-
-Clear the cache via CLI:
+**Manual clearing:**
 
 ```bash
 ./ava cache:stats            # View cache statistics
 ./ava cache:clear            # Clear all cached webpages
-./ava cache:clear /blog/*    # Clear only matching paths
+./ava cache:clear /blog/*    # Clear specific paths
 ```
-
-Example output:
-
-<pre><samp>  <span class="t-dim">───</span> <span class="t-cyan t-bold">Webpage Cache</span> <span class="t-dim">─────────────────────────────────────</span>
-
-  <span class="t-dim">Status:</span>     <span class="t-green">● Enabled</span>
-  <span class="t-dim">TTL:</span>        <span class="t-white">Forever (until cleared)</span>
-  <span class="t-dim">Cached:</span>     <span class="t-white">42 webpages</span>
-  <span class="t-dim">Size:</span>       <span class="t-white">1.2 MB</span></samp></pre>
-
-### Security Considerations
-
-The webpage cache is designed to be secure by default:
-
-| Protection | How It Works |
-|------------|--------------|
-| **No admin caching** | Admin pages are never cached |
-| **Logged-in user detection** | Admin users always get fresh pages |
-| **No query string caching** | Prevents cache poisoning |
-| **Hashed filenames** | Prevents path traversal attacks |
-| **Exclude patterns** | Sensitive routes can be explicitly excluded |
-
-**Cookie handling:** Ava checks for the `ava_admin` session cookie. If present, caching is bypassed to ensure admins always see fresh content.
 
 
 
 ## Tools & Troubleshooting
 
-### Checking Site Status
+### Check Your Site's Performance
 
-The `./ava status` command shows comprehensive performance information:
+Use `./ava status` to see everything at a glance:
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
@@ -518,45 +368,63 @@ The `./ava status` command shows comprehensive performance information:
   <span class="t-dim">Cached:</span>     <span class="t-white">42</span> webpages
   <span class="t-dim">Size:</span>       <span class="t-white">1.2 MB</span></samp></pre>
 
-### Common Issues
+### Common Issues & Solutions
 
-### Content changes not appearing
+#### Content changes not appearing
 
-1. Check your index mode: if set to `never`, run `./ava rebuild`
-2. Delete `storage/cache/fingerprint.json` to force a rebuild
-3. Run `./ava rebuild` to reset everything
+**Cause:** Index mode is set to `'never'` or index hasn't rebuilt.
 
-### Webpages not being cached
+**Fix:**
+```bash
+./ava rebuild                # Rebuild index and clear webpage cache
+```
 
-1. Check if enabled: `./ava status` or `./ava cache:stats`
-2. Log out of admin (admin users bypass cache)
-3. Check exclude patterns in `app/config/ava.php`
-4. Check for query parameters in the URL
-5. Check if the page has `cache: false` in frontmatter
+If that doesn't work:
+```bash
+rm storage/cache/fingerprint.json  # Force rebuild on next request
+```
 
-### High memory usage
+#### Webpages not caching
 
-1. Check your content count vs available RAM
-2. Consider switching to `backend: 'sqlite'`
-3. Run `./ava benchmark --compare` to see memory usage
+**Check these in order:**
 
-### SQLite backend not working
+1. **Is caching enabled?** Run `./ava status` or check `'webpage_cache.enabled'` in config
+2. **Are you logged into admin?** Log out—admins always bypass cache
+3. **Query parameters?** URLs with `?params` (except UTM) won't cache
+4. **Exclude pattern match?** Check `'webpage_cache.exclude'` in config
+5. **Page has `cache: false`?** Check the page's frontmatter
 
-1. Check if `pdo_sqlite` is installed: `php -m | grep -i sqlite`
-2. If not available, ask your host or install it
-3. Or keep using `backend: 'array'`
+#### High memory usage
 
-### Cache files not being created
+**Symptoms:** Server running out of memory, PHP fatal errors
 
-1. Ensure `storage/cache/` is writable by the web server
-2. Check file permissions: `chmod -R 755 storage/`
-3. Check for errors in `storage/logs/ava.log`
+**Solutions:**
+1. Check your content size: `./ava status`
+2. Test memory usage: `./ava benchmark --compare`
+3. Switch to SQLite if > 10k posts: `'backend' => 'sqlite'` in config
+4. Check for memory leaks in custom plugins/themes
 
-### igbinary not being used
+#### SQLite backend errors
 
-1. Check if installed: `php -m | grep igbinary`
-2. Check if enabled in config: `'use_igbinary' => true`
-3. Install via your host's PHP settings or `pecl install igbinary`
+**Error:** "could not find driver" or "pdo_sqlite not installed"
+
+**Fix:**
+```bash
+php -m | grep -i sqlite      # Check if installed
+```
+
+If not installed:
+- Contact your host to enable `pdo_sqlite`
+- Or use `'backend' => 'array'` instead
+
+#### Slow performance despite caching
+
+**Troubleshooting steps:**
+
+1. **Check cache hit rate:** Look for `X-Page-Cache: HIT` in response headers
+2. **Test uncached speed:** `./ava benchmark`
+3. **Check server resources:** CPU, RAM, disk I/O
+4. **Profile specific pages:** Add `?XDEBUG_PROFILE=1` if Xdebug installed
 
 ### Running Your Own Benchmarks
 
@@ -589,51 +457,67 @@ Test performance on your own server:
 
 ### Performance Best Practices
 
-### For Development
-
+**Development settings** (see changes immediately):
 ```php
-'content_index' => [
-    'mode' => 'auto',           // Auto-rebuild on changes
-    'backend' => 'array',
-],
-'webpage_cache' => [
-    'enabled' => false,         // See changes immediately
-],
+'content_index' => ['mode' => 'auto'],
+'webpage_cache' => ['enabled' => false],
 ```
 
-### For Production
-
+**Production settings** (maximum performance):
 ```php
 'content_index' => [
-    'mode' => 'never',          // Only rebuild via CLI/webhook
-    'backend' => 'array',       // Or 'sqlite' for 10k+ items
-    'use_igbinary' => true,
+    'mode' => 'never',          // Manual rebuilds only
+    'backend' => 'array',       // Or 'sqlite' for 10k+ posts
 ],
 'webpage_cache' => [
-    'enabled' => true,          // Maximum performance
+    'enabled' => true,
     'ttl' => null,              // Cache until rebuild
 ],
 ```
 
-### Deployment Workflow
-
-When deploying content updates:
-
+**Deployment workflow:**
 ```bash
-# After uploading new content files
-./ava rebuild                    # Rebuilds index AND clears webpage cache
+git pull                        # Pull latest changes
+./ava rebuild                   # Rebuild index and clear cache
 ```
 
-For automated deployments, add this to your CI/CD pipeline or webhook.
+## CDN Integration
 
-### CDN Integration
+Ava CMS's webpage cache is already very fast, but adding a CDN provides:
 
-Ava's webpage cache is already very fast, but you can add a CDN for additional benefits:
+- **Global edge caching:** Serve from locations worldwide
+- **DDoS protection:** Absorb attack traffic
+- **SSL termination:** Offload HTTPS processing
 
-- **Geographic distribution:** Serve from edge locations worldwide
-- **DDoS protection:** Let the CDN absorb attack traffic
-- **SSL termination:** Offload HTTPS to the CDN
+Popular options: Cloudflare (free tier), BunnyCDN, Fastly. See the [Ava for Cloudflare®](https://github.com/avacms/ava-for-cloudflare) plugin for handy Cloudflare utilities such as automatic cache purging.
 
-Popular options: Cloudflare (free tier), BunnyCDN, Fastly.
+## Quick Reference
 
-**Tip:** Set appropriate `Cache-Control` headers in your theme for static assets. Ava automatically serves theme assets with 1-year cache headers.
+**Check status:**
+```bash
+./ava status                 # View cache status and configuration
+./ava cache:stats            # Webpage cache statistics
+```
+
+**Rebuild after changes:**
+```bash
+./ava rebuild                # Rebuild index and clear webpage cache
+./ava cache:clear            # Clear webpage cache only
+```
+
+**Test performance:**
+```bash
+./ava benchmark              # Test current backend
+./ava benchmark --compare    # Compare all backends
+```
+
+**Generate test content:**
+```bash
+./ava stress:generate post 5000   # Create 5,000 test posts
+./ava stress:clean post            # Remove test posts
+```
+
+**Key files:**
+- `app/config/ava.php` - Configure caching and backend
+- `storage/cache/` - All cache files
+- `storage/cache/fingerprint.json` - Delete to force rebuild

@@ -3,10 +3,10 @@ title: Theming
 status: published
 meta_title: Theming | Flat-file PHP CMS | Ava CMS
 meta_description: Create Ava CMS themes with HTML and PHP. No custom templating language—just familiar HTML with PHP helpers for dynamic content, assets, and layouts.
-excerpt: Ava themes are HTML-first templates with PHP available when you need it. No custom templating language, no build step—just save and refresh.
+excerpt: Ava CMS themes are HTML-first templates with PHP available when you need it. No custom templating language, no build step—just save and refresh.
 ---
 
-Ava themes are HTML-first templates with PHP available when you need it. Start with normal HTML, then sprinkle in `<?= ?>` to output data or call helpers. There's no custom templating language, no build step, and no new syntax to learn.
+Ava CMS themes are HTML-first templates with PHP available when you need it. Start with normal HTML, then sprinkle in `<?= ?>` to output data or call helpers. There's no custom templating language, no build step, and no new syntax to learn.
 
 ```php
 <!-- Output a title -->
@@ -31,7 +31,9 @@ Ava themes are HTML-first templates with PHP available when you need it. Start w
 
 You decide how much custom PHP to use: none for simple pages, or more for dynamic layouts. The helpers are there when you want them, but HTML remains the core.
 
-## Why HTML + PHP (and not a custom templating language)?
+<details class="beginner-box">
+<summary>Why HTML + PHP (and not a custom templating language)?</summary>
+<div class="beginner-box-content">
 
 **What you gain**
 - **Familiar building blocks** — If you know HTML, you can start immediately. Output is just `<?= $variable ?>` and the `$ava` helper.
@@ -43,7 +45,10 @@ You decide how much custom PHP to use: none for simple pages, or more for dynami
 - Designers comfortable with HTML/CSS who want minimal new concepts
 - Developers who want flexibility without adopting a custom template language or dealing with additional tooling
 - Beginners who want to learn web fundamentals instead of framework-specific magic
-- Teams that prefer transparency and portability 
+- Teams that prefer transparency and portability
+
+</div>
+</details>
 
 <details class="beginner-box">
 <summary>What is `&lt;?= ?&gt;`?</summary>
@@ -88,7 +93,7 @@ app/themes/
 
 ## Using Assets
 
-Ava makes it easy to include your CSS and JS files. It even handles cache-busting automatically, so your visitors always see the latest version based on the files modified time.
+Ava CMS makes it easy to include your CSS and JS files. It even handles cache-busting automatically, so your visitors always see the latest version based on the files modified time.
 
 ```php
 <!-- Just ask $ava for the asset URL -->
@@ -98,6 +103,13 @@ Ava makes it easy to include your CSS and JS files. It even handles cache-bustin
 
 <div class="callout-info">
 This outputs a URL like <code>/theme/style.css?v=123456</code>, ensuring instant updates when you change the file without worrying about browser or CDN caching.
+</div>
+
+<div class="callout-warning"><strong>Theme Assets Security</strong>:
+The `assets/` folder inside your theme is served publicly via the `/theme/` URL route. Only common static file types are allowed: CSS, JavaScript, JSON, images (PNG, JPG, GIF, WebP, SVG, ICO), and fonts (WOFF, WOFF2, TTF, EOT). Any other file types—including PHP, HTML, and hidden files (dotfiles) may return a 404 Not Found response by default.
+<br><br>
+<strong>Treat your theme's `assets/` folder as a public directory</strong>: never place sensitive files, configuration, or executable code there. For private theme files like PHP templates, use the `templates/` or `partials/` folders which are not web-accessible.
+
 </div>
 
 ## Template Basics
@@ -188,6 +200,7 @@ When displaying a single piece of content (a page, post, etc.), use `$content` t
 | **Content** | | |
 | `rawContent()` | `string` | Raw Markdown body (before rendering) |
 | `excerpt()` | `string\|null` | Excerpt from frontmatter |
+| `rawHtml()` | `bool` | Whether to render body as raw HTML (skips Markdown) |
 | **Taxonomies** | | |
 | `terms()` | `array` | All taxonomy terms |
 | `terms('category')` | `array` | Terms for a specific taxonomy |
@@ -209,6 +222,8 @@ When displaying a single piece of content (a page, post, etc.), use `$content` t
 | `order()` | `int` | Manual sort order |
 | `redirectFrom()` | `array` | Old URLs that redirect here |
 | `filePath()` | `string` | Path to the Markdown file |
+| `html()` | `string\|null` | Pre-rendered HTML (if available) |
+| `frontmatter()` | `array` | All frontmatter fields as an array |
 
 ### The `$ava` Helper — All Methods
 
@@ -247,9 +262,9 @@ The `$ava` object provides helper methods for common tasks:
 
 ## Detailed Guide
 
-### Rendering Content with `$ava->body()`
+### Rendering Content
 
-To display the main content of a page or post, use `$ava->body($content)`:
+Display a page or post's main content with `$ava->body($content)`:
 
 ```php
 <div class="content">
@@ -261,59 +276,38 @@ To display the main content of a page or post, use `$ava->body($content)`:
 <summary>Why `$ava->body($content)` instead of `$content->body()`?</summary>
 <div class="beginner-box-content">
 
-When you write content in Markdown, Ava needs to *process* it before displaying:
+The `$content` object holds your raw Markdown text, but `$ava->body()` does the processing:
 
-1. Convert Markdown → HTML
-2. Process shortcodes like <code>&#91;button&#93;</code>
-3. Expand path aliases like <code>@media<span></span>:</code>
-4. Apply any plugin filters
+1. Converts Markdown → HTML
+2. Processes shortcodes like <code>&#91;button&#93;</code>
+3. Expands path aliases like <code>@media<span></span>:</code>
+4. Applies plugin filters
+5. Uses pre-rendered cache when available for better performance
 
-This processing requires the rendering engine, which lives in the `$ava` helper. The `$content` object is a simple data container—it holds your content but doesn't know how to render it.
-
-Think of it like this: `$content` is the *ingredients*, and `$ava` is the *kitchen* that turns them into a finished dish.
-
-<strong>Performance note:</strong> If <code>content_index.prerender_html</code> is enabled, <code>$ava-&gt;body($content)</code> automatically uses the pre-rendered HTML cache when available (while still processing shortcodes at runtime). If you bypass <code>$ava-&gt;body()</code> and call the rendering engine directly, you may miss the pre-render cache unless you supply the required content key.
+Think of `$content` as the ingredients, and `$ava` as the kitchen that prepares the final dish.
 
 </div>
 </details>
 
-### Working with Dates and Times
+### Working with Dates
 
-Dates in frontmatter can include times:
-
-```yaml
----
-title: My Post
-date: 2025-12-31           # Date only (midnight assumed)
-date: 2025-12-31 14:30     # Date with time
-date: 2025-12-31T14:30:00  # ISO 8601 format
----
-```
-
-Display dates in templates using `$ava->date()`:
+Format dates using `$ava->date()`, which automatically converts to your site's timezone:
 
 ```php
 <!-- Uses site's default format from config -->
 <?= $ava->date($content->date()) ?>
 
-<!-- Or specify a format -->
+<!-- Or specify a custom format -->
 <?= $ava->date($content->date(), 'F j, Y') ?>        // December 31, 2025
-<?= $ava->date($content->date(), 'Y-m-d') ?>         // 2025-12-31
 <?= $ava->date($content->date(), 'M j, g:ia') ?>     // Dec 31, 2:30pm
-<?= $ava->date($content->date(), 'l, F jS') ?>       // Wednesday, December 31st
-<?= $ava->date($content->date(), 'c') ?>             // ISO 8601 (for datetime attributes)
 ```
 
-The date is automatically converted to your site's timezone (set in `app/config/ava.php`).
+Dates in frontmatter can include times:
 
-You can set a default date format in your config:
-
-```php
-'site' => [
-    'name' => 'My Site',
-    'timezone' => 'America/New_York',
-    'date_format' => 'F j, Y',  // Used when no format specified
-],
+```yaml
+date: 2025-12-31           # Date only
+date: 2025-12-31 14:30     # Date with time
+date: 2025-12-31T14:30:00  # ISO 8601 format
 ```
 
 For relative times, use `$ava->ago()`:
@@ -326,50 +320,27 @@ For relative times, use `$ava->ago()`:
 Date formats use <a href="https://www.php.net/manual/en/datetime.format.php">PHP's date() format codes</a>. Common codes: <code>Y</code> (year), <code>m</code> (month), <code>d</code> (day), <code>F</code> (full month name), <code>M</code> (short month), <code>j</code> (day without zero), <code>g</code> (12-hour), <code>H</code> (24-hour), <code>i</code> (minutes), <code>a</code> (am/pm).
 </div>
 
-### Escaping HTML with `$ava->e()`
+### Escaping HTML
 
-The `$ava->e()` method escapes special HTML characters to prevent security issues:
-
-```php
-<?= $ava->e($value) ?>
-```
-
-<details class="beginner-box">
-<summary>When do you need `$ava->e()`?</summary>
-<div class="beginner-box-content">
-
-**You need it for user-submitted data:**
-- Comment text from visitors
-- Search queries from URL parameters
-- Form input being displayed back
-
-**You don't need it for your own content:**
-- Titles, excerpts, custom fields you wrote yourself
-- Data from your Markdown files
-- Site configuration values
-
-Since you control all content in Ava (there's no public user input by default), you typically don't need `$ava->e()` in most templates. It's there when you add features that accept user input, like a search form:
+Use `$ava->e()` to escape HTML characters in user-submitted data:
 
 ```php
 <!-- User input from URL - escape it! -->
 <p>Search results for: <?= $ava->e($request->query('q')) ?></p>
 ```
 
+<details class="beginner-box">
+<summary>When do you need `$ava->e()`?</summary>
+<div class="beginner-box-content">
+
+You only need it for **user-submitted data** like search queries or form input. Your own content from Markdown files is safe to output directly—you control it, so there's no security risk.
+
 </div>
 </details>
 
-### Accessing Custom Fields
+### Custom Fields
 
-Any field you add to frontmatter is accessible via `get()`:
-
-```yaml
----
-title: Team Member
-role: Designer
-featured: true
-website: https://example.com
----
-```
+Access any frontmatter field via `$content->get()`:
 
 ```php
 <p>Role: <?= $content->get('role', 'Unknown') ?></p>
@@ -377,27 +348,22 @@ website: https://example.com
 <?php if ($content->get('featured')): ?>
     <span class="badge">Featured</span>
 <?php endif; ?>
-
-<?php if ($content->has('website')): ?>
-    <a href="<?= $content->get('website') ?>">Visit Website</a>
-<?php endif; ?>
 ```
 
-### Displaying Taxonomies
+### Taxonomies
 
-Show categories, tags, or any taxonomy terms:
+Display categories, tags, or any taxonomy terms:
 
 ```php
+<!-- Terms for the current content item -->
 <?php foreach ($content->terms('category') as $term): ?>
     <a href="<?= $ava->termUrl('category', $term) ?>"><?= $term ?></a>
 <?php endforeach; ?>
-```
 
-Get all terms for a taxonomy across your site:
-
-```php
-<?php foreach ($ava->terms('category') as $term): ?>
-    <a href="<?= $ava->termUrl('category', $term) ?>"><?= $term ?></a>
+<!-- All terms across your site -->
+<?php foreach ($ava->terms('category') as $slug => $info): ?>
+    <a href="<?= $ava->termUrl('category', $slug) ?>"><?= $info['name'] ?></a>
+    <span>(<?= $info['count'] ?>)</span>
 <?php endforeach; ?>
 ```
 
@@ -419,7 +385,7 @@ foreach ($posts as $entry) {
 }
 ```
 
-#### Query Methods
+#### Building Queries
 
 | Method | Description | Example |
 |--------|-------------|---------|
@@ -510,35 +476,10 @@ Partials automatically inherit `$site`, `$theme`, `$request`, and `$ava`.
 ### URLs
 
 ```php
-// Content URL
-<?= $ava->url('post', 'hello-world') ?>  // /blog/hello-world
-
-// Taxonomy term URL
-<?= $ava->termUrl('category', 'tutorials') ?>  // /category/tutorials
-
-// Site base URL
-<?= $ava->baseUrl() ?>  // https://example.com
-
-// Theme asset (with cache-busting)
-<?= $ava->asset('style.css') ?>  // /theme/style.css?v=123456
-
-// Public asset (leading slash)
-<?= $ava->asset('/media/photo.jpg') ?>  // /media/photo.jpg
-
-// Full absolute URL
-<?= $ava->fullUrl('/about') ?>  // https://example.com/about
-```
-
-### Taxonomy Terms
-
-```php
-// Get all terms for a taxonomy
-<?php foreach ($ava->terms('category') as $slug => $info): ?>
-    <li><?= $ava->e($info['name']) ?> (<?= $info['count'] ?> posts)</li>
-<?php endforeach; ?>
-
-// Get display name for a term (uses config name, or title-cases the slug)
-<?= $ava->termName('category', 'getting-started') ?>  // "Getting Started"
+<?= $ava->url('post', 'hello-world') ?>                // /blog/hello-world
+<?= $ava->termUrl('category', 'tutorials') ?>           // /category/tutorials
+<?= $ava->asset('style.css') ?>                         // /theme/style.css?v=123456
+<?= $ava->fullUrl('/about') ?>                          // https://example.com/about
 ```
 
 ### SEO and Meta Tags
@@ -565,7 +506,7 @@ This helper outputs the appropriate `<link>` and `<script>` tags for that item.
 
 ## Template Resolution
 
-When a content item is requested, Ava looks for a template in this order:
+When a content item is requested, Ava CMS looks for a template in this order:
 
 1. **Frontmatter `template` field** — If the item specifies `template: landing`, use `templates/landing.php`
 2. **Content type's template** — From `content_types.php`, e.g., posts use `post.php`
@@ -584,11 +525,11 @@ When a content item is requested, Ava looks for a template in this order:
 
 | Error | Template | Built-in Fallback |
 |-------|----------|-------------------|
-| 404 Not Found | `404.php` | Ava's built-in 404 page (if theme doesn't provide one) |
-| 500 Server Error | `500.php` | Ava's built-in error page |
+| 404 Not Found | `404.php` | Ava CMS's built-in 404 page (if theme doesn't provide one) |
+| 500 Server Error | `500.php` | Ava CMS's built-in error page |
 
 <div class="callout-info">
-Ava includes built-in error page templates as fallbacks, so your site will always show a reasonable error page even if your theme doesn't include error templates.
+Ava CMS includes built-in error page templates as fallbacks, so your site will always show a reasonable error page even if your theme doesn't include error templates.
 </div>
 
 ## Taxonomy Templates
@@ -774,64 +715,48 @@ Displays all terms in a taxonomy:
 
 ## Search
 
-Ava includes a full-text search engine. The Query API does the heavy lifting — your theme just needs to wire up a route and display results.
-
-### The basics
+Ava CMS includes full-text search. Add `->search()` to any query to search titles, excerpts, and content:
 
 ```php
-$results = $app->query()
+$results = $ava->query()
     ->published()
     ->search('your query')
     ->perPage(10)
     ->get();
 ```
 
-That's it. `->search()` scores and ranks results by relevance; `->get()` returns an array of matching `Item` objects.
+Results are automatically scored and ranked by relevance.
 
-### Relevance weights
+### Tuning Search Relevance
 
-Results are ranked by a scoring system. Exact phrase matches in the title score higher than a single word buried in the body. You can tune these weights:
+By default, exact phrase matches in titles score highest. Customize weights:
 
-- **Globally per content type** — configure `search.weights` in `app/config/content_types.php`. When you filter by `->type('post')`, Ava auto-loads those weights. See [Search Configuration](/docs/configuration#content-search-configuration) for the full list of weight keys.
-- **Per query** — override for a specific search (e.g. boost titles even more for a quick-find UI):
+- **Globally** — configure `search.weights` in [content type config](/docs/configuration#content-search-configuration)
+- **Per query** — override with `->searchWeights()`:
 
 ```php
-$results = $app->query()
+$results = $ava->query()
     ->published()
-    ->searchWeights([
-        'title_phrase' => 120,
-        'body_phrase'  => 5,
-    ])
+    ->searchWeights(['title_phrase' => 120, 'body_phrase' => 5])
     ->search($q)
     ->get();
 ```
 
-### Adding a search route
+### Adding Search to Your Theme
 
-Register a route in `theme.php`. Return HTML for a search page, or JSON for an AJAX endpoint:
+Register a route in `theme.php` to handle search requests:
 
 ```php
-use Ava\Http\Response;
-
-$router->addRoute('/search.json', function ($request) use ($app) {
+$app->router()->addRoute('/search', function ($request) use ($app) {
     $q = trim($request->query('q', ''));
+    $results = $q ? $app->query()->published()->search($q)->perPage(10)->get() : [];
     
-    if (strlen($q) < 2) {
-        return Response::json(['items' => []]);
-    }
-    
-    $results = $app->query()->published()->search($q)->perPage(8)->get();
-    
-    return Response::json([
-        'items' => array_map(fn($item) => [
-            'title' => $item->title(),
-            'url'   => $app->router()->urlFor($item->type(), $item->slug()),
-        ], $results),
+    return $app->render('search', [
+        'query' => $q,
+        'results' => $results,
     ]);
 });
 ```
-
-Your front-end fetches `/search.json?q=...` and renders the results however you like — a dropdown, a modal, inline suggestions, etc.
 
 ### Working examples
 
@@ -870,39 +795,23 @@ return function (Application $app): void {
 };
 ```
 
-### Organising Larger Themes
+### Organizing Larger Themes
 
-If your `theme.php` grows unwieldy, split it into multiple files. Pass `$app` to each include:
+Split a large `theme.php` into multiple files:
 
 ```php
-<?php
 // app/themes/yourtheme/theme.php
-
 return function (\Ava\Application $app): void {
     (require __DIR__ . '/inc/shortcodes.php')($app);
-    (require __DIR__ . '/inc/hooks.php')($app);
     (require __DIR__ . '/inc/routes.php')($app);
 };
 ```
 
-Each included file follows the same pattern:
-
-```php
-<?php
-// app/themes/yourtheme/inc/shortcodes.php
-
-return function (\Ava\Application $app): void {
-    $app->shortcodes()->register('button', function (array $attrs, ?string $content) {
-        // ...
-    });
-};
-```
-
-This keeps your theme organised while maintaining portability—everything travels with your theme folder.
+Each file returns a function receiving `$app`—everything stays portable with your theme folder.
 
 ## Community Themes
 
-Looking for ready-made themes? Check out the [Community Themes](/themes) page for themes shared by other Ava users.
+Looking for ready-made themes? Check out the [Community Themes](/themes) page for themes shared by other Ava CMS users.
 
 Built a theme you'd like to share? [Submit it to the community gallery!](/themes#content-submit-your-theme)
 

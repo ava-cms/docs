@@ -324,6 +324,7 @@
     const SHOW_DELAY = 30000; // 30 seconds
     const CLOSE_DURATION = 2 * 60 * 60 * 1000; // 2 hours
     const MAYBE_LATER_DURATION = 10 * 60 * 1000; // 10 minutes
+    const PAGEVIEW_KEY = 'github-toast-doc-pages'; // session-scoped counter for docs page views
     
     function isDismissed() {
         const until = localStorage.getItem(STORAGE_KEY);
@@ -357,9 +358,99 @@
     window.starredGithub = function() {
         localStorage.setItem(STORAGE_KEY, (Date.now() + 1000 * 60 * 60 * 24 * 365 * 10).toString());
     };
-    
-    // Only show if not dismissed
-    if (!isDismissed()) {
-        setTimeout(showToast, SHOW_DELAY);
+
+    // Track docs page views in localStorage so it works with full-page caches.
+    // We avoid double-counting the same path by recording the last path seen.
+    function isDocsPath() {
+        try {
+            return String(window.location.pathname || '').startsWith('/docs');
+        } catch (e) {
+            return false;
+        }
     }
+
+    function incrementDocsPageCount() {
+        if (!isDocsPath()) return 0;
+        try {
+            const raw = localStorage.getItem(PAGEVIEW_KEY);
+            let state = raw ? JSON.parse(raw) : { count: 0, lastPath: '' };
+            const path = String(window.location.pathname || '');
+
+            // Don't increment if we've already counted this path (avoids reload/back duplicates)
+            if (state.lastPath === path) return state.count;
+
+            state.count = (parseInt(state.count, 10) || 0) + 1;
+            state.lastPath = path;
+
+            localStorage.setItem(PAGEVIEW_KEY, JSON.stringify(state));
+            return state.count;
+        } catch (e) {
+            return 0;
+        }
+    }
+    
+    // Only show if not dismissed. If the user has reached 3 docs pages in this session,
+    // show the toast immediately. Otherwise, fall back to the 30s delayed show.
+    if (!isDismissed()) {
+        const pageCount = incrementDocsPageCount();
+        if (pageCount >= 3) {
+            // show right away
+            showToast();
+        } else {
+            setTimeout(showToast, SHOW_DELAY);
+        }
+    }
+})();
+
+// Compare slider (before/after reveal)
+(function() {
+    document.querySelectorAll('.compare-slider').forEach(slider => {
+        const afterImg = slider.querySelector('.compare-after');
+        const handle = slider.querySelector('.compare-handle');
+        if (!afterImg || !handle) return;
+
+        const startPos = parseInt(slider.dataset.start, 10) || 50;
+        let isDragging = false;
+
+        function setPosition(percent) {
+            percent = Math.max(0, Math.min(100, percent));
+            // Clip the after image from the left side
+            afterImg.style.clipPath = `inset(0 0 0 ${percent}%)`;
+            handle.style.left = `${percent}%`;
+        }
+
+        function getPercent(e) {
+            const rect = slider.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            return (x / rect.width) * 100;
+        }
+
+        function onStart(e) {
+            isDragging = true;
+            setPosition(getPercent(e));
+        }
+
+        function onMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            setPosition(getPercent(e));
+        }
+
+        function onEnd() {
+            isDragging = false;
+        }
+
+        // Initialize position
+        setPosition(startPos);
+
+        // Mouse events
+        slider.addEventListener('mousedown', onStart);
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+
+        // Touch events
+        slider.addEventListener('touchstart', onStart, { passive: true });
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+    });
 })();

@@ -1,16 +1,18 @@
 ---
-title: Updates
-slug: updates
+title: Updating
+slug: updating
 status: published
-meta_title: Updates | Ava CMS
+meta_title: Updating | Ava CMS
 meta_description: Keep Ava CMS up to date with the built-in CLI updater. Learn update commands, requirements, and backup strategies for safe upgrades.
-excerpt: Keeping Ava up to date is easy. Use the CLI to check for updates and apply them, with backup reminders and safe file handling.
+excerpt: Keeping Ava CMS up to date is easy. Use the CLI to check for updates and apply them, with backup reminders and safe file handling.
+redirect_from:
+  - /docs/updates
 ---
 
-Keeping Ava up to date is easy. We release updates regularly with new features and bug fixes.
+Keeping Ava CMS up to date is easy. We release updates regularly with new features and bug fixes.
 
 <div class="callout-warning">
-<strong>Always ensure you have a good backup before attempting to update.</strong> Ava is in fairly early development and while we hope the updater will continue to seamlessly carry you through future versions, breaking changes may occur. See <a href="#backup-strategies">Backup Strategies</a> below.
+<strong>Always ensure you have a good backup before attempting to update.</strong> Ava CMS is in fairly early development and while we hope the updater will continue to seamlessly carry you through future versions, breaking changes may occur. See <a href="#backup-strategies">Backup Strategies</a> below.
 </div>
 
 ## How to Update
@@ -23,11 +25,14 @@ The easiest way is using the [CLI](/docs/cli):
 
 # 2. Apply the update
 ./ava update:apply
+
+# 3. Detect stale files left from older releases
+./ava update:stale
 ```
 
 By default, the CLI will ask you to confirm you have a backup before proceeding.
 
-Under the hood, Ava downloads an update ZIP from GitHub, extracts it into `storage/tmp/`, then copies a curated set of files into your install.
+Under the hood, Ava CMS downloads an update ZIP from GitHub, extracts it into `storage/tmp/`, then copies a curated set of files into your install.
 
 <div class="callout-info">
 <strong>Requirements:</strong> Updates require the PHP <code>ZipArchive</code> extension. If it is missing, <code>update:apply</code> will fail.
@@ -46,23 +51,23 @@ Under the hood, Ava downloads an update ZIP from GitHub, extracts it into `stora
 ./ava update:apply --dev
 ```
 
-Notes:
-- `update:check` caches results for 1 hour in `storage/cache/update_check.json`. Use `--force` (or `-f`) to bypass.
-- `update:check --dev` is treated as an alias for `update:apply --dev` (dev mode always applies immediately).
-- `update:apply --dev` bypasses version checks and updates from the latest `main` commit.
+<div class="callout-warning">
+<strong>Important:</strong> While the updater is designed to preserve your files, things can go wrong—especially during early development. Always have a backup before updating. If an update fails midway, you can restore from backup and try again, or do a <a href="#manual-updates">manual update</a>.
+</div>
 
 ## Manual Updates
 
 If you prefer not to use the built-in updater:
 
-1. Download the latest release from GitHub
-2. Extract and copy the files listed in "What Gets Updated"
+1. Download the [latest release](https://github.com/avacms/ava/releases) from GitHub
+2. Extract and copy the files listed in "[What Gets Updated](#content-what-gets-updated)" into your install
 3. Run `./ava rebuild` to rebuild the content index
 4. Run `composer install` if `composer.json` changed
 
+
 ## Backup Strategies
 
-Because Ava is a flat-file CMS, backing up is incredibly simple. You don't need to dump databases or export complex configurations. You just need to copy files.
+Because Ava CMS is a flat-file CMS, backing up is incredibly simple. You don't need to dump databases or export complex configurations. You just need to copy files.
 
 <details class="beginner-box">
 <summary>What Should I Back Up?</summary>
@@ -73,8 +78,8 @@ Because Ava is a flat-file CMS, backing up is incredibly simple. You don't need 
 The most important folders to back up are:
 
 - **`content/`** — All your pages, posts, and media
-- **`app/config/`** — Your site settings
-- **`themes/`** — Your customised themes
+- **`app/`** — Your sites custom code (config, themes, plugins, snippets)
+- **`public/`** — Any custom files you added here (like media files, `robots.txt`)
 
 Everything else (like `core/`, `vendor/`, `storage/cache/`) can be regenerated or re-downloaded.
 
@@ -100,7 +105,7 @@ Just download your files and keep them safe somewhere.
 - Or use your host's file manager to create and download a ZIP
 - Or via command line: `zip -r backup-$(date +%Y-%m-%d).zip .`
 
-**Pros:** Quick, works anywhere, no setup required.
+**Pros:** Quick, works anywhere, no setup required.  
 **Cons:** Manual effort, easy to forget, stored on same server until you download it.
 
 ### 2. Git Repository
@@ -115,7 +120,7 @@ git commit -m "Backup before update"
 git push origin main
 ```
 
-**Pros:** Automatic history of every change, off-site storage, easy to roll back.
+**Pros:** Automatic history of every change, off-site storage, easy to roll back.  
 **Cons:** Requires Git knowledge, you need to remember to commit and push.
 
 ### 3. Cloud Sync (Set and Forget)
@@ -148,52 +153,40 @@ Many people combine approaches—Git for development history, plus periodic manu
 
 ## What Gets Updated?
 
-The updater updates the core system files only. It's designed to leave your content and configuration alone.
-
-The updater is intentionally conservative: it updates Ava's core/runtime files while preserving your site-specific content and configuration.
+The updater only syncs a curated set of core/runtime files. It is intentionally conservative and leaves your content and site configuration untouched.
 
 **Updated (copied from the release into your install):**
-- `core/` — The Ava engine
+- `core/` — The Ava CMS engine
 - `ava` — The CLI entrypoint script
 - `bootstrap.php` — Bootstrap file (includes the `AVA_VERSION` constant)
 - `composer.json` — Dependencies manifest
 - `public/index.php` — Front controller / entry point
-- `public/assets/admin.css` — Admin styles
-- `docs/` — Documentation directory, if present in the release
 
-**Bundled plugins** are also updated (files copied into `plugins/<name>/`), currently:
-- `plugins/sitemap/`
-- `plugins/feed/`
-- `plugins/redirects/`
+**Bundled plugins** are updated in `app/plugins/<name>/` (Ava looks for them in `app/plugins/` and falls back to `plugins/` in older releases), currently:
+- `app/plugins/sitemap/`
+- `app/plugins/feed/`
+- `app/plugins/redirects/`
 
-If a release adds a *new bundled plugin* and you do not already have a folder for it, the updater will copy it into `plugins/<new-plugin>/`. New plugins are not automatically enabled — you activate plugins via your config.
+If a release adds a **new bundled plugin** and you do not already have a folder for it, the updater will copy it into `app/plugins/<new-plugin>/`. New plugins are not automatically enabled — you activate plugins via your config.
 
-**Preserved (never targeted by the updater):**
+**Preserved (not targeted by the updater):**
 - `content/` — Your pages, posts, and media
-- `app/` — Your configuration (including `app/config/*`)
-- `themes/` — Your themes
-- `plugins/` — Any custom/non-bundled plugins you created
-- `vendor/` — Installed PHP dependencies
+- `app/config/` — Your configuration
+- `app/themes/` — Your themes
+- `app/snippets/` — Your snippets
 - `storage/` — Cache, logs, temp files
+- `vendor/` — Installed PHP dependencies
 - `.git/`, `.env`
 - `public/robots.txt`
 
-<div class="callout-warning">
-<strong>Important:</strong> The updater copies files but does not delete old files that no longer exist in newer versions.
-If a file was renamed or removed between versions, you may need to delete the old file manually.
-</div>
-
-<div class="callout-warning">
-<strong>Important:</strong> While the updater is designed to preserve your files, things can go wrong—especially during early development. Always have a backup before updating. If an update fails midway, you can restore from backup and try again, or do a <a href="#manual-updates">manual update</a>.
+<div class="callout-info">
+<strong>After updating:</strong> The updater copies files but does not delete old files that no longer exist in newer versions.
+If a file was renamed or removed between versions, you may need to delete the old file manually (use <code>update:stale</code> to detect stale files).
 </div>
 
 ## Version Numbers
 
-Ava uses Semantic Versioning (SemVer): `MAJOR.MINOR.PATCH`.
-
-- **MAJOR**: backwards-incompatible changes
-- **MINOR**: new features that remain backwards compatible
-- **PATCH**: bug fixes and small improvements
+Ava CMS attempts to use Semantic Versioning (SemVer): `MAJOR.MINOR.PATCH`, although we are still in early development and the versioning is not yet strict. Check release notes for details.
 
 ## Troubleshooting
 

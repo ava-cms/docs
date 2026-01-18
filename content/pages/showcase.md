@@ -13,7 +13,7 @@ A gallery of websites built with Ava CMS. Get inspired by what others are creati
 <div class="showcase-grid">
     <div class="preview-card">
         <div class="preview-card-image">
-            <img src="@media:showcase/ava.addy.zone_.png" alt="Ava CMS Documentation screenshot" />
+            <a href="https://ava.addy.zone" target="_blank" rel="noopener"><img src="@media:showcase/ava.addy.zone_.png" alt="Ava CMS Documentation screenshot" /></a>
         </div>
         <div class="preview-card-content">
             <h3 class="preview-card-title"><a href="https://ava.addy.zone" target="_blank" rel="noopener">ava.addy.zone</a></h3>
@@ -25,7 +25,7 @@ A gallery of websites built with Ava CMS. Get inspired by what others are creati
 
 ## Submit Your Site
 
-Using Ava for your website? We'd love to feature it here!
+Using Ava CMS for your website? We'd love to feature it here!
 
 <ul class="feature-list">
     <li>Your site URL</li>
@@ -38,4 +38,4 @@ Using Ava for your website? We'd love to feature it here!
 - [Open an issue on GitHub](https://github.com/avacms/ava/issues) with the label "showcase"
 - Or share it in [Discord](https://discord.gg/fZwW4jBVh5)
 
-Whether it's a personal blog, portfolio, documentation site, or something completely different — if you built it with Ava, we want to see it!
+Whether it's a personal blog, portfolio, documentation site, or something completely different — if you built it with Ava CMS, we want to see it!

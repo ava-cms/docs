@@ -4,14 +4,10 @@ slug: cli
 status: published
 meta_title: CLI Reference | Flat-file PHP CMS | Ava CMS
 meta_description: Complete CLI reference for Ava CMS. Manage content, users, rebuild indexes, run tests, and automate your flat-file CMS workflow from the command line.
-excerpt: Ava includes a friendly command-line interface for managing your site. Create content, manage users, rebuild indexes, and run tests—all from your terminal.
+excerpt: Ava CMS includes a friendly command-line interface for managing your site. Create content, manage users, rebuild indexes, and run tests—all from your terminal.
 ---
 
-<pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
-  ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span></samp></pre>
-
-Ava includes a friendly command-line interface for managing your site. Run commands from your project root:
+Ava CMS includes a command-line interface for managing your site. Run commands from your project root (the folder with `ava` in it):
 
 ```bash
 ./ava <command> [options]
@@ -23,10 +19,10 @@ The CLI has been thoughtfully designed for a simple and delightful experience. M
 <summary>Beginner’s Guide to the Terminal</summary>
 <div class="beginner-box-content">
 
-“CLI” just means *typing commands* instead of clicking buttons. It’s a superpower for servers and automation, but you only need a tiny slice of it to be productive with Ava.
+“CLI” just means *typing commands* instead of clicking buttons. It’s a superpower for servers and automation, but you only need a tiny slice of it to be productive with Ava CMS.
 
 ### What is “the project root”?
-It’s the folder that contains your Ava project — where you can see `composer.json`, `content/`, `app/`, and the `ava` script.
+It’s the folder that contains your Ava CMS project — where you can see `composer.json`, `content/`, `app/`, and the `ava` script.
 
 <div class="callout-info">
 <strong>Tip:</strong> If you type <code>./ava status</code> and it works, you're in the right folder.
@@ -50,100 +46,9 @@ It’s the folder that contains your Ava project — where you can see `composer
 
 ### Running Commands on a Server
 
-To run Ava commands on your live site, you'll need to connect via SSH. See the [Hosting Guide](/docs/hosting#ssh-running-commands-on-your-server) for a complete walkthrough of SSH setup, clients, and connecting to your server.
+To run Ava CMS commands on your live site, you'll need to connect via SSH. See the [Hosting Guide](/docs/hosting#ssh-running-commands-on-your-server) for a complete walkthrough of SSH setup, clients, and connecting to your server.
 
-## Colour Theme
 
-The CLI uses a configurable colour theme for the banner, section headers, and highlights. Set your preferred theme in `app/config/ava.php`:
-
-```php
-'cli' => [
-    'theme' => 'cyan',  // cyan, pink, purple, green, blue, amber, disabled
-],
-```
-
-| Theme | Description |
-|-------|-------------|
-| `cyan` | Cool cyan/aqua (default) |
-| `pink` | Vibrant pink |
-| `purple` | Classic purple |
-| `green` | Matrix green |
-| `blue` | Standard blue |
-| `amber` | Warm amber/orange |
-| `disabled` | No colours (plain text output) |
-
-Use `disabled` for CI/CD pipelines or terminals that don't support ANSI colours.
-
-## Quick Reference
-
-### Core Commands
-
-| Command | Description |
-|---------|-------------|
-| `--help` (or `-h`, `help`) | Show all available commands |
-| `--version` (or `-v`, `version`) | Show Ava version |
-| `status` | Show site overview and health |
-| `rebuild` | Rebuild the [content index](/docs/performance#content-indexing) |
-| `lint` | Validate [content files](/docs/content) |
-| `benchmark [--compare] [--iterations=N]` | Test content index [performance](/docs/performance#benchmark-comparison) |
-
-### Content Commands
-
-| Command | Description |
-|---------|-------------|
-| `make <type> "Title"` | Create new content |
-| `prefix <add\|remove> [type]` | Toggle date prefixes on filenames |
-
-### User Management
-
-| Command | Description |
-|---------|-------------|
-| `user:add <email> <pass> [name]` | Create admin user |
-| `user:password <email> <pass>` | Update user password |
-| `user:remove <email>` | Remove admin user |
-| `user:list` (or `user`) | List all users |
-
-### Updates
-
-| Command | Description |
-|---------|-------------|
-| `update:check [--force]` (or `update`) | Check for updates |
-| `update:apply [-y] [--dev]` | Apply available update |
-
-### Webpage Cache
-
-| Command | Description |
-|---------|-------------|
-| `cache:stats` (or `cache`) | Webpage cache statistics |
-| `cache:clear [pattern]` | Clear webpage cache |
-
-### Logs
-
-| Command | Description |
-|---------|-------------|
-| `logs:stats` (or `logs`) | Log file statistics |
-| `logs:tail [name] [-n N]` | Show last lines of a log |
-| `logs:clear [name]` | Clear log files |
-
-### Testing & Benchmarking
-
-| Command | Description |
-|---------|-------------|
-| `test [filter] [-q] [--release]` | Run the [test suite](/docs/testing) |
-| `stress:generate <type> <count>` | Generate test content |
-| `stress:clean <type>` | Remove test content |
-
-### Plugin Commands
-
-Enabled plugins can add their own CLI commands. See [Bundled Plugins](/docs/bundled-plugins) for full documentation.
-
-| Command | Plugin | Description |
-|---------|--------|-------------|
-| `sitemap:stats` | sitemap | Show sitemap statistics |
-| `feed:stats` | feed | Show RSS feed statistics |
-| `redirects:list` | redirects | List all redirects |
-| `redirects:add <from> <to> [code]` | redirects | Add a redirect |
-| `redirects:remove <from>` | redirects | Remove a redirect |
 
 ## Getting Help
 
@@ -158,10 +63,11 @@ Run `./ava` or `./ava --help` to see all available commands:
 - `./ava logs` → `logs:stats`
 - `./ava user` → `user:list`
 - `./ava update` → `update:check`
+- `./ava stress:benchmark` → `benchmark`
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.1.0</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Usage</span> <span class="t-dim">─────────────────────────────────────────────</span>
 
@@ -170,7 +76,7 @@ Run `./ava` or `./ava --help` to see all available commands:
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Site Management</span> <span class="t-dim">───────────────────────────────────</span>
 
     <span class="t-white">status</span>                        <span class="t-dim">Show site health and overview</span>
-    <span class="t-white">rebuild</span>                       <span class="t-dim">Rebuild the content index</span>
+    <span class="t-white">rebuild [--keep-webcache]</span>     <span class="t-dim">Rebuild the content index</span>
     <span class="t-white">lint</span>                          <span class="t-dim">Validate all content files</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Content</span> <span class="t-dim">───────────────────────────────────────────</span>
@@ -200,13 +106,14 @@ Run `./ava` or `./ava --help` to see all available commands:
 
     <span class="t-white">update:check (or update)</span>      <span class="t-dim">Check for updates</span>
     <span class="t-white">update:apply</span>                  <span class="t-dim">Apply available update</span>
+    <span class="t-white">update:stale</span>                  <span class="t-dim">Detect stale files from older releases</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Testing</span> <span class="t-dim">───────────────────────────────────────────</span>
 
     <span class="t-white">test [filter]</span>                 <span class="t-dim">Run the test suite</span>
     <span class="t-white">stress:generate &lt;type&gt; &lt;n&gt;</span>    <span class="t-dim">Generate test content</span>
     <span class="t-white">stress:clean &lt;type&gt;</span>           <span class="t-dim">Remove test content</span>
-    <span class="t-white">benchmark</span>                     <span class="t-dim">Benchmark index backends</span>
+    <span class="t-white">stress:benchmark</span>              <span class="t-dim">Benchmark index backends</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Plugins</span> <span class="t-dim">───────────────────────────────────────────</span>
 
@@ -224,7 +131,7 @@ Run `./ava` or `./ava --help` to see all available commands:
 
 ### version
 
-Show the current Ava version:
+Show the current Ava CMS version:
 
 ```bash
 ./ava --version
@@ -236,7 +143,7 @@ Show the current Ava version:
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span></samp></pre>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.1.0</span></samp></pre>
 
 <details class="beginner-box">
 <summary>Why do commands start with <code>./</code>?</summary>
@@ -261,7 +168,7 @@ Shows a quick overview of your site's health:
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.1.0</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Site</span> <span class="t-dim">──────────────────────────────────────────────</span>
 
@@ -304,6 +211,9 @@ Rebuild the content index:
 
 ```bash
 ./ava rebuild
+
+# Preserve existing webpage cache while rebuilding the index
+./ava rebuild --keep-webpage-cache   # alias: --keep-webcache
 ```
 
 <pre><samp>  <span class="t-green">✓</span> Rebuilding content index <span class="t-dim">(23ms)</span>
@@ -317,7 +227,7 @@ What it does:
 - Loads plugins first so rebuild hooks can run
 - Rebuilds the content index (`$app->indexer()->rebuild()`)
 - If `content_index.prerender_html` is enabled: writes `storage/cache/html_cache.bin` (otherwise deletes it)
-- Clears the webpage cache at the end (so pages regenerate on the next request)
+- Clears the webpage cache at the end (so pages regenerate on the next request), unless the `--keep-webpage-cache` / `--keep-webcache` flag is supplied to preserve cached pages during the rebuild
 
 Alternative invocation (if the `./ava` script isn’t executable): `php ava rebuild`.
 
@@ -509,14 +419,14 @@ Results are cached for 1 hour. Force a fresh check:
 
 <pre><samp>  🔍 Checking for updates...
 
-  <span class="t-dim">Current:</span>    <span class="t-white">1.0.0.0</span>
-  <span class="t-dim">Latest:</span>     <span class="t-green">1.0.0.1</span>
+  <span class="t-dim">Current:</span>    <span class="t-white">1.1.0</span>
+  <span class="t-dim">Latest:</span>     <span class="t-green">1.1.1</span>
 
   <span class="t-green">╭───────────────────────╮
   │  Update available!    │
   ╰───────────────────────╯</span>
 
-  <span class="t-dim">Release:</span>    <span class="t-white">v1.0.0.1</span>
+  <span class="t-dim">Release:</span>    <span class="t-white">v1.1.1</span>
   <span class="t-dim">Published:</span>  <span class="t-white">2024-12-28</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Changelog</span> <span class="t-dim">──────────────────────────────────────────</span>
@@ -526,12 +436,6 @@ Results are cached for 1 hour. Force a fresh check:
   <span class="t-dim">-</span> Added progress bars for bulk operations
 
   <span class="t-blue">→</span> <span class="t-cyan">./ava update:apply</span> <span class="t-dim">— Download and apply the update</span></samp></pre>
-
-Results are cached for 1 hour. Force a fresh check:
-
-```bash
-./ava update:check --force
-```
 
 ### update:apply
 
@@ -543,8 +447,8 @@ Download and apply the latest update:
 
 <pre><samp>  <span class="t-dim">───</span> <span class="t-cyan t-bold">Update Available</span> <span class="t-dim">───────────────────────────────────</span>
 
-  <span class="t-dim">From:</span>       <span class="t-white">1.0.0.0</span>
-  <span class="t-dim">To:</span>         <span class="t-green">1.0.0.1</span>
+  <span class="t-dim">From:</span>       <span class="t-white">1.1.0</span>
+  <span class="t-dim">To:</span>         <span class="t-green">1.1.1</span>
 
   <span class="t-bold">Will be updated:</span>
     <span class="t-cyan">▸</span> Core files <span class="t-dim">(core/, bin/, bootstrap.php)</span>
@@ -590,7 +494,7 @@ Skip confirmation with `-y` or `--yes`:
       <span class="t-dim">This may include unstable or untested changes.</span>
       <span class="t-dim">Version checks are bypassed in dev mode.</span>
 
-  <span class="t-dim">From:</span>       <span class="t-white">1.0.0.0</span>
+  <span class="t-dim">From:</span>       <span class="t-white">1.0.0</span>
   <span class="t-dim">To:</span>         <span class="t-yellow t-bold">main (latest commit)</span></samp></pre>
 
 <div class="callout-warning">
@@ -598,6 +502,44 @@ Skip confirmation with `-y` or `--yes`:
 </div>
 
 See [Updates](/docs/updates) for details on what gets updated and preserved.
+
+### update:stale
+
+Detect leftover files from older Ava CMS releases that are no longer needed:
+
+```bash
+./ava update:stale
+```
+
+<pre><samp>  <span class="t-green">✓</span> Scanning for stale files <span class="t-dim">(1.2s)</span>
+
+  <span class="t-dim">Compared to:</span> <span class="t-white">v1.1.0</span>
+
+  <span class="t-green">╭──────────────────────────╮
+  │  No stale files found    │
+  ╰──────────────────────────╯</span></samp></pre>
+
+If stale files are detected:
+
+<pre><samp>  <span class="t-green">✓</span> Scanning for stale files <span class="t-dim">(1.2s)</span>
+
+  <span class="t-dim">Compared to:</span> <span class="t-white">v1.1.0</span>
+
+  <span class="t-yellow">╭──────────────────────────────────╮
+  │  Found 3 stale file(s)          │
+  ╰──────────────────────────────────╯</span>
+
+  <span class="t-cyan">•</span> core/OldClass.php
+  <span class="t-cyan">•</span> core/Deprecated/Helper.php
+  <span class="t-cyan">•</span> app/plugins/feed/old-template.php
+
+  <span class="t-yellow">💡 Tip:</span> Review before deleting any files</samp></pre>
+
+This command compares your local files against the latest release to identify files that were removed in newer versions. Use `--dev` to compare against the latest main branch commit instead of a release.
+
+<div class="callout-info">
+<strong>Note:</strong> This command cannot run if you use custom paths (non-default <code>app</code>, <code>content</code>, or <code>storage</code> locations). Review stale files carefully before deleting—some may be intentional customizations.
+</div>
 
 ## Webpage Cache
 
@@ -651,7 +593,7 @@ See [Performance](/docs/performance#page-cache-details) for details.
 
 ## Logs
 
-Commands for managing log files in `storage/logs/`. Ava automatically rotates log files when they exceed the configured size limit to prevent disk space issues.
+Commands for managing log files in `storage/logs/`. Ava CMS automatically rotates log files when they exceed the configured size limit to prevent disk space issues.
 
 ### logs:stats
 
@@ -730,7 +672,7 @@ Clear log files:
 
 ### Log Rotation
 
-Ava automatically rotates log files to prevent them from growing too large. Configure rotation in `app/config/ava.php`:
+Ava CMS automatically rotates log files to prevent them from growing too large. Configure rotation in `app/config/ava.php`:
 
 ```php
 'logs' => [
@@ -745,54 +687,6 @@ When a log exceeds `max_size`, it's rotated:
 - Oldest files beyond `max_files` are deleted
 
 See [Configuration - Logs](/docs/configuration#logs) for details.
-
-## Stress Testing
-
-Commands for testing performance with large amounts of content.
-
-### stress:generate
-
-Generate dummy content for stress testing:
-
-```bash
-./ava stress:generate post 100
-```
-
-<pre><samp>  🧪 Generating <span class="t-white">100</span> dummy post(s)...
-
-  <span class="t-green">[████████████████████████████████]</span> <span class="t-white">100%</span> Creating posts...
-
-  <span class="t-green">✓</span> Generated <span class="t-white">100</span> files in <span class="t-dim">245ms</span>
-
-  <span class="t-green">✓</span> Rebuilding content index <span class="t-dim">(89ms)</span>
-
-  <span class="t-blue">→</span> <span class="t-cyan">./ava stress:clean post</span> <span class="t-dim">— Remove generated content when done</span></samp></pre>
-
-Generated content includes:
-- Random lorem ipsum titles and content
-- Random dates (within last 2 years for dated types)
-- Random taxonomy terms from configured taxonomies
-- 80% published, 20% draft status
-- Files prefixed with `_dummy-` for easy identification
-
-### stress:clean
-
-Remove all generated test content:
-
-```bash
-./ava stress:clean post
-```
-
-<pre><samp>  Found <span class="t-white">100</span> dummy content file(s).
-
-  Delete all? <span class="t-dim">[y/N]:</span> <span class="t-green">y</span>
-
-  <span class="t-green">[████████████████████████████████]</span> <span class="t-white">100%</span> Deleting files...
-
-  <span class="t-green">✓</span> Deleted <span class="t-white">100</span> file(s)
-
-  <span class="t-green">✓</span> Rebuilding content index <span class="t-dim">(12ms)</span>
-  <span class="t-green">✓ Done!</span></samp></pre>
 
 ## Testing
 
@@ -875,11 +769,13 @@ Test the performance of your content index:
 
 ```bash
 ./ava benchmark
+# or
+./ava stress:benchmark
 ```
 
 <pre><samp><span class="t-cyan">   ▄▄▄  ▄▄ ▄▄  ▄▄▄     ▄▄▄▄ ▄▄   ▄▄  ▄▄▄▄
   ██▀██ ██▄██ ██▀██   ██▀▀▀ ██▀▄▀██ ███▄▄
-  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.0.0</span>
+  ██▀██  ▀█▀  ██▀██   ▀████ ██   ██ ▄▄██▀</span>   <span class="t-dim">v1.1.0</span>
 
   <span class="t-dim">───</span> <span class="t-cyan t-bold">Performance Benchmark</span> <span class="t-dim">───────────────────────────────</span>
 
@@ -962,6 +858,54 @@ Test the performance of your content index:
 
 See [Performance](/docs/performance) for detailed benchmark results and backend recommendations.
 
+## Stress Testing
+
+Commands for testing performance with large amounts of content.
+
+### stress:generate
+
+Generate dummy content for stress testing:
+
+```bash
+./ava stress:generate post 100
+```
+
+<pre><samp>  🧪 Generating <span class="t-white">100</span> dummy post(s)...
+
+  <span class="t-green">[████████████████████████████████]</span> <span class="t-white">100%</span> Creating posts...
+
+  <span class="t-green">✓</span> Generated <span class="t-white">100</span> files in <span class="t-dim">245ms</span>
+
+  <span class="t-green">✓</span> Rebuilding content index <span class="t-dim">(89ms)</span>
+
+  <span class="t-blue">→</span> <span class="t-cyan">./ava stress:clean post</span> <span class="t-dim">— Remove generated content when done</span></samp></pre>
+
+Generated content includes:
+- Random lorem ipsum titles and content
+- Random dates (within last 2 years for dated types)
+- Random taxonomy terms from configured taxonomies
+- 80% published, 20% draft status
+- Files prefixed with `_dummy-` for easy identification
+
+### stress:clean
+
+Remove all generated test content:
+
+```bash
+./ava stress:clean post
+```
+
+<pre><samp>  Found <span class="t-white">100</span> dummy content file(s).
+
+  Delete all? <span class="t-dim">[y/N]:</span> <span class="t-green">y</span>
+
+  <span class="t-green">[████████████████████████████████]</span> <span class="t-white">100%</span> Deleting files...
+
+  <span class="t-green">✓</span> Deleted <span class="t-white">100</span> file(s)
+
+  <span class="t-green">✓</span> Rebuilding content index <span class="t-dim">(12ms)</span>
+  <span class="t-green">✓ Done!</span></samp></pre>
+
 ## Plugin Commands
 
 Enabled plugins can register their own CLI commands. When you run `./ava --help`, plugin commands appear in the **Plugins** section.
@@ -1004,6 +948,92 @@ return [
 |------|---------|
 | 0 | Success |
 | 1 | Error (invalid arguments, validation failures, etc.) |
+
+## Quick Reference
+
+### Core Commands
+
+| Command | Description |
+|---------|-------------|
+| `--help` (or `-h`, `help`) | Show all available commands |
+| `--version` (or `-v`, `version`) | Show Ava CMS version |
+| `status` | Show site overview and health |
+| `rebuild` | Rebuild the [content index](/docs/performance#content-indexing) |
+| `lint` | Validate [content files](/docs/content) |
+
+### Content Commands
+
+| Command | Description |
+|---------|-------------|
+| `make <type> "Title"` | Create new content |
+| `prefix <add\|remove> [type]` | Toggle date prefixes on filenames |
+
+### User Management
+
+| Command | Description |
+|---------|-------------|
+| `user:add <email> <pass> [name]` | Create admin user |
+| `user:password <email> <pass>` | Update user password |
+| `user:remove <email>` | Remove admin user |
+| `user:list` (or `user`) | List all users |
+
+### Updates
+
+| Command | Description |
+|---------|-------------|
+| `update:check [--force]` (or `update`) | Check for updates |
+| `update:apply [-y] [--dev]` | Apply available update |
+| `update:stale [--dev]` | Detect stale files from older releases |
+
+### Webpage Cache
+
+| Command | Description |
+|---------|-------------|
+| `cache:stats` (or `cache`) | Webpage cache statistics |
+| `cache:clear [pattern]` | Clear webpage cache |
+
+### Logs
+
+| Command | Description |
+|---------|-------------|
+| `logs:stats` (or `logs`) | Log file statistics |
+| `logs:tail [name] [-n N]` | Show last lines of a log |
+| `logs:clear [name]` | Clear log files |
+
+### Testing & Benchmarking
+
+| Command | Description |
+|---------|-------------|
+| `test [filter] [-q] [--release]` | Run the [test suite](/docs/testing) |
+| `benchmark [--compare] [--iterations=N]` | Test content index [performance](/docs/performance#benchmark-comparison) |
+| `stress:generate <type> <count>` | Generate test content |
+| `stress:clean <type>` | Remove test content |
+| `stress:benchmark` | Alias for `benchmark` |
+
+### Plugin Commands
+
+Enabled plugins can add their own CLI commands. See [Bundled Plugins](/docs/bundled-plugins) for full documentation.
+
+| Command | Plugin | Description |
+|---------|--------|-------------|
+| `sitemap:stats` | sitemap | Show sitemap statistics |
+| `feed:stats` | feed | Show RSS feed statistics |
+| `redirects:list` | redirects | List all redirects |
+| `redirects:add <from> <to> [code]` | redirects | Add a redirect |
+| `redirects:remove <from>` | redirects | Remove a redirect |
+
+
+## Colour Theme
+
+The CLI uses a configurable colour theme for the banner, section headers, and highlights. Set your preferred theme in `app/config/ava.php`:
+
+```php
+'cli' => [
+    'theme' => 'cyan',  // cyan, pink, purple, green, blue, amber, disabled
+],
+```
+
+Use `disabled` for CI/CD pipelines or terminals that don't support ANSI colours.
 
 ## Common Workflows
 
@@ -1092,7 +1122,7 @@ php -S localhost:8000 -t public
 ./ava user:remove editor@example.com
 ```
 
-### Updating Ava
+### Updating Ava CMS
 
 ```bash
 # Check for updates
@@ -1123,4 +1153,7 @@ php -S localhost:8000 -t public
 # Clear caches and rebuild
 ./ava cache:clear
 ./ava rebuild
+
+# After updating, check for stale files
+./ava update:stale
 ```

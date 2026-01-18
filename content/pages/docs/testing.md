@@ -4,12 +4,12 @@ slug: testing
 status: published
 meta_title: Testing | Flat-file PHP CMS | Ava CMS
 meta_description: Ava CMS includes a lightweight, zero-dependency test framework. Learn how to run tests, write test cases, and use release checks for maintainers.
-excerpt: Ava includes a lightweight, zero-dependency test framework for verifying core functionality. Run tests with the CLI and write your own test cases.
+excerpt: Ava CMS includes a lightweight, zero-dependency test framework for verifying core functionality. Run tests with the CLI and write your own test cases.
 ---
 
-Ava includes a lightweight, zero-dependency test framework for verifying core functionality. Tests are designed for maintainers and contributors working on the CMS itself.
+Ava CMS includes a lightweight, zero-dependency test framework for verifying core functionality. Tests are designed for maintainers and contributors working on the CMS itself.
 
-This page documents the test framework exactly as it exists in the current Ava codebase:
+This page documents the test framework exactly as it exists in the current Ava CMS codebase:
 
 - The runner is implemented in `core/Testing/`.
 - The CLI entrypoint is `./ava test` (implemented in `core/Cli/Application.php`).
@@ -50,38 +50,10 @@ Run the test suite from your project root:
 
 Supported flags/arguments:
 
-- `filter` (optional): a single string used to filter the run.
+- `filter` (optional): a single string used to filter the run. The runner first matches the class name (case-insensitive substring); if the class matches, the same filter is applied to method names to narrow which tests run within that class.
 - `-q`, `--quiet`: reduce output.
 - `--release`: include release-readiness tests under `core/tests/Release/`.
 - `-v`, `--verbose`: accepted by the CLI, but currently does not change output (reserved for a future verbose mode).
-
-### Filtering Tests
-
-The `filter` is the **first non-flag argument** (the first argument that does not start with `-`).
-
-Important: the current runner applies the filter in **two places**:
-
-1. It skips an entire test class unless the fully-qualified class name contains the filter (case-insensitive).
-2. It then skips individual test methods unless the method name also contains the filter (case-insensitive).
-
-Because most test method names do not include the class name (e.g. `StrTest` vs `testSlugConvertsToLowercase`), this means filtering is currently a bit unintuitive.
-
-Examples:
-
-```bash
-./ava test               # Run all non-release tests
-./ava test --release     # Run all tests, including Release checks
-```
-
-If you try to filter by class name only:
-
-```bash
-./ava test Str
-```
-
-…Ava will locate `StrTest`, but it may still run **zero** methods because the same filter is also applied to method names.
-
-Until the filter behaviour is refined, treat `filter` as an experimental/quirky feature and prefer running the full suite.
 
 ### Quiet Mode
 
@@ -106,13 +78,26 @@ Tests live in `core/tests/` and are organised by component:
 ```
 core/tests/
 ├── Admin/
-│   └── DebugTest.php          # Debug configuration and logging
+│   ├── AuthTest.php           # Admin authentication
+│   ├── ContentSecurityTest.php # Content Security Policy rules
+│   ├── DebugTest.php          # Debug configuration and logging
+│   └── MediaUploaderTest.php  # Media upload handling
 ├── Config/
 │   └── ConfigTest.php         # Configuration access patterns
 ├── Content/
+│   ├── IndexerRoutesTest.php  # Indexer route generation
 │   ├── ItemTest.php           # Content item value object
-│   └── ParserTest.php         # Markdown/YAML parser
-├── Core/                      # Core services
+│   ├── ParserTest.php         # Markdown/YAML parser
+│   └── QueryTest.php          # Content query builder
+├── Core/
+│   └── UpdaterTest.php         # Updater behavior
+├── Fields/
+│   ├── BasicFieldsTest.php    # Basic field types
+│   ├── ComplexFieldsTest.php  # Complex field types
+│   ├── FieldRegistryTest.php  # Field registry
+│   ├── SystemFieldsTest.php   # System fields
+│   ├── TextFieldsTest.php     # Text fields
+│   └── ValidationResultTest.php # Field validation result
 ├── Http/
 │   ├── HttpsEnforcementTest.php  # HTTPS/localhost detection
 │   ├── RequestTest.php        # HTTP request handling
@@ -120,9 +105,12 @@ core/tests/
 ├── Plugins/
 │   └── HooksTest.php          # Action/filter hook system
 ├── Rendering/
-│   └── MarkdownTest.php       # CommonMark rendering
+│   ├── ErrorPagesTest.php     # Error page rendering
+│   ├── MarkdownTest.php       # CommonMark rendering
+│   └── RawHtmlTest.php        # Raw HTML handling
 ├── Routing/
-│   └── RouteMatchTest.php     # Route match value object
+│   ├── RouteMatchTest.php     # Route match value object
+│   └── RouterTest.php         # Router behavior
 ├── Shortcodes/
 │   └── EngineTest.php         # Shortcode processing
 ├── Release/
@@ -179,8 +167,10 @@ The runner discovers tests by scanning `core/tests/` recursively:
 
 Notes / quirks:
 
-- A test class does **not** technically have to extend `TestCase` to run, but then you won’t have Ava’s assertion helpers or the `$app` injection.
+- A test class does **not** technically have to extend `TestCase` to run, but then you won’t have Ava CMS’s assertion helpers or the `$app` injection.
 - If you define `setUp()` / `tearDown()`, define them as `public`. The runner calls them directly; non-public visibility will cause an error.
+- If `setUp()` throws, that test is recorded as a failure and the test body is not run.
+- If `tearDown()` throws, the error is ignored and does not fail the test.
 
 ### Available Assertions
 
@@ -237,7 +227,7 @@ Skipped tests are counted as skipped (not failed).
 
 ### What Counts as a Failure?
 
-- Any `AssertionFailedException` (thrown by Ava assertions) marks the test as failed.
+- Any `AssertionFailedException` (thrown by Ava CMS assertions) marks the test as failed.
 - Any other uncaught `Throwable` inside a test method also marks it as failed.
 
 Failures are listed at the end with the thrown message and file/line.
@@ -268,9 +258,9 @@ The test suite focuses on **unit testing core utilities** that have no external 
 - **Markdown** - CommonMark rendering behaviour
 - **Config access** - Dot-notation array access patterns
 
-Classes that require full `Application` context can still be tested: when you extend `TestCase`, Ava injects an `Ava\Application` instance as `$this->app`.
+Classes that require full `Application` context can still be tested: when you extend `TestCase`, Ava CMS injects an `Ava\Application` instance as `$this->app`.
 
-However, Ava’s test suite is still intentionally biased toward fast, deterministic tests.
+However, Ava CMS’s test suite is still intentionally biased toward fast, deterministic tests.
 
 
 ## Continuous Integration

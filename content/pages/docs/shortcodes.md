@@ -69,7 +69,7 @@ Usage:
 </code></pre>
 
 <div class="callout-info">
-<strong>Heads up:</strong> Ava processes shortcodes after Markdown, so shortcodes can run even inside code blocks/tables. This page inserts an invisible character after <code>[</code> in examples so they display correctly without executing.
+<strong>Heads up:</strong> Ava CMS processes shortcodes after Markdown, so shortcodes can run even inside code blocks/tables. This page inserts an invisible character after <code>[</code> in examples so they display correctly without executing.
 </div>
 
 ### Shortcode Callback Parameters
@@ -80,7 +80,7 @@ Usage:
 | `$content` | `?string` | Content between opening/closing tags (null when not provided) |
 | `$tag` | `string` | Normalized shortcode tag name (lowercase) |
 
-If your callback only needs `$attrs`, you can still declare fewer parameters — PHP will ignore the extra arguments Ava passes.
+If your callback only needs `$attrs`, you can still declare fewer parameters — PHP will ignore the extra arguments Ava CMS passes.
 
 ### Attributes
 
@@ -211,7 +211,7 @@ Usage: <code>&#91;&#8203;snippet name=&quot;pricing&quot; plan=&quot;Pro&quot; p
 
 Since shortcodes run after Markdown processing, they can safely output raw HTML.
 
-## Limitations (v1)
+## Limitations
 
 - **No nested shortcodes** — shortcodes are not processed inside other shortcodes.
 - **Paired content cannot contain `[`** — the current parser stops paired shortcode content at the next `[` character. If you need rich/nested markup, prefer a snippet.

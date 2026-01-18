@@ -4,12 +4,12 @@ slug: content
 status: published
 meta_title: Writing Content | Flat-file PHP CMS | Ava CMS
 meta_description: Write content in Markdown with YAML frontmatter. Learn about content types, taxonomies, drafts, and how to structure your flat-file CMS content.
-excerpt: Content in Ava is just text—write in Markdown, save as a file, and you have a page. No database to manage, your files are your content.
+excerpt: Content in Ava CMS is just text—write in Markdown, save as a file, and you have a page. No database to manage, your files are your content.
 ---
 
-Content in Ava is just text. You write in [Markdown](https://www.markdownguide.org/basic-syntax/), which is a simple way to format text, and save it as a file. There's no database to manage—your files are your content. 
+Content in Ava CMS is just text. You write in [Markdown](https://ava.addy.zone/docs/markdown-reference), which is a simple way to format text, and save it as a file. There's no database to manage—your files are your content. 
 
-Ava can handle any combination of Markdown and standard HTML, even within the same file. You can also embed safe and reusable PHP snippets using [Shortcodes](/docs/shortcodes) for absolute flexibility.
+Ava CMS can handle any combination of Markdown and standard HTML, even within the same file. You can also embed safe and reusable PHP snippets using [Shortcodes](/docs/shortcodes) for absolute flexibility.
 
 <details class="beginner-box">
 <summary>What is Markdown?</summary>
@@ -22,7 +22,7 @@ Markdown is a lightweight way to format text using plain characters.
 - You write readable text.
 - You sprinkle in simple symbols for headings, links, lists, and code.
 - Mix in your own custom HTML if required for advanced styling.
-- Ava (and your theme) turns it into HTML.
+- Ava CMS (and your theme) turns it into HTML.
 
 ### A tiny Markdown cheat-sheet
 
@@ -45,11 +45,11 @@ echo 'Hello';
 ```‎ 
 ```
 
-[View full Markdown reference](https://www.markdownguide.org/basic-syntax/)
+[View full Markdown reference →](https://ava.addy.zone/docs/markdown-reference)
 
 ### Markdown Editors (use what you like)
 
-You can write Ava content in almost anything:
+You can write Ava CMS content in almost anything:
 
 - **Code editors:** VS Code, Sublime Text, PhpStorm
 - **Markdown-focused apps:** Obsidian, Typora, MarkText, iA Writer, Zettlr
@@ -89,25 +89,33 @@ date: 2024-12-28
 This is my first post. I can use **bold**, *italics*, and [links](https://example.com).
 ```
 
-You can keep drafts forever. Set `status: draft` while writing, then switch to `published` when you’re happy.
+Set `status: draft` while writing, then switch to `published` when you’re happy.
 
 ## Creating Content
 
 ### Manually
 
-Create a `.md` file in the appropriate directory:
+Create a `.md` file in the appropriate content directory:
 
-```bash
-# content/posts/my-new-post.md
+```
+content/
+└── pages/
+    └── my-new-page.md   ← create your file here
 ```
 
 Add frontmatter and content, then save. If cache mode is `auto`, the site updates immediately.
 
 ### Via the Admin Dashboard
 
-If you have the admin dashboard enabled, you can create, edit, and delete content files directly in the browser. Ava writes changes back to your Markdown files (files remain the source of truth).
+If you have the admin dashboard enabled, you can create, edit, and delete content files directly in the browser. Ava CMS writes changes back to your Markdown files (files remain the source of truth).
 
-See [Admin Dashboard](/docs/admin).
+<div class="screenshot-window">
+<a href="@media:admin-dashboard.webp" target="_blank" rel="noopener">
+    <img src="@media:admin-dashboard.webp" alt="Ava CMS admin dashboard" />
+</a>
+</div>
+
+See [Admin Dashboard](/docs/admin) for setup and usage.
 
 ### Via CLI
 
@@ -158,7 +166,7 @@ This creates a properly formatted file with:
 - Draft status
 
 <div class="callout-info">
-<strong>Beginner's need not worry:</strong> the CLI isn't "advanced mode", it's just a helper that saves you from remembering boilerplate and file naming. It's a great way to dip your toes in to command-line tools without getting overwhelmed.
+<strong>Beginners need not worry:</strong> the CLI isn't "advanced mode"—it's just a helper that saves you from remembering boilerplate and file naming. It's a great way to dip your toes into command-line tools without getting overwhelmed.
 </div>
 
 ## Organising Your Files
@@ -226,20 +234,20 @@ Your Markdown content goes here...
 
 ### Core Fields
 
-These fields are used by Ava to manage and display your content.
+These fields are used by Ava CMS to manage and display your content.
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `title` | No* | Display title. If omitted, Ava derives one from `slug` (e.g. `my-post` → `My Post`). |
-| `slug` | No* | A URL-safe identifier. If omitted, Ava sets it from the **filename** (not the title). Must match: lowercase letters/numbers + hyphens only (`^[a-z0-9-]+$`). |
+| `title` | No* | Display title. If omitted, Ava CMS derives one from `slug` (e.g. `my-post` → `My Post`). |
+| `slug` | No* | A URL-safe identifier. If omitted, Ava CMS sets it from the **filename** (not the title). Must match: lowercase letters/numbers + hyphens only (`^[a-z0-9-]+$`). |
 | `status` | No | `draft`, `published`, or `unlisted`. Defaults to `draft`. |
 | `id` | No | Optional unique identifier. Useful for stable references and ID-based URLs (see below). |
-| `date` | No | Optional date. Ava accepts common date strings (and some other types); invalid values become `null`. |
-| `updated` | No | Optional updated timestamp. If omitted (or invalid), Ava falls back to `date`. |
+| `date` | No | Optional date. Ava CMS accepts common date strings (and some other types); invalid values become `null`. |
+| `updated` | No | Optional updated timestamp. If omitted (or invalid), Ava CMS falls back to `date`. |
 | `excerpt` | No | Optional short summary for listings/search/etc. |
 | `template` | No | Optional template override (e.g., `landing.php`). |
 
-\*Ava’s linter validates that the computed `title` and `slug` are non-empty, but Ava also supplies defaults:
+\*Ava CMS’s linter validates that the computed `title` and `slug` are non-empty, but Ava CMS also supplies defaults:
 
 - `slug` defaults to the filename (e.g. `hello-world.md` → `hello-world`)
 - `title` defaults to a title-cased version of `slug`
@@ -248,7 +256,7 @@ In other words: you *can* omit `title`/`slug` in frontmatter, but your **filenam
 
 #### Slugs and URLs (pattern vs hierarchical)
 
-Ava supports two URL styles per content type (configured in `app/config/content_types.php`):
+Ava CMS supports two URL styles per content type (configured in `app/config/content_types.php`):
 
 - **Pattern URLs** (`url.type = pattern`): the item’s `slug` is used in the URL pattern (e.g. `/blog/{slug}`), and as the lookup key.
 - **Hierarchical URLs** (`url.type = hierarchical`): the URL is derived from the **file path**, not the item’s `slug`.
@@ -271,9 +279,9 @@ The `id` field is optional.
 
 Benefits of setting/keeping IDs:
 
-- Ava can fetch an item by ID via the repository index.
+- Ava CMS can fetch an item by ID via the repository index.
 - You can create stable, rename-proof permalinks by using `{id}` in a pattern URL (e.g. `'/p/{id}'`).
-- Ava detects duplicate IDs during indexing (helpful when merging content).
+- Ava CMS detects duplicate IDs during indexing (helpful when merging content).
 
 If you don’t need any of that, you can omit `id:` entirely.
 
@@ -290,11 +298,11 @@ tag:
   - beginner
 ```
 
-You can use either a single value or a list. Ava normalizes both into an array when reading.
+You can use either a single value or a list. Ava CMS normalizes both into an array when reading.
 
 **How taxonomy indexing works:**
 
-- Only taxonomies defined in `app/config/taxonomies.php` are indexed and routed
+- Only taxonomies defined in `app/config/taxonomies.php` are indexed and routed (see [Configuration - Taxonomies](/docs/configuration#taxonomies-taxonomiesphp))
 - Taxonomy indexes only include **published** content (not drafts or unlisted items)
 - Terms do not need to be "pre-created" — if a published item references a term slug, the term appears automatically
 - Term display names are auto-generated from slugs (e.g., `php-tutorials` → `Php Tutorials`) unless defined in a registry file
@@ -313,7 +321,7 @@ category:
   - cms
 ```
 
-Both formats work — Ava normalizes single values into arrays internally.
+Both formats work — Ava CMS normalizes single values into arrays internally.
 
 #### Alternative format: `tax:` map
 
@@ -328,6 +336,8 @@ tax:
 This keeps frontmatter tidy when you have many taxonomies.
 
 #### Accessing Terms in Templates
+
+For detailed template examples, see [Theming - Working with Taxonomies](/docs/theming).
 
 ```php
 // Get terms for a specific taxonomy on an item
@@ -436,51 +446,44 @@ $items = $ava->query()
 
 ### Behaviour Fields
 
-Fine-tune how Ava handles this specific piece of content.
+Fine-tune how Ava CMS handles this specific piece of content.
 
 | Field | Description |
 |-------|-------------|
 | `cache` | Set to `false` to disable page caching for this URL. Set to `true` to force caching. |
-| `redirect_from` | Array of old URLs that should 301 redirect here. |
-| `template` | Override the default template for this content type (e.g., `landing.php`). |
+| `redirect_from` | Array of old URLs that should 301 redirect here. See [Redirects](#redirects). |
+| `template` | Override the default template for this content type (e.g., `landing.php`). See [Theming](/docs/theming). |
+| `raw_html` | Set to `true` to skip Markdown parsing. Shortcodes and path aliases are still processed. Useful for pages with custom HTML layouts. |
 
 ### Per-Item Assets
 
-Load CSS or JS only on specific pages:
-
-<pre><code class="language-yaml">assets:
-  css:
-    - "@media<span></span>:css/custom-post.css"
-  js:
-    - "@media<span></span>:js/interactive.js"
-</code></pre>
+Load CSS or JS only on specific pages (for "art-directed" posts). See [Per-Item Assets](#per-item-assets-art-directed-posts) for details.
 
 ### Custom Fields
 
-You can add **any custom fields** you like! They're accessible in your templates via `$item->get('field_name')`.
+You can add **any custom fields** you like—they're just YAML keys in your frontmatter:
 
 ```yaml
 ---
 title: Team Member
 slug: jane-doe
 status: published
-# Custom fields:
 role: Lead Developer
 website: "https://janedoe.com"
 featured: true
 ---
 ```
 
-In your template:
+Access them in templates with `$item->get('field_name')`:
+
 ```php
-<h1><?= $ava->e($item->title()) ?></h1>
 <p>Role: <?= $ava->e($item->get('role')) ?></p>
 <?php if ($item->get('featured')): ?>
     <span class="badge">Featured</span>
 <?php endif; ?>
 ```
 
-You can also define expected fields for a content type in [content_types.php](/docs/configuration#content-types) using the `fields` option—useful for documentation and validation.
+**Want validation and admin UI for your custom fields?** Define them in your content type configuration to get proper form inputs, type validation, and linting. See [Fields](/docs/fields) for the complete guide to typed fields.
 
 ## Redirects
 
@@ -507,54 +510,26 @@ For art-directed blogging, you can load custom CSS or JS on specific pages. Put 
 
 Your theme must include `<?= $ava->itemAssets($item) ?>` in the `<head>` for these to load (the default theme already does this).
 
-## Where to Put Images and Media
+**See also:** [Theming - Per-Item Assets](/docs/theming) for how to implement this in your theme.
 
-<details class="beginner-box">
-<summary>Start here</summary>
-<div class="beginner-box-content">
+## Images and Media
 
-- Put user-facing images and files in <code>public/media/</code> (use the <code>@media<span></span>:</code> alias).
-- If the admin dashboard is enabled, you can upload files via the media uploader (uploads go into <code>public/media/</code>).
-- Theme assets are handled by your theme’s asset pipeline/helpers; don’t drop theme CSS/JS here.
-- Keep content (Markdown) in <code>content/</code>; reference media via aliases so paths stay clean.
-
-Project snapshot:
-
-```text
-public/
-  media/         # your images, PDFs, downloads
-  index.php
-content/         # your Markdown pages/posts
-```
-
-Example Markdown:
+Store images, PDFs, and other files in `public/media/`. Reference them using the <code>@media<span></span>:</code> path alias:
 
 <pre><code class="language-markdown">![Team photo](@media<span></span>:team/group.jpg)
 
 [Download PDF](@media<span></span>:docs/guide.pdf)
 </code></pre>
 
+The <code>@media<span></span>:</code> alias expands to `/media/` at render time. You can add custom aliases (like <code>@cdn<span></span>:</code>) in [`ava.php`](/docs/configuration#path-aliases)—this makes it easy to change asset locations later without updating every content file.
+
+**Uploading files:**
+- **Manually** — Drop files into `public/media/` via SFTP or your file manager
+- **Admin Dashboard** — Use the built-in media uploader (see [Admin Dashboard](/docs/admin))
+
+<div class="callout-info">
+<strong>Tip:</strong> Theme assets (CSS/JS for your site design) go in your theme folder, not <code>public/media/</code>. The media folder is for content-related files like images, downloads, and per-post assets.
 </div>
-</details>
-
-## Path Aliases
-
-Use aliases instead of hard-coded URLs. These are configured in [`ava.php`](/docs/configuration#path-aliases) and expanded at render time:
-
-| Alias | Default Expansion | Use For |
-|-------|-------------------|--------|
-| <code>@media<span></span>:</code> | <code>/media/</code> | Images, downloads, per-post CSS/JS |
-
-You can add custom aliases in your config (e.g., <code>@cdn<span></span>:</code> for a CDN URL).
-
-Use in your Markdown:
-
-<pre><code class="language-markdown">![Hero image](@media<span></span>:hero.jpg)
-
-[Download PDF](@media<span></span>:docs/guide.pdf)
-</code></pre>
-
-This makes it easy to change asset locations or add a CDN later without updating every content file.
 
 ## Shortcodes
 
@@ -579,71 +554,9 @@ See [Shortcodes](/docs/shortcodes) for the full reference.
 
 ## Previewing Your Site
 
-Ava is flexible—you can edit directly on a live server, work locally and deploy, or any combination that suits your workflow.
+### Local Development
 
-<details class="beginner-box">
-<summary>Choosing Your Workflow</summary>
-<div class="beginner-box-content">
-
-## Choosing Your Workflow
-
-There's no single "right" way to work with Ava. Here are some common approaches:
-
-### Option 1: Edit Directly on Your Server
-
-The simplest approach—just edit files on your web server.
-
-**How:** Use SFTP (FileZilla, Cyberduck, WinSCP), your host's file manager, or SSH.
-
-**Pros:**
-- No extra setup—changes are live immediately
-- Great for quick fixes and content updates
-- Works from any computer
-
-**Cons:**
-- No undo if you break something (make backups!)
-- Slower if you're making lots of changes
-
-### Option 2: Work Locally, Then Upload
-
-Edit on your own computer, preview locally, then upload when ready.
-
-**How:** Run PHP's built-in server (see below), edit in your favourite editor, upload via SFTP when happy.
-
-**Pros:**
-- Fast feedback loop—save, refresh, repeat
-- Can work offline
-- Safer—test changes before they go live
-
-**Cons:**
-- Need PHP installed on your computer
-- Extra step to upload changes
-
-### Option 3: Use Git + Remote Repository
-
-Track all changes with version control and sync via GitHub, GitLab, or similar.
-
-**How:** Commit changes locally, push to a remote repository, pull or deploy on your server.
-
-**Pros:**
-- Full history of every change (easy to undo mistakes)
-- Great for collaboration
-- Can automate deployments
-
-**Cons:**
-- Steeper learning curve if you're new to Git
-- More setup involved
-
-### Mix and Match
-
-Many people combine approaches: quick content fixes directly on the server, bigger design changes locally with Git. Do what works for you!
-
-</div>
-</details>
-
-### Local Preview
-
-If you're working on your own machine, PHP's built-in server is the quickest way to preview:
+Run PHP's built-in server to preview locally:
 
 ```bash
 php -S localhost:8000 -t public
@@ -652,12 +565,27 @@ php -S localhost:8000 -t public
 Then open `http://localhost:8000` in your browser.
 
 <div class="callout-warning">
-This is a development server, not for public use. See the <a href="hosting.md">Hosting Guide</a> for production options.
+This is a development server, not for public use. See the <a href="/docs/hosting">Hosting Guide</a> for production options.
 </div>
 
 ### Live Editing
 
-Editing files directly on your server works great too! Ava's auto-rebuild mode (the default) means changes appear immediately—just save and refresh.
+Editing files directly on your server works great too! Ava CMS's auto-rebuild mode (the default) means changes appear immediately—just save and refresh.
+
+<details class="beginner-box">
+<summary>Workflow Options</summary>
+<div class="beginner-box-content">
+
+There's no single "right" way to work with Ava CMS:
+
+- **Edit on server** — Use SFTP, your host's file manager, or SSH. Changes are live immediately.
+- **Work locally** — Edit with your favourite tools, preview with PHP's dev server, upload when ready.
+- **Use Git** — Track changes with version control, sync via GitHub/GitLab, automate deployments.
+
+Many people combine approaches: quick fixes directly on the server, bigger changes locally with Git. Do what works for you!
+
+</div>
+</details>
 
 ## Validation
 
@@ -674,3 +602,5 @@ This catches:
 - Malformed slugs
 - Duplicate content keys (slug for pattern types; path key for hierarchical types)
 - Duplicate IDs (when IDs are present)
+
+See [CLI Reference - Lint](/docs/cli#lint) for more details.

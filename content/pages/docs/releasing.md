@@ -4,16 +4,16 @@ slug: releasing
 status: published
 meta_title: Releasing | Flat-file PHP CMS | Ava CMS
 meta_description: Guide for Ava CMS maintainers releasing new versions. Covers semantic versioning, release tests, version checks, and the complete release process.
-excerpt: Release guide for Ava maintainers. Covers semantic versioning, release tests, version checks, and the steps to publish a new version to GitHub.
+excerpt: Release guide for Ava CMS maintainers. Covers semantic versioning, release tests, version checks, and the steps to publish a new version to GitHub.
 ---
 
-This guide is for maintainers who are releasing a new version of Ava.
+This guide is for maintainers who are releasing a new version of Ava CMS.
 
 ## Versioning
 
-Ava uses Semantic Versioning: `MAJOR.MINOR.PATCH`.
+Ava CMS uses Semantic Versioning: `MAJOR.MINOR.PATCH`.
 
-Important: Ava’s **release checks currently require a strict numeric SemVer** of the form:
+Important: Ava CMS’s **release checks currently require a strict numeric SemVer** of the form:
 
 - `^\d+\.\d+\.\d+$`
 
@@ -37,7 +37,7 @@ Examples:
 7. **Push:** Push the tag to GitHub.
 8. **Release:** Create a GitHub Release from that tag.
 
-That’s it. Ava’s updater checks GitHub Releases and compares the installed version (from `AVA_VERSION`) to the latest release tag.
+That’s it. Ava CMS’s updater checks GitHub Releases and compares the installed version (from `AVA_VERSION`) to the latest release tag.
 
 ## Release Tests
 
@@ -51,7 +51,7 @@ The `--release` flag runs additional tests that verify the project is ready for 
 
 These checks are implemented in `core/tests/Release/ReleaseChecksTest.php`.
 
-Note: these checks are intentionally opinionated. They validate the defaults of the **Ava distribution / starter install** (safe config defaults, placeholder URLs/tokens, empty media directory, etc.). If you run them inside a real customised site (for example, a production docs site), you should expect them to fail unless you reset that site back to the starter defaults.
+Note: these checks are intentionally opinionated. They validate the defaults of the **Ava CMS distribution / starter install** (safe config defaults, placeholder URLs/tokens, empty media directory, etc.). If you run them inside a real customised site (for example, a production docs site), you should expect them to fail unless you reset that site back to the starter defaults.
 
 ### Security & Git
 
@@ -72,7 +72,7 @@ The release suite expects a “fresh install / safe defaults” configuration in
 
 And default site identity values:
 
-- `site.name` is `My Ava Site`
+- `site.name` is `My Ava CMS Site`
 - `site.base_url` contains `localhost`
 - `site.timezone` is `UTC`
 - `site.locale` is `en_GB`
@@ -127,47 +127,13 @@ Include a changelog in the release notes following this format:
 - `plugin-name` — Brief description (not activated by default)
 ```
 
-### Emoji Reference
-
-| Emoji | Use for |
-|-------|---------|
-| ✨ | New features |
-| 🔧 | Improvements/enhancements |
-| 🐛 | Bug fixes |
-| ⚠️ | Breaking changes |
-| 📚 | Documentation |
-| 🚀 | Performance |
-| 🔒 | Security |
-
 ## What's Included in Releases
 
 GitHub’s release zipball includes the repository contents.
 
-When a user runs `./ava update:apply`, Ava does **not** blindly overwrite their entire site. Instead, it downloads the zipball and synchronises a specific set of paths (see `core/Updater.php`).
+When a user runs `./ava update:apply`, Ava CMS should **not** blindly overwrite their entire site. Instead, it downloads the zipball and synchronises a specific set of paths (see `core/Updater.php`).
 
-**Updated by updater (current behaviour):**
-
-- `core/`
-- `docs/` (if present in the release)
-- `ava` (the CLI script)
-- `public/index.php`
-- `bootstrap.php`
-- `composer.json`
-- Bundled plugins under `app/plugins/` (currently: `sitemap`, `feed`, `redirects`)
-
-Notes:
-
-- The updater copies **new** bundled plugins from a release if they don’t already exist locally.
-- The updater synchronises files but does **not** delete files that were removed upstream. Old files may remain on disk after an update.
-
-**Never updated:**
-- `content/` — User content
-- `app/themes/` — All themes, including `app/themes/default/` (Ava avoids overwriting theme customisations)
-- `app/config/` — User configuration
-- `app/config/users.php` — Admin users (gitignored)
-- `storage/` — Cache and logs (gitignored except structure)
-- `vendor/` — Dependencies (gitignored)
-- `.env` — Environment config (gitignored)
+[See Updates →](/docs/updates/) 
 
 ## Testing the Update Flow
 
