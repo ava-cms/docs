@@ -27,7 +27,7 @@ The admin is disabled by default. Enable it in `app/config/ava.php`:
 ```php
 'admin' => [
     'enabled' => true,
-    'path' => '/admin',
+    'path' => '/ava-admin',
 ],
 ```
 
@@ -91,7 +91,7 @@ Copy the output (starts with `$2y$12$...`) into the `password` field.
 
 ### 3. Log In
 
-Visit `/admin` (or your custom path) and log in with your email and password.
+Visit `/ava-admin` (or your custom path) and log in with your email and password.
 
 ## Install as an app (PWA)
 
@@ -103,12 +103,12 @@ That means you can add it to your home screen and launch it like an app:
 - Can cache some admin assets for faster loads
 
 <div class="callout-info">
-<strong>Scope:</strong> The PWA is scoped to the admin area (e.g. <code>/admin</code>). Your public site remains a normal website.
+<strong>Scope:</strong> The PWA is scoped to the admin area (e.g. <code>/ava-admin</code>). Your public site remains a normal website.
 </div>
 
 #### iPhone / iPad (Safari)
 
-1. Open your admin URL in Safari (e.g. `https://example.com/admin`).
+1. Open your admin URL in Safari (e.g. `https://example.com/ava-admin`).
 2. Tap the <strong>Share</strong> button.
 3. Tap <strong>Add to Home Screen</strong>.
 4. Launch “Ava Admin” from your home screen.
@@ -289,7 +289,7 @@ Choose a color accent for the admin interface in `app/config/ava.php`:
 ```php
 'admin' => [
     'enabled' => true,
-    'path' => '/admin',
+    'path' => '/ava-admin',
     'theme' => 'cyan',  // cyan, blue, green, purple, orange, pink
 ],
 ```

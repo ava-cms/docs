@@ -813,6 +813,8 @@ Each file returns a function receiving `$app`—everything stays portable with y
 
 Looking for ready-made themes? Check out the [Community Themes](/themes) page for themes shared by other Ava CMS users.
 
+<div class="callout-warning"><strong>Security warning:</strong> Community themes are third-party code and are <strong>not vetted or audited</strong> by the Ava CMS project. Themes can include PHP (e.g. <code>theme.php</code>), templates, and assets that execute on your server/in your users’ browsers. Only install themes from authors you trust, review the source, and test in staging before deploying.</div>
+
 Built a theme you'd like to share? [Submit it to the community gallery!](/themes#content-submit-your-theme)
 
 

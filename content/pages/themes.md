@@ -8,6 +8,8 @@ excerpt: Community-made themes for Ava CMS. Drop a theme into your themes folder
 
 Themes created by the Ava CMS community. Drop these into your `app/themes/` folder and set them in your config. Some themes may be designed for certain content configurations so check the themes README for more info.
 
+<div class="callout-warning"><strong>Security warning:</strong> Community themes are third-party code and are <strong>not vetted or audited</strong> by the Ava CMS project. A theme can include PHP (e.g. <code>theme.php</code>), templates, and assets that run with the same permissions as your site. Only install themes from authors you trust, review the source before deploying, and test in a staging environment.</div>
+
 ## Available Themes
 
 <div class="showcase-grid">

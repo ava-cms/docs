@@ -8,6 +8,8 @@ excerpt: Community-made plugins for Ava CMS. Install by adding the plugin folder
 
 Plugins created by the Ava CMS community. These extend Ava CMS with additional functionality. You can use these by dropping them into your `app/plugins/` folder and enabling them in your config.
 
+<div class="callout-warning"><strong>Security warning:</strong> Community plugins are third-party code and are <strong>not vetted or audited</strong> by the Ava CMS project. A plugin can execute PHP with the same permissions as your site (and may change routing, templates, headers, file access, etc). Only install plugins from authors you trust, review the source before deploying, and test in a staging environment.</div>
+
 ## Available Plugins
 
 | Plugin | Description | Author |

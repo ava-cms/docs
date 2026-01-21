@@ -66,7 +66,7 @@ The release suite expects a “fresh install / safe defaults” configuration in
 - `debug.enabled` is `false`
 - `theme` is `default`
 - `admin.enabled` is `false`
-- `admin.path` is `/admin`
+- `admin.path` is `/ava-admin`
 - `admin.theme` is `cyan`
 - `cli.theme` is `cyan`
 

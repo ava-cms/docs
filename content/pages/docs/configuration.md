@@ -232,7 +232,7 @@ The admin dashboard provides a web-based interface for managing your site.
 ```php
 'admin' => [
     'enabled' => false,
-    'path'    => '/admin',
+    'path'    => '/ava-admin',
     'theme'   => 'cyan',
 
     'media' => [
@@ -251,7 +251,7 @@ The admin dashboard provides a web-based interface for managing your site.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `enabled` | bool | `false` | Enable the admin dashboard. |
-| `path` | string | `'/admin'` | URL path for the admin area. Change to obscure admin location. |
+| `path` | string | `'/ava-admin'` | URL path for the admin area. Change to obscure admin location. |
 | `theme` | string | `'cyan'` | Color theme: `cyan`, `pink`, `purple`, `green`, `blue`, or `amber`. |
 | `media.enabled` | bool | `true` | Enable the media upload feature. |
 | `media.path` | string | `'public/media'` | Upload directory (relative to project root). |

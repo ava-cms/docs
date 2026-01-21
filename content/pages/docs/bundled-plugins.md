@@ -353,9 +353,9 @@ After enabling, rebuild the content index:
 ```
 
 Then access the plugin admin pages at:
-- `/admin/sitemap`
-- `/admin/feeds`
-- `/admin/redirects`
+- `/ava-admin/sitemap`
+- `/ava-admin/feeds`
+- `/ava-admin/redirects`
 
 ## Community Plugins
 

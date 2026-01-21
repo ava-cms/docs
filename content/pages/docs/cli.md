@@ -356,7 +356,7 @@ Create a new admin user:
   <span class="t-dim">Email:</span>      <span class="t-cyan">admin@example.com</span>
   <span class="t-dim">Name:</span>       <span class="t-white">Admin User</span>
 
-  <span class="t-blue">→</span> <span class="t-cyan">/admin</span> <span class="t-dim">— Login at your admin dashboard</span></samp></pre>
+  <span class="t-blue">→</span> <span class="t-cyan">/ava-admin</span> <span class="t-dim">— Login at your admin dashboard</span></samp></pre>
 
 **Password Security:** Your password is hashed using [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) before being stored in `app/config/users.php`. This means:
 - Your actual password is never saved—only an irreversible hash

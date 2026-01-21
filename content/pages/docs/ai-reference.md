@@ -124,7 +124,7 @@ All settings in `app/config/` as PHP arrays. Three main files:
 ```php
 'admin' => [
     'enabled' => true,
-    'path'    => '/admin',
+    'path'    => '/ava-admin',
     'theme'   => 'cyan',  // cyan, pink, purple, green, blue, amber
     'media'   => [
         'enabled'          => true,
@@ -486,7 +486,7 @@ Optional web-based admin for content management. Files remain the source of trut
 
 **Enabling:**
 ```php
-'admin' => ['enabled' => true, 'path' => '/admin', 'theme' => 'cyan'],
+'admin' => ['enabled' => true, 'path' => '/ava-admin', 'theme' => 'cyan'],
 ```
 
 Create users via CLI: `./ava user:add email@example.com password "Name"`

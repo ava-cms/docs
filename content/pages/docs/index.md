@@ -321,6 +321,8 @@ The default theme provides a clean, minimal starting point for your site. Custom
 
 See what others are building with Ava CMS:
 
+<div class="callout-warning"><strong>Security warning:</strong> Community themes/plugins are provided by third parties and are <strong>not vetted or audited</strong> by the Ava CMS project. Installing them may run third-party PHP/JS with the same permissions as your site. Only install code you trust, review it before deploying, and test in a staging environment.</div>
+
 - [Community Plugins](/plugins) — Extend Ava CMS with plugins shared by the community
 - [Community Themes](/themes) — Ready-to-use themes for your site
 - [Sites Built with Ava CMS](/showcase) — Get inspired by what others have created

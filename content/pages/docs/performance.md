@@ -320,7 +320,7 @@ cache: false    # This page always renders fresh
 - Homepage and pagination
 
 **❌ Never cached:**
-- Admin area (`/admin/*`)
+- Admin area (`/ava-admin/*`)
 - Requests from logged-in admins
 - URLs with query parameters (except UTM marketing params)
 - Pages with `cache: false` in frontmatter

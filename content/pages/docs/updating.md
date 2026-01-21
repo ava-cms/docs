@@ -80,7 +80,7 @@ Because Ava CMS is a flat-file CMS, backing up is incredibly simple. You don't n
 
 The most important folders to back up are:
 
-- **`content/`** — AYour markdown content, taxonomies and structure
+- **`content/`** — Your markdown content, taxonomies and structure
 - **`app/`** — Your sites custom code (config, themes, plugins, snippets)
 - **`public/`** — Any custom files you added here (like media files, `robots.txt`)
 
