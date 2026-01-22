@@ -51,17 +51,7 @@ $bodyClass = trim(($bodyClass ?? '') . ($isDocsPage ? '' : ' hide-sidebar-deskto
     
     <link rel="stylesheet" href="<?= $ava->asset('fonts.css') ?>">
     <link rel="stylesheet" href="<?= $ava->asset('style.css') ?>">
-    
-
-    <script>
-    // Initialize theme from localStorage before page renders to prevent flash
-    (function() {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
-    })();
-    </script>
+    <script src="<?= $ava->asset('theme-init.js') ?>"></script>
 </head>
 <body class="<?= $ava->e($bodyClass) ?>">
     <header class="topbar">

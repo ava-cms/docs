@@ -1442,12 +1442,12 @@ mark {
     }
     
     & pre {
-        background: var(--bg-body) !important;
-        border: 1px solid var(--border);
+        background: var(--bg-code-block) !important;
+        border: 1px solid var(--border-code-block);
         margin: var(--sp-4) 0 !important;
     }
     
-    & code {
+    & code:not(pre code) {
         background: rgba(var(--theme-color-rgb), 0.12);
     }
     
@@ -2030,6 +2030,7 @@ body.home-hero-page {
     & .cta-github {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.5rem;
     }
     
@@ -2047,7 +2048,7 @@ body.home-hero-page {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.25em;
+        gap: 0.15rem;
         padding: 0.2em 0.6em;
         font-size: 0.75em;
         font-weight: 600;

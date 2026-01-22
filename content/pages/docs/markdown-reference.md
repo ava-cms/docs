@@ -354,11 +354,11 @@ Heading 2
 <div class="md-grid">
 <div>
 <div class="md-label">Markdown</div>
-<div class="md-box md-box-code">[Ava CMS](https://avacms.dev "Visit Ava CMS")</div>
+<div class="md-box md-box-code">[Ava CMS](https://ava.addy.zone "Visit Ava CMS")</div>
 </div>
 <div>
 <div class="md-label">Result</div>
-<div class="md-box md-box-render"><a href="https://avacms.dev" title="Visit Ava CMS">Ava CMS</a></div>
+<div class="md-box md-box-render"><a href="https://ava.addy.zone" title="Visit Ava CMS">Ava CMS</a></div>
 </div>
 </div>
 
@@ -369,11 +369,11 @@ Heading 2
 <div class="md-label">Markdown</div>
 <div class="md-box md-box-code">Check out [Ava CMS][ava] for more.
 
-[ava]: https://avacms.dev "Ava CMS"</div>
+[ava]: https://ava.addy.zone "Ava CMS"</div>
 </div>
 <div>
 <div class="md-label">Result</div>
-<div class="md-box md-box-render"><p>Check out <a href="https://avacms.dev" title="Ava CMS">Ava CMS</a> for more.</p></div>
+<div class="md-box md-box-render"><p>Check out <a href="https://ava.addy.zone" title="Ava CMS">Ava CMS</a> for more.</p></div>
 </div>
 </div>
 
@@ -382,13 +382,13 @@ Heading 2
 <div class="md-grid">
 <div>
 <div class="md-label">Markdown</div>
-<div class="md-box md-box-code">&lt;https://avacms.dev&gt;
+<div class="md-box md-box-code">&lt;https://ava.addy.zone&gt;
 &lt;hello@example.com&gt;</div>
 </div>
 <div>
 <div class="md-label">Result</div>
 <div class="md-box md-box-render">
-<a href="https://avacms.dev">https://avacms.dev</a><br>
+<a href="https://ava.addy.zone">https://ava.addy.zone</a><br>
 <a href="mailto:hello@example.com">hello@example.com</a>
 </div>
 </div>
@@ -399,11 +399,11 @@ Heading 2
 <div class="md-grid">
 <div>
 <div class="md-label">Markdown</div>
-<div class="md-box md-box-code">Visit https://avacms.dev for details.</div>
+<div class="md-box md-box-code">Visit https://ava.addy.zone for details.</div>
 </div>
 <div>
 <div class="md-label">Result</div>
-<div class="md-box md-box-render">Visit <a href="https://avacms.dev">https://avacms.dev</a> for details.</div>
+<div class="md-box md-box-render">Visit <a href="https://ava.addy.zone">https://ava.addy.zone</a> for details.</div>
 </div>
 </div>
 </div>

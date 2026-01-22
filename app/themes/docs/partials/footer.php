@@ -75,31 +75,14 @@ $isHomepage = $isHomepage ?? false;
         </div>
     </div>
 
-    <script>
-        // Configure Prism autoloader to use locally hosted language components.
-        window.Prism = window.Prism || {};
-        Prism.plugins = Prism.plugins || {};
-        Prism.plugins.autoloader = Prism.plugins.autoloader || {};
-        Prism.plugins.autoloader.languages_path = '/theme/vendor/prism/components/';
-    </script>
+    <script src="<?= $ava->asset('prism-config.js') ?>"></script>
     <script src="<?= $ava->asset('vendor/prism/prism-core.min.js') ?>" defer></script>
     <script src="<?= $ava->asset('vendor/prism/prism-autoloader.min.js') ?>" defer></script>
     <script src="<?= $ava->asset('instantpage.js') ?>" defer></script>
     <script src="<?= $ava->asset('docs.js') ?>" defer></script>
 
     <!-- Matomo Analytics -->
-    <script>
-        var _paq = _paq || [];
-        _paq.push(["trackPageView"]), _paq.push(["enableLinkTracking"]),
-        function() {
-            _paq.push(["disableCookies"]);
-            _paq.push(["setTrackerUrl", "//reporting.adgr.dev/zefstyg.php"]);
-            _paq.push(["setSiteId", "22"]);
-            _paq.push(['disableAlwaysUseSendBeacon', 'true']);
-            var a = document, r = a.createElement("script"), s = a.getElementsByTagName("script")[0];
-            r.async = !0, r.defer = !0, r.src = "//reporting.adgr.dev/pywhvsr.php", s.parentNode.insertBefore(r, s)
-        }();
-    </script>
+    <script src="<?= $ava->asset('matomo.js') ?>" defer></script>
     <noscript><img src="//reporting.adgr.dev/zefstyg.php?vbf=22&nmi=1" /></noscript>
     <!-- End Matomo Code -->
 </body>

@@ -207,11 +207,38 @@ Controls how Ava CMS processes your Markdown content files.
 
 ### Security
 
+Ava includes security settings for shortcodes, preview tokens, and HTTP security headers.
+
 ```php
 'security' => [
     'shortcodes' => [
         'allow_php_snippets' => true,
     ],
+
+    'headers' => [
+        'content_security_policy' => [
+            "default-src 'self'",
+            "base-uri 'none'",
+            "object-src 'none'",
+            "frame-ancestors 'none'",
+            "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
+            "form-action 'self'",
+            "connect-src 'self' https:",        // External APIs, analytics
+            "img-src 'self' data: https:",      // External images
+            "font-src 'self' data: https:",     // Google Fonts, CDNs
+            "style-src 'self' 'unsafe-inline' https:",
+            "script-src 'self' 'unsafe-inline' https:",
+        ],
+        'permissions_policy' => [
+            'camera=()',
+            'microphone=()',
+            'geolocation=()',
+            'payment=()',
+            'usb=()',
+            'interest-cohort=()',
+        ],
+    ],
+
     'preview_token' => null,
 ],
 ```
@@ -219,9 +246,86 @@ Controls how Ava CMS processes your Markdown content files.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `shortcodes.allow_php_snippets` | bool | `true` | Enable the `[snippet]` shortcode for including PHP files from `app/snippets/`. |
+| `headers.content_security_policy` | array | See above | CSP directives applied to public responses. See [CSP explanation](#content-understanding-content-security-policy) below. |
+| `headers.permissions_policy` | array | See above | Browser permissions to disable (camera, mic, etc.). |
 | `preview_token` | string\|null | `null` | Secret token for previewing draft content without logging in. |
 
 **Preview token usage:** Access drafts via `https://example.com/path?preview=1&token=your-token`
+
+<details class="beginner-box">
+<summary>Understanding Content Security Policy</summary>
+<div class="beginner-box-content">
+
+**Content Security Policy (CSP)** is a security layer that helps protect your site from attacks like cross-site scripting (XSS) and data injection. It works by telling browsers which sources of content are allowed to load.
+
+**How it works:** When a browser loads your page, it reads the CSP header and blocks any resources (scripts, styles, images, etc.) that don't match the allowed sources. This stops attackers from injecting malicious scripts, even if they find a vulnerability in your site.
+
+**Ava's default CSP explained:**
+
+| Directive | Value | What it does |
+|-----------|-------|--------------|
+| `default-src 'self'` | Only your domain | Fallback rule: only load resources from your own site. |
+| `script-src 'self' 'unsafe-inline' https:` | Your domain + inline + HTTPS | JavaScript from your files, inline scripts, and any HTTPS source. Allows analytics, widgets, etc. |
+| `style-src 'self' 'unsafe-inline' https:` | Your domain + inline + HTTPS | CSS from your files, inline `style=""` attributes, and any HTTPS stylesheet URLs. |
+| `img-src 'self' data: https:` | Your domain + data URIs + HTTPS | Images from your site, embedded base64 data URIs, or any HTTPS image URL (shields.io badges, external photos, etc.). |
+| `font-src 'self' data: https:` | Your domain + data URIs + HTTPS | Fonts from your site, embedded data URIs, or any HTTPS font URL (Google Fonts, etc.). |
+| `connect-src 'self' https:` | Your domain + HTTPS | AJAX/fetch requests to your site and any HTTPS API (analytics, external services). |
+| `frame-src 'self' youtube vimeo` | Your domain + video platforms | Allows embedding YouTube and Vimeo videos by default. |
+| `form-action 'self'` | Only your domain | Forms can only submit to your own site. |
+| `frame-ancestors 'none'` | Nobody | Your site cannot be embedded in iframes (prevents clickjacking). |
+| `object-src 'none'` | Blocked | No Flash, Java applets, or other plugins. |
+| `base-uri 'none'` | Blocked | Prevents `<base>` tag injection attacks. |
+
+**Why these defaults?** Ava's CSP is designed to balance security with flexibility for a content management system. The defaults are permissive enough for common use cases:
+- Embedding YouTube and Vimeo videos
+- Loading images from external sources
+- Loading fonts from CDNs like Google Fonts
+- Adding analytics scripts (Google Analytics, Plausible, Matomo, etc.)
+- Connecting to external APIs
+
+This is more permissive than a locked-down web app, but appropriate for a CMS where content flexibility is expected. For high-security sites, restrict `https:` to specific domains.
+
+**When you might need to customize:**
+
+- **Embedding other video platforms?** Add their domains to `frame-src`.
+- **Need your site to be embeddable?** Change `frame-ancestors 'none'` to list allowed parent domains.
+- **Need stricter security?** Replace `https:` with specific domains (e.g., `https://cdn.example.com`).
+
+**Example: Stricter CSP with specific domains only**
+
+```php
+'headers' => [
+    'content_security_policy' => [
+        "default-src 'self'",
+        "base-uri 'none'",
+        "object-src 'none'",
+        "frame-ancestors 'none'",
+        "frame-src 'self' https://www.youtube.com",
+        "form-action 'self'",
+        "connect-src 'self' https://www.google-analytics.com",
+        "img-src 'self' data:",
+        "font-src 'self' data: https://fonts.gstatic.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "script-src 'self' https://www.googletagmanager.com",
+    ],
+    // ... other headers
+],
+```
+
+**Testing your CSP:** Open your browser's developer tools (F12) and check the Console tab. Any blocked resources will show as errors, telling you exactly which directive blocked them and what source was attempted.
+
+**Learn more:** [MDN Content Security Policy Guide](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+
+</div>
+</details>
+
+**Permissions Policy** disables browser features you don't need. The defaults block camera, microphone, geolocation, payment APIs, USB access, and FLoC tracking. Remove items from the array if your site legitimately needs these features.
+
+**HSTS (Strict Transport Security)** should be configured at your web server level (Apache, Nginx, Caddy), not in Ava's config.
+
+<div class="callout-warning">
+<strong>Note:</strong> Security headers are only applied to public (non-admin) responses. The admin dashboard has its own separate Content Security Policy.
+</div>
 
 **See:** [Shortcodes - Snippets](/docs/shortcodes#content-snippets-reusable-php-components) and [Routing - Preview Mode](/docs/routing#content-preview-mode).
 
