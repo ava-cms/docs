@@ -521,3 +521,12 @@ Popular options: Cloudflare (free tier), BunnyCDN, Fastly. See the [Ava for Clou
 - `app/config/ava.php` - Configure caching and backend
 - `storage/cache/` - All cache files
 - `storage/cache/fingerprint.json` - Delete to force rebuild
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/configuration">Configuration</a> — Cache and indexing settings</li>
+<li><a href="/docs/cli">CLI Reference</a> — Cache and benchmark commands</li>
+<li><a href="/docs/hosting">Hosting</a> — Server optimization tips</li>
+</ul>
+</div>

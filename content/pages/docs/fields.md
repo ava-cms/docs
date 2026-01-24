@@ -44,7 +44,7 @@ return [
 ];
 ```
 
-For complete content type configuration, see [Configuration: Content Types](/docs/configuration#content-types-content_typesphp).
+For complete content type configuration, see [Configuration: Content Types](/docs/configuration#content-content-types-content_typesphp).
 
 ## How Fields Are Stored
 
@@ -445,7 +445,7 @@ Taxonomy term selector. Use this to assign categories, tags, or other taxonomy t
 
 **Stored as:** Term slug, or array of slugs if `multiple: true`.
 
-For more on taxonomies, see [Content: Taxonomies](/docs/content#taxonomy-fields) and [Configuration: Taxonomies](/docs/configuration#taxonomies-taxonomiesphp).
+**See:** [Taxonomies](/docs/taxonomies) for full documentation on defining taxonomies, term storage, and template helpers.
 
 ### status
 
@@ -658,3 +658,13 @@ Then use your custom type:
 5. **Be thoughtful with `required`** — Only mark fields required if truly necessary.
 
 6. **Provide sensible defaults** — Set `default` values to streamline content creation.
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/configuration#content-content-types-content_typesphp">Configuration: Content Types</a> — Defining fields in content types</li>
+<li><a href="/docs/content#content-frontmatter-reference">Content: Frontmatter Reference</a> — How fields are stored</li>
+<li><a href="/docs/taxonomies">Taxonomies</a> — The taxonomy field type in depth</li>
+<li><a href="/docs/cli#content-lint">CLI: Lint</a> — Validating field values</li>
+</ul>
+</div>

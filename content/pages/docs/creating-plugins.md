@@ -616,3 +616,13 @@ function findBrokenLinks($app): array {
 - See the [API reference](/docs/api) for all available methods
 - Read the [CLI reference](/docs/cli) for command details
 - Learn about [shortcodes](/docs/shortcodes) for content extensions
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/bundled-plugins">Bundled Plugins</a> — Built-in plugin examples</li>
+<li><a href="/docs/api">API</a> — Application methods and routing</li>
+<li><a href="/docs/shortcodes">Shortcodes</a> — Creating shortcodes</li>
+<li><a href="/docs/theming#content-theme-bootstrap">Theming: Theme Bootstrap</a> — Theme-level customization</li>
+</ul>
+</div>

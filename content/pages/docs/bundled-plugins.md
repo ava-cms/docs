@@ -362,3 +362,12 @@ Then access the plugin admin pages at:
 Looking for more plugins? Check out the [Community Plugins](/plugins) page for plugins shared by other Ava CMS users.
 
 Built a plugin you'd like to share? [Submit it to the community gallery!](/plugins#content-submit-your-plugin)
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/creating-plugins">Creating Plugins</a> — Build your own plugins</li>
+<li><a href="/docs/configuration">Configuration</a> — Enabling plugins in config</li>
+<li><a href="/docs/cli">CLI Reference</a> — Plugin-related commands</li>
+</ul>
+</div>

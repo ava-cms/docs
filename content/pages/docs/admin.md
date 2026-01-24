@@ -223,7 +223,7 @@ Terms are stored in `content/_taxonomies/{taxonomy}.yml`:
 Deleting a term removes it from the registry but doesn't modify your content files.
 </div>
 
-See [Taxonomies](/docs/configuration#content-taxonomies-taxonomiesphp) for configuration options.*
+**See:** [Taxonomies](/docs/taxonomies) for full documentation on configuration, term storage, and template helpers.
 
 ### Content Linting
 
@@ -393,4 +393,14 @@ Forms in the admin include a CSRF token intended to help distinguish legitimate 
 
 <div class="callout-warning">
 <strong>Project status:</strong> Ava CMS is an evolving project. Security-related behaviour may change between versions, and no part of the system should be assumed to be complete, audited, or suitable for high-risk or sensitive environments without independent review.
+</div>
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/configuration">Configuration</a> — Site settings and content types</li>
+<li><a href="/docs/cli#content-user-management">CLI: User Management</a> — Creating admin users via command line</li>
+<li><a href="/docs/taxonomies#content-admin-management">Taxonomies: Admin Management</a> — Managing taxonomy terms</li>
+<li><a href="/docs/creating-plugins#content-admin-pages">Creating Plugins: Admin Pages</a> — Adding custom admin pages</li>
+</ul>
 </div>

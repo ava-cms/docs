@@ -629,19 +629,7 @@ return [
 | `ui.show_counts` | bool | `true` | Display content count next to terms. |
 | `ui.sort_terms` | string | `'name_asc'` | Default sort: `name_asc`, `name_desc`, `count_asc`, `count_desc`. |
 
-**Using taxonomies in content:**
-
-```yaml
----
-title: My PHP Tutorial
-category: Tutorials
-tag:
-  - php
-  - beginner
----
-```
-
-**See:** [Writing Content - Taxonomy Fields](/docs/content#content-taxonomy-fields) for usage examples and [Routing - Taxonomy Routes](/docs/routing#content-taxonomy-routes) for URL generation.
+**See:** [Taxonomies](/docs/taxonomies) for assigning terms to content, term storage, hierarchical terms, and template helpers.
 
 ## Environment-Specific Config
 
@@ -679,6 +667,18 @@ Set the environment variable in your server config:
 ```bash
 export APP_ENV=development
 ```
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/content">Content</a> — Writing content with frontmatter</li>
+<li><a href="/docs/taxonomies">Taxonomies</a> — Organizing content with terms</li>
+<li><a href="/docs/fields">Fields</a> — All available field types</li>
+<li><a href="/docs/routing">Routing</a> — URL generation and custom routes</li>
+<li><a href="/docs/performance">Performance</a> — Caching and indexing options</li>
+</ul>
+</div>
+
 ---
 
 <div class="callout-warning">

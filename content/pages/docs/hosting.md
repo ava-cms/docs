@@ -50,12 +50,60 @@ PHP includes a built-in server perfect for local development:
 ```bash
 php -v                              # Check PHP is installed (need 8.3+)
 cd /path/to/your/ava-site
+composer install                    # Install dependencies (first time only)
 php -S localhost:8000 -t public     # Start the dev server
 ```
 
 Open `http://localhost:8000` in your browser. No Apache, Nginx, or LAMP stack required.
 
-**Don't have PHP?** Install via `brew install php` (macOS), `sudo apt install php` (Linux), or download from [windows.php.net](https://windows.php.net/download) (Windows).
+<details class="beginner-box">
+<summary>Installing PHP and Composer</summary>
+<div class="beginner-box-content">
+
+**macOS:**
+```bash
+brew install php composer
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt install php php-mbstring php-xml composer
+```
+
+**Windows:**
+
+1. Download PHP from [windows.php.net/download](https://windows.php.net/download) (choose the **VS16 x64 Thread Safe** ZIP)
+2. Extract to `C:\php` and add it to your PATH ([guide](https://www.php.net/manual/en/install.windows.manual.php))
+3. Copy `php.ini-development` to `php.ini` and enable required extensions (uncomment `extension=mbstring`)
+4. Download [Composer-Setup.exe](https://getcomposer.org/Composer-Setup.exe) and run the installer
+
+Or use a package manager like [Scoop](https://scoop.sh/): `scoop install php composer`
+
+**Verify installation:**
+```bash
+php -v        # Should show PHP 8.3+
+composer -V   # Should show Composer version
+```
+
+</div>
+</details>
+
+<details class="beginner-box">
+<summary>Windows: Running Ava CLI Commands</summary>
+<div class="beginner-box-content">
+
+On Windows, you can't run `./ava` directly. Use `php ava` instead:
+
+```powershell
+php ava status       # Check site status
+php ava rebuild      # Rebuild content index
+php ava lint         # Validate content files
+```
+
+All Ava CLI commands work this way—just prefix with `php`.
+
+</div>
+</details>
 
 
 
@@ -82,31 +130,38 @@ Shared hosting is the easiest and most affordable option. The hosting company ha
 
 Had a good experience elsewhere? Let us know in the [Discord](https://discord.gg/fZwW4jBVh5)!
 
+
 ### File Structure
 
-Shared hosts typically give you a `public_html/` folder as your web root. For security, install Ava CMS *above* that:
+Ava CMS has a simple flat structure:
 
 ```
 /home/yourusername/
-├── public_html/          ← Web root (publicly accessible)
-│   ├── index.php         ← Copy from ava/public/, edit AVA_ROOT path
+├── app/                  ← Themes, plugins, config
+├── content/              ← Your Markdown content
+├── core/                 ← Ava CMS core (don't edit)
+├── public/               ← Web root (point your domain here)
+│   ├── index.php
 │   ├── assets/
 │   ├── robots.txt
 │   └── media/
-├── ava/                  ← Ava CMS installation (protected)
-│   ├── app/
-│   ├── content/
-│   ├── core/
-│   └── storage/
+├── storage/              ← Cache, logs (PHP needs write access)
+├── vendor/               ← Composer dependencies
+├── ava                   ← CLI tool
+├── bootstrap.php
+└── composer.json
 ```
 
 **Setup steps:**
 
-1. Upload Ava CMS to a folder *above* your web root (e.g., `/home/you/ava/`).
-2. If your host lets you set the document root, point it directly at Ava's `public/` folder — no copying needed.  
-If you can't set the document root, copy the contents of `ava/public/` into `public_html/` (or equivalent).
+1. Upload Ava CMS to your home directory (e.g., `/home/yourusername/`).
+2. Point your domain's document root to the `public/` folder.
 3. Run `composer install --no-dev` and `./ava rebuild`.  
-**If SSH isn’t available**, generate the `vendor/` folder locally, upload it, then rebuild via the admin dashboard.
+**If SSH isn't available**, generate the `vendor/` folder locally, upload it, then rebuild via the admin dashboard.
+
+<div class="callout-info">
+<strong>Can't change the document root?</strong> Some shared hosts lock you to <code>public_html/</code>. In that case, copy the contents of <code>public/</code> into <code>public_html/</code>, then edit <code>index.php</code> to update the <code>AVA_ROOT</code> path to point to where you uploaded the rest of Ava.
+</div>
 
 ## Connecting to Your Server
 
@@ -149,7 +204,6 @@ ssh username@your-domain.com
 Once connected, you can run Ava CMS commands:
 
 ```bash
-cd ~/ava           # Go to your Ava folder
 ./ava status       # Check site health
 ./ava rebuild      # Rebuild content index
 ./ava cache:clear  # Clear webpage cache
@@ -234,7 +288,7 @@ If you keep your site in a Git repository (your own customised Ava CMS installat
 
 ```bash
 # On your server (pulling your own site repo)
-cd ~/ava && git pull origin main && ./ava rebuild
+git pull origin main && ./ava rebuild
 ```
 
 <div class="callout-info">
@@ -257,7 +311,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: cd ~/ava && git pull && composer install --no-dev && ./ava rebuild
+          script: git pull && composer install --no-dev && ./ava rebuild
 ```
 
 
@@ -289,7 +343,7 @@ Other options: [BunnyCDN](https://bunny.net/) (pay-as-you-go), [KeyCDN](https://
 server {
     listen 80;
     server_name example.com;
-    root /home/user/ava/public;
+    root /home/yourusername/public;
     index index.php;
 
     location / {
@@ -324,3 +378,13 @@ sudo a2enmod rewrite && sudo systemctl restart apache2
 - [Configuration](/docs/configuration) — Site settings
 - [Performance](/docs/performance) — Optimisation tips
 - [Discord Community](https://discord.gg/fZwW4jBVh5) — Ask questions, get help
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/configuration">Configuration</a> — Site settings and paths</li>
+<li><a href="/docs/performance">Performance</a> — Caching and optimization</li>
+<li><a href="/docs/updating">Updating</a> — Keeping Ava CMS current</li>
+<li><a href="/docs/cli">CLI Reference</a> — Deployment commands</li>
+</ul>
+</div>

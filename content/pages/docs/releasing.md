@@ -190,3 +190,12 @@ Numeric SemVer examples that compare as expected:
 
 - If `./ava test --release` fails because `LICENSE` is missing, add a `LICENSE` file (the release suite requires it).
 - If the “higher than GitHub” check is skipped, install/enable the `curl` extension so the suite can verify you’re not re-releasing an old version.
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/testing">Testing</a> — Running the test suite</li>
+<li><a href="/docs/cli">CLI Reference</a> — Release-related commands</li>
+<li><a href="/docs/updating">Updating</a> — How users receive updates</li>
+</ul>
+</div>

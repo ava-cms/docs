@@ -75,7 +75,7 @@ Ava CMS is for people who like owning and understanding how their site works. It
 | Feature | What it does for you |
 |---------|-------------|
 | **Content&nbsp;Types** | [Define](/docs/configuration) exactly what you're publishing (Pages, Posts, Projects, etc.). |
-| **Taxonomies** | [Organise](/docs/configuration) content your way with custom categories, tags, or collections. |
+| **Taxonomies** | [Organise](/docs/taxonomies) content your way with custom categories, tags, or collections. |
 | **Smart&nbsp;Routing** | URLs are generated [automatically](/docs/routing) based on your content structure. |
 | **Themes** | Write standard HTML and CSS, use PHP and Ava CMS [helpers](/docs/theming) only where you need to. |
 | **Shortcodes** | Embed [dynamic content](/docs/shortcodes) and reusable snippets in your Markdown. |
@@ -286,13 +286,19 @@ Then [configure](/docs/configuration) your site by editing `app/config/ava.php`,
 If you want to preview your site on your own computer before going live:
 
 ```bash
-php -S localhost:8000 -t public
+composer install                    # Install dependencies (first time only)
+php ava rebuild                     # Build the content index
+php -S localhost:8000 -t public     # Start the dev server
 ```
 
 Then visit [http://localhost:8000](http://localhost:8000) in your browser.
 
 <div class="callout-info">
-<strong>CLI Permission Denied?</strong> If you get a "permission denied" error when running <code>./ava</code> commands, run <code>chmod +x ava</code> to make the script executable. This is common after extracting from a ZIP or uploading via SFTP. See the <a href="/docs/cli#troubleshooting-permission-denied">CLI documentation</a> for more details.
+<strong>Windows users:</strong> Use <code>php ava</code> instead of <code>./ava</code> for all CLI commands. See the <a href="/docs/hosting#local-development">Hosting Guide</a> for detailed Windows setup instructions.
+</div>
+
+<div class="callout-info">
+<strong>macOS/Linux: Permission Denied?</strong> If you get a "permission denied" error when running <code>./ava</code> commands, run <code>chmod +x ava</code> to make the script executable. This is common after extracting from a ZIP or uploading via SFTP. See the <a href="/docs/cli#troubleshooting-permission-denied">CLI documentation</a> for more details.
 </div>
 
 <details class="beginner-box">

@@ -69,6 +69,28 @@ Each content file has:
 </div>
 </details>
 
+## Content Types
+
+Content types define what kinds of content your site has. They're configured in `app/config/content_types.php`:
+
+```php
+return [
+    'page' => [
+        'label'       => 'Pages',
+        'content_dir' => 'pages',
+        'url'         => ['type' => 'hierarchical', 'base' => '/'],
+    ],
+    'post' => [
+        'label'       => 'Posts',
+        'content_dir' => 'posts',
+        'url'         => ['type' => 'pattern', 'pattern' => '/blog/{slug}'],
+        'taxonomies'  => ['category', 'tag'],
+    ],
+];
+```
+
+For complete configuration options (fields, templates, sorting, archives), see [Configuration: Content Types](/docs/configuration#content-content-types-content_typesphp).
+
 ## The Basics
 
 Every piece of content is a `.md` file with two parts:
@@ -287,7 +309,7 @@ If you don’t need any of that, you can omit `id:` entirely.
 
 ### Taxonomy Fields
 
-Assign content to categories, tags, or any taxonomy defined in [taxonomies.php](/docs/configuration#taxonomies).
+Assign content to categories, tags, or any taxonomy defined in [taxonomies.php](/docs/configuration#content-taxonomies-taxonomiesphp).
 
 ```yaml
 category:
@@ -298,34 +320,11 @@ tag:
   - beginner
 ```
 
-You can use either a single value or a list. Ava CMS normalizes both into an array when reading.
-
-**How taxonomy indexing works:**
-
-- Only taxonomies defined in `app/config/taxonomies.php` are indexed and routed (see [Configuration - Taxonomies](/docs/configuration#taxonomies-taxonomiesphp))
-- Taxonomy indexes only include **published** content (not drafts or unlisted items)
-- Terms do not need to be "pre-created" — if a published item references a term slug, the term appears automatically
-- Term display names are auto-generated from slugs (e.g., `php-tutorials` → `Php Tutorials`) unless defined in a registry file
-- Term slugs should be lowercase alphanumeric with hyphens
-
-#### Single vs Multiple Terms
-
-```yaml
-# Single term (string)
-category: tutorials
-
-# Multiple terms (array)
-category:
-  - tutorials
-  - php
-  - cms
-```
-
-Both formats work — Ava CMS normalizes single values into arrays internally.
+You can use either a single value or a list. Ava normalizes both into an array.
 
 #### Alternative format: `tax:` map
 
-If you prefer to group all taxonomies under a single key:
+Group all taxonomies under a single key:
 
 ```yaml
 tax:
@@ -333,67 +332,17 @@ tax:
   tag: beginner
 ```
 
-This keeps frontmatter tidy when you have many taxonomies.
-
 #### Accessing Terms in Templates
 
-For detailed template examples, see [Theming - Working with Taxonomies](/docs/theming).
-
 ```php
-// Get terms for a specific taxonomy on an item
 <?php foreach ($content->terms('category') as $term): ?>
     <a href="<?= $ava->termUrl('category', $term) ?>">
         <?= $ava->termName('category', $term) ?>
     </a>
 <?php endforeach; ?>
-
-// Get all terms for a taxonomy across the site
-<?php foreach ($ava->terms('category') as $slug => $info): ?>
-    <li>
-        <a href="<?= $ava->termUrl('category', $slug) ?>">
-            <?= $ava->e($info['name']) ?>
-        </a>
-        <span class="count">(<?= $info['count'] ?>)</span>
-    </li>
-<?php endforeach; ?>
 ```
 
-#### Term registries (`content/_taxonomies/*.yml`)
-
-You can optionally define a "term registry" file per taxonomy to add metadata:
-
-- `content/_taxonomies/category.yml`
-- `content/_taxonomies/tag.yml`
-
-Registry files let you:
-
-- Define term display names (instead of auto-generated)
-- Add descriptions, images, or custom fields to terms
-- Pre-create terms before any content uses them
-
-**Registry file format:**
-
-```yaml
-# content/_taxonomies/category.yml
-- slug: tutorials
-  name: Tutorials
-  description: Step-by-step guides and how-tos
-  icon: book
-
-- slug: php
-  name: PHP
-  description: PHP-specific content
-
-- slug: reference
-  name: Reference
-  description: API and syntax reference
-```
-
-**How registry merging works:**
-
-- Terms used in published content get their `count` and `items` from indexing, plus any extra fields from the registry
-- Terms that exist only in the registry appear with `count: 0`
-- Registry fields are available in templates via `$ava->terms('category')[$slug]['description']` etc.
+**See:** [Taxonomies](/docs/taxonomies) for full documentation on term storage, registry files, hierarchical terms, and template helpers.
 
 ### SEO Fields
 
@@ -559,13 +508,19 @@ See [Shortcodes](/docs/shortcodes) for the full reference.
 Run PHP's built-in server to preview locally:
 
 ```bash
-php -S localhost:8000 -t public
+composer install                    # First time only
+php ava rebuild                     # Build content index
+php -S localhost:8000 -t public     # Start dev server
 ```
 
 Then open `http://localhost:8000` in your browser.
 
 <div class="callout-warning">
 This is a development server, not for public use. See the <a href="/docs/hosting">Hosting Guide</a> for production options.
+</div>
+
+<div class="callout-info">
+<strong>New to local development?</strong> See the <a href="/docs/hosting#local-development">Hosting Guide</a> for detailed setup instructions, including Windows-specific guidance for installing PHP and Composer.
 </div>
 
 ### Live Editing
@@ -604,3 +559,14 @@ This catches:
 - Duplicate IDs (when IDs are present)
 
 See [CLI Reference - Lint](/docs/cli#lint) for more details.
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/configuration#content-content-types-content_typesphp">Configuration: Content Types</a> — Full content type options</li>
+<li><a href="/docs/fields">Fields</a> — All field types and validation</li>
+<li><a href="/docs/taxonomies">Taxonomies</a> — Organizing content with categories and tags</li>
+<li><a href="/docs/shortcodes">Shortcodes</a> — Embedding dynamic content</li>
+<li><a href="/docs/markdown-reference">Markdown Reference</a> — Complete Markdown syntax</li>
+</ul>
+</div>

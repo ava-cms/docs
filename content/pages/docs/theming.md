@@ -367,6 +367,8 @@ Display categories, tags, or any taxonomy terms:
 <?php endforeach; ?>
 ```
 
+**See:** [Taxonomies](/docs/taxonomies) for full documentation on configuration, term storage, hierarchical terms, and the `$tax` variable.
+
 ### Querying Content
 
 The `$ava->query()` method returns a fluent query builder:
@@ -534,7 +536,7 @@ Ava CMS includes built-in error page templates as fallbacks, so your site will a
 
 ## Taxonomy Templates
 
-Taxonomy pages require specific templates to display term archives and term listings.
+Taxonomy pages require specific templates to display term archives and term listings. For full documentation on taxonomies, including configuration, term storage, and the `$tax` variable, see [Taxonomies](/docs/taxonomies).
 
 ### Term Archive Template (`taxonomy.php`)
 
@@ -816,5 +818,16 @@ Looking for ready-made themes? Check out the [Community Themes](/themes) page fo
 <div class="callout-warning"><strong>Security warning:</strong> Community themes are third-party code and are <strong>not vetted or audited</strong> by the Ava CMS project. Themes can include PHP (e.g. <code>theme.php</code>), templates, and assets that execute on your server/in your users’ browsers. Only install themes from authors you trust, review the source, and test in staging before deploying.</div>
 
 Built a theme you'd like to share? [Submit it to the community gallery!](/themes#content-submit-your-theme)
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/configuration#content-content-types-content_typesphp">Configuration: Content Types</a> — Template settings</li>
+<li><a href="/docs/taxonomies">Taxonomies</a> — Taxonomy templates and helpers</li>
+<li><a href="/docs/routing">Routing</a> — URL generation and template resolution</li>
+<li><a href="/docs/shortcodes">Shortcodes</a> — Embedding dynamic content</li>
+<li><a href="/docs/creating-plugins">Creating Plugins</a> — Theme-level extensions</li>
+</ul>
+</div>
 
 

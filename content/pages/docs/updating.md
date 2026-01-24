@@ -230,3 +230,12 @@ Your content and configuration are in separate directories from core files, so t
 ## Need Help?
 
 Updates not working? Something broken? Join the [Discord community](https://discord.gg/fZwW4jBVh5)—we're happy to help troubleshoot and get you back on track.
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/cli#content-updates">CLI: Updates</a> — Update commands</li>
+<li><a href="/docs/hosting">Hosting</a> — Deployment workflows</li>
+<li><a href="/docs/releasing">Releasing</a> — How releases are published</li>
+</ul>
+</div>

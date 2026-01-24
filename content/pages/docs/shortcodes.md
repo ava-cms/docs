@@ -223,3 +223,12 @@ Since shortcodes run after Markdown processing, they can safely output raw HTML.
 - **Unknown shortcodes:** Left as-is in output (no errors)
 - **Errors:** Exceptions are logged and replaced with an HTML comment
 - **Escaping:** Always use `htmlspecialchars()` for user values
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/content">Content</a> — Using shortcodes in Markdown</li>
+<li><a href="/docs/creating-plugins#content-shortcodes">Creating Plugins: Shortcodes</a> — Registering shortcodes via plugins</li>
+<li><a href="/docs/theming">Theming</a> — Template helpers and partials</li>
+</ul>
+</div>

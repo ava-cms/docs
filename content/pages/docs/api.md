@@ -769,3 +769,13 @@ The `\Ava\Application` class is the heart of the framework. It acts as a service
 | `query()` | Create a new `\Ava\Content\Query` instance for querying content. |
 | `loadPlugins()` | Manually load plugins and register their hooks. Useful for custom CLI scripts or external integrations that run outside the normal request lifecycle. |
 
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/routing">Routing</a> — URL patterns and route matching</li>
+<li><a href="/docs/creating-plugins#content-frontend-routes">Creating Plugins: Frontend Routes</a> — Adding routes via plugins</li>
+<li><a href="/docs/theming#content-querying-content">Theming: Querying Content</a> — Query builder methods</li>
+<li><a href="/docs/taxonomies#content-template-helpers">Taxonomies: Template Helpers</a> — Taxonomy-related helpers</li>
+</ul>
+</div>
+

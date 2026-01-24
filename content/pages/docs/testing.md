@@ -278,3 +278,12 @@ Example GitHub Actions workflow:
 - name: Run tests
   run: ./ava test
 ```
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/cli#content-testing">CLI: Testing</a> — Test command options</li>
+<li><a href="/docs/releasing">Releasing</a> — Release tests and workflows</li>
+<li><a href="/docs/creating-plugins">Creating Plugins</a> — Testing plugin code</li>
+</ul>
+</div>

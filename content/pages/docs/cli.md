@@ -13,6 +13,10 @@ Ava CMS includes a command-line interface for managing your site. Run commands f
 ./ava <command> [options]
 ```
 
+<div class="callout-info">
+<strong>Windows users:</strong> Use <code>php ava</code> instead of <code>./ava</code> for all commands throughout this documentation. The commands work identically—Windows just needs the explicit <code>php</code> prefix.
+</div>
+
 The CLI has been thoughtfully designed for a simple and delightful experience. Most output includes helpful tips and next steps.
 
 <details class="beginner-box">
@@ -25,22 +29,19 @@ The CLI has been thoughtfully designed for a simple and delightful experience. M
 It’s the folder that contains your Ava CMS project — where you can see `composer.json`, `content/`, `app/`, and the `ava` script.
 
 <div class="callout-info">
-<strong>Tip:</strong> If you type <code>./ava status</code> and it works, you're in the right folder.
+<strong>Tip:</strong> If you type <code>./ava status</code> (or <code>php ava status</code> on Windows) and it works, you're in the right folder.
 </div>
 
 ### A tiny CLI cheat-sheet (you’ll use these a lot)
 
 | Command | What it does |
 | :--- | :--- |
-| `pwd` | Show your current folder (Linux/macOS). Short for "print working directory". |
-| `ls` | List files in the current folder (Linux/macOS). Short for "list". |
-| `cd folder-name` | Move into a folder. Short for "change directory". |
-| `cd ..` | Go up one folder. |
-| `php -v` | Show your PHP version. |
+| `ls` | List files in the current folder. Works everywhere (including PowerShell). |
+| `cd folder-name` | Move into a folder. Works everywhere. |
+| `cd ..` | Go up one folder. Works everywhere. |
+| `php -v` | Show your PHP version. Works everywhere. |
+| `php ava status` | Check if Ava CMS is working. Use this on Windows instead of `./ava`. |
 
-<div class="callout-info">
-<strong>Windows note:</strong> In PowerShell, the equivalents are <code>Get-Location</code> (like <code>pwd</code>) and <code>dir</code> (like <code>ls</code>). <code>cd</code> works everywhere.
-</div>
 </div>
 </details>
 
@@ -1182,3 +1183,13 @@ php -S localhost:8000 -t public
 # After updating, check for stale files
 ./ava update:stale
 ```
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/performance">Performance</a> — Caching and optimization</li>
+<li><a href="/docs/content">Content</a> — Writing and organizing content</li>
+<li><a href="/docs/testing">Testing</a> — Running the test suite</li>
+<li><a href="/docs/updating">Updating</a> — Keeping Ava CMS current</li>
+</ul>
+</div>

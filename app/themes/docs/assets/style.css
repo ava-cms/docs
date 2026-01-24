@@ -1386,6 +1386,50 @@ mark {
     }
 }
 
+/* Related Documentation */
+.related-docs {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5) var(--sp-6);
+    margin: var(--sp-10) 0 var(--sp-6);
+    
+    & h2 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        margin: 0 0 var(--sp-3) 0;
+        padding: 0;
+        border: none;
+    }
+    
+    & ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    
+    & li {
+        margin: 0 0 var(--sp-2) 0;
+        padding: 0;
+        font-size: 0.875rem;
+    }
+    
+    & li:last-child {
+        margin-bottom: 0;
+    }
+    
+    & a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        
+        &:hover {
+            color: var(--accent);
+        }
+    }
+}
+
 /* Beginner Box */
 .beginner-box {
     background: var(--callout-beginner-bg);

@@ -849,3 +849,13 @@ Hidden content here.
 
 <p>See <a href="/docs/creating-plugins#markdown-configure">Creating Plugins</a> to learn how to extend the Markdown parser.</p>
 </div>
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/content">Content</a> — Writing content with frontmatter</li>
+<li><a href="/docs/shortcodes">Shortcodes</a> — Embedding dynamic content</li>
+<li><a href="/docs/theming">Theming</a> — Rendering content in templates</li>
+<li><a href="/docs/creating-plugins">Creating Plugins</a> — Extending the Markdown parser</li>
+</ul>
+</div>

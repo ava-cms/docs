@@ -195,6 +195,8 @@ Taxonomies with `public: true` automatically get routes:
 - `$tax['terms']` — All terms (index)
 - `$query` — Pre-filtered Query object
 
+**See:** [Taxonomies](/docs/taxonomies) for full documentation on configuration, term storage, and template examples.
+
 
 ## Adding Custom Routes
 
@@ -323,3 +325,14 @@ var_dump($routes['exact']['/my-path'] ?? 'not found');
 | Wrong hierarchical URL | Use path-based key: `$ava->get('page', 'about/team')` |
 | Redirect loop | Check for circular `redirect_from` |
 | Preview not working | Verify `security.preview_token` in config |
+
+<div class="related-docs">
+<h2>Related Documentation</h2>
+<ul>
+<li><a href="/docs/configuration#content-content-types-content_typesphp">Configuration: Content Types</a> — URL patterns and settings</li>
+<li><a href="/docs/taxonomies#content-routing">Taxonomies: Routing</a> — Taxonomy URL generation</li>
+<li><a href="/docs/theming">Theming</a> — Template resolution</li>
+<li><a href="/docs/api">API</a> — Building custom endpoints</li>
+<li><a href="/docs/creating-plugins#content-frontend-routes">Creating Plugins: Frontend Routes</a> — Plugin routes</li>
+</ul>
+</div>
